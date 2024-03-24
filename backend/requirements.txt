@@ -1,0 +1,8 @@
+Django==4.2.4
+Django==5.0.1
+django_ckeditor==6.7.1
+djangorestframework==3.14.0
+fuzzywuzzy==0.18.0
+openai==0.28.0
+python-dotenv==1.0.1
+Requests==2.31.0

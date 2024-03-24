@@ -1,0 +1,35 @@
+# Ignore Python bytecode files
+*.pyc
+
+# Ignore virtual environment directories
+venv/
+
+# Ignore SQLite database file + data exports
+backend/db.sqlite3
+backend/data.json
+backend/dump.json
+backend/export.sql
+backend/data.csv
+
+# Ignore Node.js modules
+frontend/node_modules/
+
+# Ignore build artifacts
+frontend/build/
+frontend/dist/
+
+# Ignore IDE/Editor specific files
+backend/.vscode/
+frontend/.vscode/
+backend/.idea/
+frontend/.idea/
+
+# Ignore local configuration files
+backend/.env
+frontend/.env
+
+# Ignore test and import scripts
+backend/core/_import_review.py
+backend/core/_import.py
+backend/core/_spotify_import.py
+backend/core/_test_mail.py
