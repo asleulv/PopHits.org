@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base url
-let BASE_URL = 'https://pophits.org/api'; // Default to production URL
+let BASE_URL = 'https://pophits.org'; // Default to production URL
 
 if (process.env.NODE_ENV === 'development') {
   BASE_URL = 'http://localhost:8000'; // Use local URL for development

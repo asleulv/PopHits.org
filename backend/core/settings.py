@@ -9,10 +9,18 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+REACT_BUILD_DIR = BASE_DIR.parent / 'frontend' / 'build'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static') 
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    str(REACT_BUILD_DIR / 'static'),
+]
+
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org']
 SESSION_COOKIE_AGE = 3600
 
@@ -96,7 +104,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(REACT_BUILD_DIR)], 
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -120,9 +128,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'pophits_org',
         'USER': 'hairmetalclub',
-        'PASSWORD': 'Enerhaugen666',
-        'HOST': 'localhost',   # Or the hostname of your MySQL server
-        'PORT': '3306',        # MySQL's default port
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'localhost',   
+        'PORT': '3306',        
     }
 }
 
@@ -152,11 +160,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useCallback, useContext, createContext } from 'react';
 
 // Base url
-let BASE_URL = 'https://pophits.org/api'; // Default to production URL
+let BASE_URL = 'https://pophits.org'; // Default to production URL
 
 if (process.env.NODE_ENV === 'development') {
   BASE_URL = 'http://localhost:8000'; // Use local URL for development
