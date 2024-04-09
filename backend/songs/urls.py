@@ -1,12 +1,15 @@
 from django.urls import path
-from .views import SongListCreateView, SongDetailView, SongDetailBySlugView, UserSongCommentCreateView, UserSongRatingCreateView, UserSongCommentUpdateView, get_user_rating_for_song, UserBookmarkView, UserBookmarkedSongsView, BookmarkStatusView, CommentStatusView
+from .views import SongListCreateView, SongDetailView, SongDetailBySlugView, UserSongCommentCreateView, UserSongRatingCreateView, UserSongCommentUpdateView, get_user_rating_for_song, UserBookmarkView, UserBookmarkedSongsView, BookmarkStatusView, CommentStatusView, RandomSongView, SongsByArtistSlugView, SongsByYearView
 
 urlpatterns = [
     path('', SongListCreateView.as_view(), name='song-list-create'),
+    path('artist/<slug:artist_slug>/', SongsByArtistSlugView.as_view(), name='songs_by_artist'),
+    path('year/<int:year>/', SongsByYearView.as_view(), name='songs-by-year'),
     path('<int:pk>/', SongDetailView.as_view(), name='song-detail'),
     path('bookmarked-songs/', UserBookmarkedSongsView.as_view(), name='get_bookmarked_songs'),
     path('<int:song_id>/bookmark-status/', BookmarkStatusView.as_view()),
     path('<int:song_id>/comment-status/', CommentStatusView.as_view()),
+    path('random-song/', RandomSongView.as_view(), name='random-song'),
     path('<slug:slug>/', SongDetailBySlugView.as_view(), name='song-detail-slug'),
     path('<int:pk>/comment/', UserSongCommentCreateView.as_view(), name='user-song-comment-create'),
     path('<int:song_pk>/comment/<int:comment_pk>/', UserSongCommentUpdateView.as_view(), name='user-song-comment-update'),

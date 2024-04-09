@@ -7,20 +7,30 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-REACT_BUILD_DIR = BASE_DIR.parent / 'frontend' / 'build'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static') 
-STATIC_URL = "/static/"
+
+REACT_BUILD_DIR = BASE_DIR / 'frontend/build'
+print(REACT_BUILD_DIR)
+
+STATIC_ROOT = os.path.join(REACT_BUILD_DIR, 'static')
+STATIC_URL = '/static/'
+print(STATIC_ROOT)
+
+# Include only the React build directory in STATICFILES_DIRS
 STATICFILES_DIRS = [
-    str(REACT_BUILD_DIR / 'static'),
+    str(REACT_BUILD_DIR),
 ]
+
+
 
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org']
 SESSION_COOKIE_AGE = 3600
 
@@ -70,8 +80,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'core.middleware.PermissionPolicyMiddleware',
-    "core.middleware.RequestLoggingMiddleware" 
-    
+    "core.middleware.RequestLoggingMiddleware"
+
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -104,7 +114,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [os.path.join(REACT_BUILD_DIR)], 
+        'DIRS': [os.path.join(REACT_BUILD_DIR)],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -126,11 +136,11 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pophits_org',
-        'USER': 'hairmetalclub',
+        'NAME': 'hitquiz$pophits',
+        'USER': 'hitquiz',
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'localhost',   
-        'PORT': '3306',        
+        'HOST': 'hitquiz.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
 

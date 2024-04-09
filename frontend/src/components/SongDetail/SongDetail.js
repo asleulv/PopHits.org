@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import {
   getSongBySlug,
   submitUserScore,
@@ -15,6 +16,16 @@ import {
 import DOMPurify from "dompurify";
 import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "../../services/auth";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  FacebookMessengerShareButton,
+  FacebookIcon,  // Importing FacebookIcon
+  TwitterIcon,   // Importing TwitterIcon
+  WhatsappIcon,  // Importing WhatsappIcon
+  FacebookMessengerIcon  // Importing FacebookMessengerIcon
+} from 'react-share';
 
 const SongDetail = () => {
   const { slug } = useParams();
@@ -31,6 +42,8 @@ const SongDetail = () => {
   const { isAuthenticated, user } = useAuth();
   const [showReview, setShowReview] = useState(false);
   const userId = userProfile ? userProfile.id : null;
+  const [artistHashtag, setArtistHashtag] = useState("");
+
 
 
   const toggleReview = () => {
@@ -52,7 +65,7 @@ const SongDetail = () => {
         console.error('Error fetching user rating:', error);
       }
     };
-  
+
     if (song && userId) {
       fetchUserRating();
     }
@@ -85,6 +98,10 @@ const SongDetail = () => {
         setIsBookmarked(fetchedSong.is_bookmarked);
         document.title = `${fetchedSong.title} by ${fetchedSong.artist} at PopHits.org`;
 
+        const artistHashtag = fetchedSong.artist.replace(/\s+/g, '');
+        setArtistHashtag(artistHashtag);
+
+
         if (isAuthenticated && fetchedSong.comments) {
           const userComment = fetchedSong.comments.find(
             (comment) => comment.user_id === user.id
@@ -100,6 +117,8 @@ const SongDetail = () => {
         }
       } catch (error) {}
     };
+
+
 
     fetchData();
   }, [slug, isAuthenticated, user]);
@@ -253,6 +272,17 @@ const SongDetail = () => {
     <div className="container mx-auto px-4 py-8">
       {song && (
         <>
+        <Helmet>
+          <title>{`${song.title} by ${song.artist}`}</title>
+          <meta property="og:title" content={`${song.title} by ${song.artist}`} />
+          <meta property="og:description" content={song.review} />
+          <meta property="og:image" content="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png" />
+          <meta property="og:url" content={window.location.href} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={`${song.title} by ${song.artist}`} />
+          <meta name="twitter:description" content={song.review} />
+          <meta name="twitter:image" content="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png" />
+        </Helmet>
           <div className="flex flex-col items-center justify-center">
             <h2 className="song-title">
               <span>{song.title}</span>
@@ -305,6 +335,50 @@ const SongDetail = () => {
               </p>
             </div>
           </div>
+
+          <div className="social-share-buttons" style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center', marginRight: '10px' }}>
+                <FacebookShareButton
+                    url={window.location.href}
+                    quote={`${song.title} by ${song.artist}`}
+                    hashtag="#popmusic"
+                    image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+                >
+                    <FacebookIcon size={32} round />
+                </FacebookShareButton>
+            </div>
+            <div style={{ textAlign: 'center', marginRight: '10px' }}>
+                <TwitterShareButton
+                    url={window.location.href}
+                    title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at ${song.peak_rank}`}
+                    via="PopHitsOrg"
+                    hashtags={['popmusic', 'favoritesong', artistHashtag, 'pophitsdotorg']}
+                    image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+                >
+                    <TwitterIcon size={32} round />
+                </TwitterShareButton>
+            </div>
+            <div style={{ textAlign: 'center', marginRight: '10px' }}>
+                <WhatsappShareButton
+                    url={window.location.href}
+                    title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeksOnChart} weeks on the Hot 100, peaking at #${song.peakRank}`}
+                    separator=" - "
+                >
+                    <WhatsappIcon size={32} round />
+                </WhatsappShareButton>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+                <FacebookMessengerShareButton
+                    url={window.location.href}
+                    appId="your-facebook-app-id" // Replace with your Facebook App ID
+                    image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+                >
+                    <FacebookMessengerIcon size={32} round />
+                </FacebookMessengerShareButton>
+            </div>
+        </div>
+
+
 
           <div className="spotify-embed">
             {song.spotify_url ? (

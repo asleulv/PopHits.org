@@ -9,7 +9,7 @@ class Song(models.Model):
     year = models.IntegerField()
     peak_rank = models.IntegerField()
     weeks_on_chart = models.IntegerField()
-    
+
     # New fields for the rating system
     average_user_score = models.FloatField(default=0.0)
     total_ratings = models.IntegerField(default=0)
@@ -32,13 +32,14 @@ class Song(models.Model):
 
 class UserSongRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    song = models.ForeignKey('Song', on_delete=models.CASCADE)
     score = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 11)])
 
+    class Meta:
+        unique_together = ('user', 'song',)
+
     def get_song_slug(self):
-        # Retrieve the Song object associated with this rating
         song = self.song
-        # Return the slug of the associated Song object
         return song.slug
 
     def save(self, *args, **kwargs):
@@ -50,18 +51,18 @@ class UserSongRating(models.Model):
         self.update_song_average_score()
 
     def update_song_average_score(self):
-        song = self.song
-        total_ratings = UserSongRating.objects.filter(song=song, score__gt=0).count()
-        sum_ratings = UserSongRating.objects.filter(song=song).aggregate(models.Sum('score'))['score__sum']
+        all_ratings = UserSongRating.objects.filter(song=self.song)
+        total_ratings = all_ratings.count()
+        sum_ratings = all_ratings.aggregate(models.Sum('score'))['score__sum']
 
         if total_ratings > 0:
-            song.total_ratings = total_ratings
-            song.average_user_score = sum_ratings / total_ratings
+            self.song.total_ratings = total_ratings
+            self.song.average_user_score = sum_ratings / total_ratings
         else:
-            song.total_ratings = 0
-            song.average_user_score = 0.0
+            self.song.total_ratings = 0
+            self.song.average_user_score = 0.0
 
-        song.save()
+        self.song.save()
 
 
 class UserSongComment(models.Model):
@@ -73,7 +74,7 @@ class UserSongComment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.song.title}"
-    
+
 class Bookmark(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     songs = models.ManyToManyField('Song', related_name='bookmarks')

@@ -3,15 +3,33 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from .models import Song, UserSongRating, UserSongComment, Bookmark
+from django.db.models import F
 from .serializers import SongSerializer, UserSongCommentSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
+from random import randint
 
 # API VIEW: songlist
 class SongListCreateView(generics.ListCreateAPIView):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
+
+# API VIEW: songlist by artist
+class SongsByArtistSlugView(generics.ListAPIView):
+    serializer_class = SongSerializer
+
+    def get_queryset(self):
+        artist_slug = self.kwargs['artist_slug']
+        return Song.objects.filter(artist_slug=artist_slug)
+
+# API VIEW: songlist by year
+class SongsByYearView(generics.ListAPIView):
+    serializer_class = SongSerializer
+
+    def get_queryset(self):
+        year = self.kwargs['year']
+        return Song.objects.filter(year=year)
 
 # API VIEW: song detail by id
 class SongDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -46,10 +64,37 @@ class SongDetailBySlugView(generics.RetrieveUpdateDestroyAPIView):
         serializer = self.get_serializer(instance)
         comments = UserSongComment.objects.filter(song=instance)
         comment_serializer = UserSongCommentSerializer(comments, many=True)
+
+        # Construct description
+        description = f"{instance.title} entered the Hot 100 in {instance.year} spending {instance.weeks_on_chart} weeks on the charts with #{instance.peak_rank} being its highest position."
+
+        # Add description to serializer data
         data = serializer.data
+        data['description'] = description
         data['comments'] = comment_serializer.data
+
         return Response(data)
-    
+
+# API view to get a random song
+class RandomSongView(APIView):
+    serializer_class = SongSerializer
+
+    def get(self, request, *args, **kwargs):
+        # Get a count of all songs
+        song_count = Song.objects.count()
+
+        # Generate a random index within the range of song_count
+        random_index = randint(0, song_count - 1)
+
+        # Retrieve a random song using the random index
+        random_song = Song.objects.all()[random_index]
+
+        # Serialize the random song
+        serializer = self.serializer_class(random_song)
+
+        # Return the serialized random song
+        return Response(serializer.data)
+
 
 ##################################################
 ## Allow authenticated users to comment or rate ##
@@ -68,7 +113,7 @@ class UserSongCommentCreateView(APIView):
             user = request.user
             user_song_comment = UserSongComment(user=user, song=song, text=comment_text)
             user_song_comment.save()
-            
+
             # Check if the rating value is provided and save it
             if rating_value is not None:
                 UserSongRating.objects.create(user=user, song=song, score=rating_value)
@@ -121,12 +166,11 @@ class UserSongRatingCreateView(APIView):
                 # Create a new rating
                 UserSongRating.objects.create(user=user, song=song, score=rating_value)
 
-            # Optionally, you can update the average score in the Song model here
-
             return Response(status=status.HTTP_201_CREATED)
         else:
             return Response({'detail': 'Rating is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+
 @api_view(['GET'])
 def get_user_rating_for_song(request, song_id, user_id):
     try:
@@ -135,13 +179,13 @@ def get_user_rating_for_song(request, song_id, user_id):
     except UserSongRating.DoesNotExist:
         # Return a default value (e.g., 0) instead of a 404 error
         return Response(0, status=status.HTTP_200_OK)
-  
+
 
 class UserBookmarkView(APIView):
     def post(self, request, song_id):
         song = get_object_or_404(Song, id=song_id)
         bookmark, created = Bookmark.objects.get_or_create(user=request.user)
-        
+
         if created:
             bookmark.songs.add(song)
             message = 'Song bookmarked successfully.'
@@ -155,7 +199,7 @@ class UserBookmarkView(APIView):
                 bookmark.songs.add(song)
                 message = 'Song bookmarked successfully.'
                 is_bookmarked = True
-        
+
         return Response({'success': True, 'message': message, 'is_bookmarked': is_bookmarked}, status=status.HTTP_200_OK)
 
 
@@ -171,14 +215,14 @@ class UserBookmarkedSongsView(APIView):
         user_bookmarks = Bookmark.objects.filter(user=request.user)
         user_bookmarks.delete()  # Delete all bookmarks associated with the current user
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 class BookmarkStatusView(APIView):
     def get(self, request, song_id):
         song = get_object_or_404(Song, id=song_id)
         bookmark = Bookmark.objects.filter(user=request.user).first()
         is_bookmarked = bookmark.songs.filter(id=song_id).exists() if bookmark else False
         return Response({'is_bookmarked': is_bookmarked}, status=status.HTTP_200_OK)
-    
+
 class CommentStatusView(APIView):
     def get(self, request, song_id):
         song = get_object_or_404(Song, id=song_id)

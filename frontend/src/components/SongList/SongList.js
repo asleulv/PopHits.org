@@ -1,48 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getAllSongs } from "../../services/api";
+import { getAllSongs, getAllSongsByArtist, getAllSongsByYear } from "../../services/api";
 import ReactPaginate from "react-paginate";
+import { ThreeDots } from "react-loader-spinner";
 
 const SongList = () => {
   const { artist_slug, year } = useParams();
   const [songs, setSongs] = useState([]);
-  const [sortBy, setSortBy] = useState("peak_rank");
+  const [sortBy, setSortBy] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState("");
   const [offset, setOffset] = useState(0);
-  const [perPage, setPerPage] = useState(100);
+  const [perPage] = useState(100);
   const [pageCount, setPageCount] = useState(0);
   const [showingCount, setShowingCount] = useState(0);
   const [filteredSongs, setFilteredSongs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    
-
     const fetchSongs = async () => {
       try {
-        let fetchedSongs = await getAllSongs();
-
+        let fetchedSongs;
         if (artist_slug) {
-          fetchedSongs = fetchedSongs.filter(
-            (song) => song.artist_slug === artist_slug
-          );
-        }
-
-        if (year) {
-          fetchedSongs = fetchedSongs.filter(
-            (song) => song.year.toString() === year
-          );
-        }
-
-        // If neither artist_slug nor year is present, set all songs
-        if (!artist_slug && !year) {
-          setSongs(fetchedSongs);
+          fetchedSongs = await getAllSongsByArtist(artist_slug); // Call the API function to fetch songs by artist
+        } else if (year) {
+          fetchedSongs = await getAllSongsByYear(year); // Call the API function to fetch songs by year
         } else {
-          setSongs([]);
-          setSongs(fetchedSongs);
+          fetchedSongs = await getAllSongs(); // Fetch all songs if no filter is applied
         }
+
+        setSongs(fetchedSongs);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching songs:", error);
+        setLoading(false); // Handle error condition
       }
     };
 
@@ -50,55 +41,58 @@ const SongList = () => {
   }, [artist_slug, year]);
 
   useEffect(() => {
-    const searchedSongs = songs.filter((song) => {
-      const searchWords = searchQuery.toLowerCase().split(" ");
-      const isInTitle = searchWords.every((word) =>
-        song.title.toLowerCase().includes(word)
-      );
-      const isInArtist = searchWords.every((word) =>
-        song.artist.toLowerCase().includes(word)
-      );
-      return isInTitle || isInArtist;
-    });
+    if (!loading) {
+      const searchedSongs = songs.filter((song) => {
+        const searchWords = searchQuery.toLowerCase().split(" ");
+        const isInTitle = searchWords.every((word) =>
+          song.title.toLowerCase().includes(word)
+        );
+        const isInArtist = searchWords.every((word) =>
+          song.artist.toLowerCase().includes(word)
+        );
+        return isInTitle || isInArtist;
+      });
 
-    const sortedSongs = searchedSongs.sort((a, b) => {
-      if (sortBy === "title") {
-        return sortOrder === "asc"
-          ? a.title.localeCompare(b.title)
-          : b.title.localeCompare(a.title);
-      } else if (sortBy === "artist") {
-        return sortOrder === "asc"
-          ? a.artist.localeCompare(b.artist)
-          : b.artist.localeCompare(a.artist);
-      } else if (sortBy === "year") {
-        return sortOrder === "asc" ? a.year - b.year : b.year - a.year;
-      } else if (sortBy === "peak_rank") {
-        return sortOrder === "asc"
-          ? a.peak_rank - b.peak_rank
-          : b.peak_rank - a.peak_rank;
-      } else if (sortBy === "rating") {
-        if (a.average_user_score === b.average_user_score) {
-          return b.total_ratings - a.total_ratings;
-        } else {
+      const sortedSongs = searchedSongs.sort((a, b) => {
+        if (sortBy === "title") {
           return sortOrder === "asc"
-            ? a.average_user_score - b.average_user_score
-            : b.average_user_score - a.average_user_score;
+            ? a.title.localeCompare(b.title)
+            : b.title.localeCompare(a.title);
+        } else if (sortBy === "artist") {
+          return sortOrder === "asc"
+            ? a.artist.localeCompare(b.artist)
+            : b.artist.localeCompare(a.artist);
+        } else if (sortBy === "year") {
+          return sortOrder === "asc" ? a.year - b.year : b.year - a.year;
+        } else if (sortBy === "peak_rank") {
+          return sortOrder === "asc"
+            ? a.peak_rank - b.peak_rank
+            : b.peak_rank - a.peak_rank;
+        } else if (sortBy === "rating") {
+          if (a.average_user_score === b.average_user_score) {
+            return b.total_ratings - a.total_ratings;
+          } else {
+            return sortOrder === "asc"
+              ? a.average_user_score - b.average_user_score
+              : b.average_user_score - a.average_user_score;
+          }
+        } else if (sortBy === "ratings") {
+          return sortOrder === "asc"
+            ? a.total_ratings - b.total_ratings
+            : b.total_ratings - a.total_ratings;
         }
-      } else if (sortBy === "ratings") {
-        return sortOrder === "asc"
-          ? a.total_ratings - b.total_ratings
-          : b.total_ratings - a.total_ratings;
-      }
-    });
+        return 0; // Added to handle scenarios where sortBy isn't recognized
+      });
 
-    setShowingCount(sortedSongs.length);
-    setPageCount(Math.ceil(sortedSongs.length / perPage));
+      setShowingCount(sortedSongs.length);
+      setPageCount(Math.ceil(sortedSongs.length / perPage));
 
-    const offsetStart = offset;
-    const offsetEnd = offset + perPage;
-    const paginatedSongs = sortedSongs.slice(offsetStart, offsetEnd);
-    setFilteredSongs(paginatedSongs);
-  }, [songs, searchQuery, offset, perPage, sortBy, sortOrder]);
+      const offsetStart = offset;
+      const offsetEnd = offset + perPage;
+      const paginatedSongs = sortedSongs.slice(offsetStart, offsetEnd);
+      setFilteredSongs(paginatedSongs);
+    }
+  }, [loading, songs, searchQuery, offset, perPage, sortBy, sortOrder]);
 
   const handleSort = (criteria) => {
     if (sortBy === criteria) {
@@ -121,15 +115,31 @@ const SongList = () => {
 
   const handleReset = () => {
     setSearchQuery("");
-    setSortBy("title"); // Reset sorting criteria to default
-    setSortOrder("asc"); // Reset sorting order to default
-    setOffset(0); // Reset offset to 0
-    // Clear the search input field
+    setSortBy("title");
+    setSortOrder("asc");
+    setOffset(0);
     const searchInput = document.getElementById("search-input");
     if (searchInput) {
       searchInput.value = "";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ThreeDots
+          visible={loading}
+          height={80}
+          width={80}
+          color="#0d458b"
+          radius={9}
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

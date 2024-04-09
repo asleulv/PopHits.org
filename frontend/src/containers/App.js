@@ -17,7 +17,7 @@ import ProfileUpdate from "../components/users/ProfileUpdate";
 import ResetPassword from "../components/users/ResetPassword";
 import ConfirmPasswordReset from "../components/users/ConfirmResetPassword";
 import { useAuth } from "../services/auth";
-import { getRandomSongWithSpotifyURL } from "../services/api";
+import { getRandomHit } from "../services/api";
 import { ThreeDots } from "react-loader-spinner";
 
 const RandomSongRedirect = () => {
@@ -29,7 +29,7 @@ const RandomSongRedirect = () => {
     if (!hasRedirected.current) {
       const fetchAndRedirect = async () => {
         try {
-          const song = await getRandomSongWithSpotifyURL();
+          const song = await getRandomHit(); // Updated function call
           navigate(`/songs/${song.slug}`);
         } catch (error) {
           console.error(error);

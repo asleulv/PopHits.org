@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/auth";
 import { slide as Menu } from "react-burger-menu";
+import oldhitsLogo from './oldhits_logo.png';
 
 const Navbar = ({ isAuthenticated }) => {
   const { logoutUser } = useAuth();
@@ -48,11 +49,7 @@ const Navbar = ({ isAuthenticated }) => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-4">
           {/* Site Logo */}
-          <img
-            src="/gfx/oldhits_logo.png"
-            alt="old.hits"
-            className="navbar-logo"
-          />
+          <img src={oldhitsLogo} alt="old.hits" className="navbar-logo" />
         </div>
         {/* Hamburger Menu Icon */}
         <Menu
@@ -79,7 +76,7 @@ const Navbar = ({ isAuthenticated }) => {
                 😱 All hits
               </Link>
             </li>
-            
+
             <li className="navbar-menu-item">
               <Link
                 to="/about"

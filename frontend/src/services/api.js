@@ -26,7 +26,6 @@ export const authApi = axios.create({
   baseURL: `${BASE_URL}/`,
 });
 
-
 // Function to get a random song
 export const getRandomSong = async () => {
   try {
@@ -40,18 +39,18 @@ export const getRandomSong = async () => {
   }
 };
 
-// Function to get a random song with spotify_url
-export const getRandomSongWithSpotifyURL = async () => {
+
+// Function to get a random song
+export const getRandomHit = async () => {
   try {
-    const response = await songApi.get('?spotify_url__isnull=False');
-    const songsWithSpotifyURL = response.data.filter(song => song.spotify_url.trim() !== ''); // Filter out songs with empty spotify_url
-    const randomIndex = Math.floor(Math.random() * songsWithSpotifyURL.length);
-    return songsWithSpotifyURL[randomIndex];
+    const response = await songApi.get('/random-song/');
+    return response.data;
   } catch (error) {
-    
+    console.error('Error fetching random song:', error);
     throw error;
   }
 };
+
 
 // Function to get all songs
 export const getAllSongs = async () => {
@@ -71,6 +70,28 @@ export const getSongById = async (id) => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching song with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+export const getAllSongsByArtist = async (artist_slug) => {
+  try {
+    const response = await songApi.get(`/artist/${artist_slug}`);
+    return response.data; // Assuming the response contains the list of songs
+  } catch (error) {
+    // Handle error
+    console.error('Error fetching songs by artist:', error);
+    throw error;
+  }
+};
+
+export const getAllSongsByYear = async (year) => {
+  try {
+    const response = await songApi.get(`/year/${year}`);
+    return response.data; // Assuming the response contains the list of songs
+  } catch (error) {
+    // Handle error
+    console.error('Error fetching songs by year:', error);
     throw error;
   }
 };
@@ -267,7 +288,7 @@ export const getBookmarkStatusForSong = async (songId) => {
      throw error;
   }
  };
- 
+
  export const getCommentStatusForSong = async (songId) => {
   try {
     const authToken = localStorage.getItem('authToken');
@@ -283,6 +304,6 @@ export const getBookmarkStatusForSong = async (songId) => {
 };
 
 
- 
+
 
 
