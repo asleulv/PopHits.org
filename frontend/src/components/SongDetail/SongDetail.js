@@ -312,12 +312,7 @@ const SongDetail = () => {
                 </span>
               </div>
             )}
-            <a
-              href="/"
-              className="circle-button next-random-song"
-            >
-              <span>👉</span>
-            </a>
+            
           </div>
           <div className="song-info-container">
             <div className="song-info-box">
@@ -361,7 +356,7 @@ const SongDetail = () => {
             <div style={{ textAlign: 'center', marginRight: '10px' }}>
                 <WhatsappShareButton
                     url={window.location.href}
-                    title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeksOnChart} weeks on the Hot 100, peaking at #${song.peakRank}`}
+                    title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at #${song.peak_rank}`}
                     separator=" - "
                 >
                     <WhatsappIcon size={32} round />

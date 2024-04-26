@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from .models import Song, UserSongRating, UserSongComment, Bookmark
 from django.db.models import F
@@ -10,26 +11,53 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
 from random import randint
 
+class CustomPagination(PageNumberPagination):
+    page_size = 100  # Set the number of records per page
+    page_size_query_param = 'page_size'
+    max_page_size = 1000  # Set the maximum number of records per page
+
 # API VIEW: songlist
 class SongListCreateView(generics.ListCreateAPIView):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
-
-# API VIEW: songlist by artist
-class SongsByArtistSlugView(generics.ListAPIView):
-    serializer_class = SongSerializer
+    pagination_class = CustomPagination
 
     def get_queryset(self):
-        artist_slug = self.kwargs['artist_slug']
-        return Song.objects.filter(artist_slug=artist_slug)
+        queryset = super().get_queryset()
+        search_query = self.request.GET.get('search', None)
+        if search_query:
+            queryset = queryset.filter(title__icontains=search_query) | queryset.filter(artist__icontains=search_query)
+        return queryset
 
-# API VIEW: songlist by year
-class SongsByYearView(generics.ListAPIView):
-    serializer_class = SongSerializer
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
 
-    def get_queryset(self):
-        year = self.kwargs['year']
-        return Song.objects.filter(year=year)
+        # Filtering by artist or year
+        artist_slug = request.GET.get('artist')
+        if artist_slug:
+            queryset = queryset.filter(artist_slug=artist_slug)
+        else:
+            year = request.GET.get('year')
+            if year:
+                queryset = queryset.filter(year=year)
+
+        # Sorting
+        sort_by = request.GET.get('sort_by', 'id')  # Default sorting by 'id'
+        order = request.GET.get('order', 'asc')     # Default order is ascending
+        if order == 'asc':
+            queryset = queryset.order_by(sort_by)
+        else:
+            queryset = queryset.order_by(f'-{sort_by}')
+
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 # API VIEW: song detail by id
 class SongDetailView(generics.RetrieveUpdateDestroyAPIView):

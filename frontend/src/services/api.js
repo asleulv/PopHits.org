@@ -51,18 +51,6 @@ export const getRandomHit = async () => {
   }
 };
 
-
-// Function to get all songs
-export const getAllSongs = async () => {
-  try {
-    const response = await songApi.get('?ordering=?'); // Adjust the ordering parameter based on your API
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching all songs:', error);
-    throw error;
-  }
-};
-
 // Function to get a specific song by ID
 export const getSongById = async (id) => {
   try {
@@ -74,24 +62,98 @@ export const getSongById = async (id) => {
   }
 };
 
-export const getAllSongsByArtist = async (artist_slug) => {
+
+// Function to get all songs
+export const getAllSongs = async (page, perPage, sortBy, sortOrder, searchQuery) => {
   try {
-    const response = await songApi.get(`/artist/${artist_slug}`);
-    return response.data; // Assuming the response contains the list of songs
+    let url = `?page=${page}&page_size=${perPage}`;
+
+    // Append sortBy if provided
+    if (sortBy) {
+      url += `&sort_by=${sortBy}`;
+    }
+
+    // Append sortOrder if provided
+    if (sortOrder) {
+      url += `&order=${sortOrder === "-" ? "desc" : "asc"}`; // Use "desc" for descending order, "asc" for ascending
+    }
+
+    // Append searchQuery if provided
+    if (searchQuery) {
+      url += `&search=${searchQuery}`;
+    }
+
+    const response = await songApi.get(url);
+    return response.data;
   } catch (error) {
-    // Handle error
-    console.error('Error fetching songs by artist:', error);
+    console.error('Error fetching songs:', error);
     throw error;
   }
 };
 
-export const getAllSongsByYear = async (year) => {
+// Function to get all songs or songs by filter
+export const getSongs = async (page, perPage, filterType, filterValue, sortBy, sortOrder, searchQuery) => {
   try {
-    const response = await songApi.get(`/year/${year}`);
-    return response.data; // Assuming the response contains the list of songs
+    let url = '';
+
+    // Append filterType and filterValue if provided
+    if (filterType && filterValue) {
+      if (filterType === 'artist' || filterType === 'year') {
+        url = `?${filterType}=${filterValue}`;
+      }
+    } else {
+      url = `?page=${page}&page_size=${perPage}`;
+    }
+
+    // Append sortBy if provided
+    if (sortBy) {
+      url += `&sort_by=${sortBy}`;
+    }
+
+    // Append sortOrder if provided
+    if (sortOrder) {
+      url += `&order=${sortOrder === "-" ? "desc" : "asc"}`; // Use "desc" for descending order, "asc" for ascending
+    }
+
+    // Append searchQuery if provided
+    if (searchQuery) {
+      url += `&search=${searchQuery}`;
+    }
+
+    const response = await songApi.get(url);
+    return response.data;
   } catch (error) {
-    // Handle error
-    console.error('Error fetching songs by year:', error);
+    console.error('Error fetching songs:', error);
+    throw error;
+  }
+};
+
+
+
+// Function to get songs by artist or year
+export const getSongsByFilter = async (filterType, filterValue, page, perPage, sortBy, sortOrder, searchQuery) => {
+  try {
+    let url = `/${filterType}/${filterValue}/?page=${page}&page_size=${perPage}`;
+
+    // Append sortBy if provided
+    if (sortBy) {
+      url += `&sort_by=${sortBy}`;
+    }
+
+    // Append sortOrder if provided
+    if (sortOrder) {
+      url += `&order=${sortOrder === "-" ? "desc" : "asc"}`; // Use "desc" for descending order, "asc" for ascending
+    }
+
+    // Append searchQuery if provided
+    if (searchQuery) {
+      url += `&search=${searchQuery}`;
+    }
+
+    const response = await songApi.get(url);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching songs by ${filterType}:`, error);
     throw error;
   }
 };
@@ -210,7 +272,6 @@ export const getUserRatingForSong = async (songId, userId) => {
       return 0;
     } else {
       // Handle other errors
-      console.error('Error fetching user rating:', error);
       throw error;
     }
   }

@@ -7,17 +7,14 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(BASE_DIR)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 REACT_BUILD_DIR = BASE_DIR / 'frontend/build'
-print(REACT_BUILD_DIR)
 
 STATIC_ROOT = os.path.join(REACT_BUILD_DIR, 'static')
 STATIC_URL = '/static/'
-print(STATIC_ROOT)
 
 # Include only the React build directory in STATICFILES_DIRS
 STATICFILES_DIRS = [
@@ -133,14 +130,25 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'hitquiz$pophits',
+#        'USER': 'hitquiz',
+#        'PASSWORD': os.getenv('DB_PASSWORD'),
+#        'HOST': 'hitquiz.mysql.pythonanywhere-services.com',
+#        'PORT': '3306',
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hitquiz$pophits',
-        'USER': 'hitquiz',
+        'NAME': 'pophits_org',
+        'USER': 'hairmetalclub',
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'hitquiz.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
+        'HOST': 'localhost',   
+        'PORT': '3306',        
     }
 }
 

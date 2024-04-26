@@ -3,7 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/auth";
 import { slide as Menu } from "react-burger-menu";
-import oldhitsLogo from './oldhits_logo.png';
+import oldhitsLogo from "./oldhits_logo.png";
+import { FaRandom, FaHouseUser, FaUser } from "react-icons/fa";
+import { BsMusicPlayerFill } from "react-icons/bs";
+import { FaCircleInfo } from "react-icons/fa6";
+import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
+import { GiBullseye } from "react-icons/gi";
 
 const Navbar = ({ isAuthenticated }) => {
   const { logoutUser } = useAuth();
@@ -49,7 +54,9 @@ const Navbar = ({ isAuthenticated }) => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-4">
           {/* Site Logo */}
-          <img src={oldhitsLogo} alt="old.hits" className="navbar-logo" />
+          <Link to="/">
+            <img src={oldhitsLogo} alt="old.hits" className="navbar-logo" />
+          </Link>
         </div>
         {/* Hamburger Menu Icon */}
         <Menu
@@ -64,7 +71,10 @@ const Navbar = ({ isAuthenticated }) => {
                 className="navbar-menu-link hover:text-gray-300"
                 onClick={() => setMenuOpen(false)}
               >
-                🙃 Random hit
+                <span className="navbar-menu-icon">
+                  <FaRandom />
+                </span>
+                Random hit
               </Link>
             </li>
             <li className="navbar-menu-item">
@@ -73,7 +83,10 @@ const Navbar = ({ isAuthenticated }) => {
                 className="navbar-menu-link hover:text-gray-300"
                 onClick={() => setMenuOpen(false)}
               >
-                😱 All hits
+                <span className="navbar-menu-icon">
+                  <BsMusicPlayerFill />
+                </span>
+                Every hit
               </Link>
             </li>
 
@@ -83,7 +96,10 @@ const Navbar = ({ isAuthenticated }) => {
                 className="navbar-menu-link hover:text-gray-300"
                 onClick={() => setMenuOpen(false)}
               >
-                😴 About
+                <span className="navbar-menu-icon">
+                  <FaCircleInfo />
+                </span>
+                About
               </Link>
             </li>
             {isAuthenticated ? (
@@ -95,7 +111,10 @@ const Navbar = ({ isAuthenticated }) => {
                     className="navbar-menu-link hover:text-gray-300"
                     onClick={() => setMenuOpen(false)}
                   >
-                    🧐 Profile
+                    <span className="navbar-menu-icon">
+                      <FaHouseUser />
+                    </span>
+                    Profile
                   </Link>
                 </li>
                 <li className="navbar-menu-item">
@@ -103,7 +122,7 @@ const Navbar = ({ isAuthenticated }) => {
                     className="navbar-menu-link hover:text-gray-300 focus:outline-none"
                     onClick={handleLogout}
                   >
-                    🤬 Logout
+                    <RiLogoutBoxRFill className="navbar-menu-icon" /> Logout
                   </button>
                 </li>
               </>
@@ -116,7 +135,7 @@ const Navbar = ({ isAuthenticated }) => {
                     className="navbar-menu-link hover:text-gray-300"
                     onClick={() => setMenuOpen(false)}
                   >
-                    ✏️ Register
+                    <RiUserAddLine className="navbar-menu-icon" /> Register
                   </Link>
                 </li>
                 <li className="navbar-menu-item">
@@ -125,7 +144,7 @@ const Navbar = ({ isAuthenticated }) => {
                     className="navbar-menu-link hover:text-gray-300"
                     onClick={() => setMenuOpen(false)}
                   >
-                    🎉 Login
+                    <FaUser className="navbar-menu-icon" /> Login
                   </Link>
                 </li>
               </>
@@ -137,7 +156,7 @@ const Navbar = ({ isAuthenticated }) => {
                 className="navbar-menu-link hover:text-gray-300"
                 onClick={() => setMenuOpen(false)}
               >
-                🎯 HitQuiz.me
+                <GiBullseye className="navbar-menu-icon" /> HitQuiz.me
               </Link>
             </li>
           </ul>

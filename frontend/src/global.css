@@ -70,10 +70,15 @@ a:hover {
 
 .navbar-menu-link {
   color: rgb(255, 255, 255);
-  font-family: "Sansita", sans-serif;
   font-size: larger;
-  text-transform: uppercase;
+  display: flex; /* Set display to flex */
+  align-items: center; /* Center items vertically */
 }
+
+.navbar-menu-icon {
+  margin-right: 0.5rem;
+}
+
 
 .footer {
   background-color: #0d458b;

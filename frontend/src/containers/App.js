@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import {
   Routes,
   Route,
@@ -19,6 +20,8 @@ import ConfirmPasswordReset from "../components/users/ConfirmResetPassword";
 import { useAuth } from "../services/auth";
 import { getRandomHit } from "../services/api";
 import { ThreeDots } from "react-loader-spinner";
+
+const queryClient = new QueryClient();
 
 const RandomSongRedirect = () => {
   const navigate = useNavigate();
@@ -68,29 +71,31 @@ const App = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <Router>
-      <Navbar isAuthenticated={isAuthenticated} />
-      <div className="app-container">
-        <Routes>
-          <Route path="/" element={<RandomSongRedirect />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/songs" element={<SongList />} />
-          <Route path="/songs/:slug" element={<SongDetail />} />
-          <Route path="/artist/:artist_slug" element={<SongList />} />
-          <Route path="/year/:year" element={<SongList />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/profile/update" element={<ProfileUpdate />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route
-            path="/confirm-reset-password/:uid/:token"
-            element={<ConfirmPasswordReset />}
-          />
-        </Routes>
-      </div>
-      <Footer />
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Navbar isAuthenticated={isAuthenticated} />
+        <div className="app-container">
+          <Routes>
+            <Route path="/" element={<RandomSongRedirect />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/songs" element={<SongList />} />
+            <Route path="/songs/:slug" element={<SongDetail />} />
+            <Route path="/artist/:artist_slug" element={<SongList />} />
+            <Route path="/year/:year" element={<SongList />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/update" element={<ProfileUpdate />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route
+              path="/confirm-reset-password/:uid/:token"
+              element={<ConfirmPasswordReset />}
+            />
+          </Routes>
+        </div>
+        <Footer />
+      </Router>
+    </QueryClientProvider>
   );
 };
 

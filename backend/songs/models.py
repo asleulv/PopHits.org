@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
+from django.db.models import Avg, Count
 
 class Song(models.Model):
     title = models.CharField(max_length=100)
@@ -51,18 +53,19 @@ class UserSongRating(models.Model):
         self.update_song_average_score()
 
     def update_song_average_score(self):
-        all_ratings = UserSongRating.objects.filter(song=self.song)
-        total_ratings = all_ratings.count()
-        sum_ratings = all_ratings.aggregate(models.Sum('score'))['score__sum']
+        song = self.song
+        total_ratings = UserSongRating.objects.filter(song=song, score__gt=0).count()
+        sum_ratings = UserSongRating.objects.filter(song=song).aggregate(models.Sum('score'))['score__sum']
 
         if total_ratings > 0:
-            self.song.total_ratings = total_ratings
-            self.song.average_user_score = sum_ratings / total_ratings
+            song.total_ratings = total_ratings
+            average_score = sum_ratings / total_ratings
+            song.average_user_score = round(average_score, 1)  # Round to one decimal place
         else:
-            self.song.total_ratings = 0
-            self.song.average_user_score = 0.0
+            song.total_ratings = 0
+            song.average_user_score = 0.0
 
-        self.song.save()
+        song.save()
 
 
 class UserSongComment(models.Model):
