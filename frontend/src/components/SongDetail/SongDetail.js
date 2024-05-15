@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import {
   getSongBySlug,
@@ -290,7 +290,7 @@ const SongDetail = () => {
           </div>
 
           <h2 className="artist-title" style={{ marginTop: 0 }}>
-            by <a href={`/artist/${song.artist_slug}`}>{song.artist}</a>
+            by <Link to={`/artist/${song.artist_slug}`}>{song.artist}</Link>
           </h2>
           <div className="flex items-center">
             {isAuthenticated && (
