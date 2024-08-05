@@ -4,12 +4,13 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from .models import Song, UserSongRating, UserSongComment, Bookmark
-from django.db.models import F
 from .serializers import SongSerializer, UserSongCommentSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
-from random import randint
+from random import randint, random
+import random
+import datetime
 
 class CustomPagination(PageNumberPagination):
     page_size = 100  # Set the number of records per page
@@ -25,25 +26,44 @@ class SongListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         search_query = self.request.GET.get('search', None)
+
+        # Apply search query
         if search_query:
             queryset = queryset.filter(title__icontains=search_query) | queryset.filter(artist__icontains=search_query)
+
+        # Apply artist and year filters
+        artist_slug = self.request.GET.get('artist')
+        year = self.request.GET.get('year')
+
+        if artist_slug:
+            queryset = queryset.filter(artist_slug=artist_slug)
+
+        if year:
+            queryset = queryset.filter(year=year)
+
+        # Apply peak rank filter
+        peak_rank_filter = self.request.GET.get('peak_rank')
+        if peak_rank_filter:
+            try:
+                if peak_rank_filter.lower() == 'top_10':
+                    queryset = queryset.filter(peak_rank__lte=10)
+                elif peak_rank_filter.lower() == 'number_one':
+                    queryset = queryset.filter(peak_rank=1)
+                else:
+                    max_rank = int(peak_rank_filter)
+                    queryset = queryset.filter(peak_rank__lte=max_rank)
+            except ValueError:
+                # Invalid peak_rank_filter value
+                pass
+
         return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
 
-        # Filtering by artist or year
-        artist_slug = request.GET.get('artist')
-        if artist_slug:
-            queryset = queryset.filter(artist_slug=artist_slug)
-        else:
-            year = request.GET.get('year')
-            if year:
-                queryset = queryset.filter(year=year)
-
-        # Sorting
-        sort_by = request.GET.get('sort_by', 'id')  # Default sorting by 'id'
-        order = request.GET.get('order', 'asc')     # Default order is ascending
+        # Apply sorting
+        sort_by = request.GET.get('sort_by', 'id')
+        order = request.GET.get('order', 'asc')
         if order == 'asc':
             queryset = queryset.order_by(sort_by)
         else:
@@ -260,3 +280,46 @@ class CommentStatusView(APIView):
         else:
             has_commented = False
         return Response({'has_commented': has_commented}, status=status.HTTP_200_OK)
+    
+# New view to get songs with the highest average user score
+
+class TopRatedSongsView(APIView):
+    def get(self, request):
+        # Fetch songs ordered by their average user score, in descending order
+        top_rated_songs = Song.objects.filter(average_user_score__gt=0).order_by('-average_user_score')[:10]
+        
+        # Serialize the songs
+        serializer = SongSerializer(top_rated_songs, many=True)
+        
+        # Return the serialized data
+        return Response(serializer.data)
+
+# New view to get random songs by decade
+class RandomSongsByDecadeView(APIView):
+    serializer_class = SongSerializer
+
+    def get(self, request, *args, **kwargs):
+        current_year = datetime.datetime.now().year
+        decades = [(year, year + 9) for year in range(1950, current_year, 10)]
+
+        random_songs_by_decade = []
+        for start_year, end_year in decades:
+            songs_in_decade = Song.objects.filter(year__gte=start_year, year__lte=end_year, spotify_url__isnull=False).exclude(spotify_url='')
+            if songs_in_decade.exists():
+                random_song = random.choice(songs_in_decade)
+                random_songs_by_decade.append(random_song)
+
+        serializer = self.serializer_class(random_songs_by_decade, many=True)
+        return Response(serializer.data)
+    
+class NumberOneSongsView(generics.ListAPIView):
+    serializer_class = SongSerializer
+
+    def get_queryset(self):
+        return Song.objects.filter(peak_rank=1)
+    
+class SongsWithImagesView(generics.ListAPIView):
+    serializer_class = SongSerializer
+
+    def get_queryset(self):
+        return Song.objects.exclude(image_upload='').exclude(image_upload__isnull=True)

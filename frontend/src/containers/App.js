@@ -9,8 +9,10 @@ import {
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import About from "../components/About/About";
+import FrontPage from "../components/FrontPage/FrontPage";
 import SongList from "../components/SongList/SongList";
 import SongDetail from "../components/SongDetail/SongDetail";
+import CookiePolicy from "../components/CookiePolicy/CookiePolicy";
 import Register from "../components/users/Register";
 import Login from "../components/users/Login";
 import Profile from "../components/users/Profile";
@@ -20,6 +22,7 @@ import ConfirmPasswordReset from "../components/users/ConfirmResetPassword";
 import { useAuth } from "../services/auth";
 import { getRandomHit } from "../services/api";
 import { ThreeDots } from "react-loader-spinner";
+import CookieConsent from 'react-cookie-consent'; // Import CookieConsent
 
 const queryClient = new QueryClient();
 
@@ -75,13 +78,30 @@ const App = () => {
       <Router>
         <Navbar isAuthenticated={isAuthenticated} />
         <div className="app-container">
+          {/* Cookie Consent Banner */}
+          <CookieConsent
+            location="bottom"
+            buttonText="I accept"
+            cookieName="myAwesomeCookie"
+            style={{ background: "#2B373B", color: "#fff", padding: "10px" }}
+            buttonStyle={{ color: "#4e503b", fontSize: "13px", background: "#FFD700" }}
+            expires={150}
+          >
+            This website uses cookies to enhance the user experience.{" "}
+            <a href="/privacy-policy" style={{ color: "#FFD700" }}>Learn more</a>
+          </CookieConsent>
+          
           <Routes>
-            <Route path="/" element={<RandomSongRedirect />} />
+            <Route path="/" element={<FrontPage />} />
+            <Route path="/search" element={<SongList />} />
+            <Route path="/random" element={<RandomSongRedirect />} />
             <Route path="/about" element={<About />} />
+            <Route path="/privacy-policy" element={<CookiePolicy />} />
             <Route path="/songs" element={<SongList />} />
             <Route path="/songs/:slug" element={<SongDetail />} />
             <Route path="/artist/:artist_slug" element={<SongList />} />
             <Route path="/year/:year" element={<SongList />} />
+            <Route path="/artist/:artist_slug/year/:year" element={<SongList />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />

@@ -1,5 +1,11 @@
 from django.urls import path
-from .views import SongListCreateView, SongDetailView, SongDetailBySlugView, UserSongCommentCreateView, UserSongRatingCreateView, UserSongCommentUpdateView, get_user_rating_for_song, UserBookmarkView, UserBookmarkedSongsView, BookmarkStatusView, CommentStatusView, RandomSongView
+from .views import (
+    SongListCreateView, SongDetailView, SongDetailBySlugView, UserSongCommentCreateView,
+    UserSongRatingCreateView, UserSongCommentUpdateView, get_user_rating_for_song, 
+    UserBookmarkView, UserBookmarkedSongsView, BookmarkStatusView, CommentStatusView,
+    RandomSongView, TopRatedSongsView, RandomSongsByDecadeView, NumberOneSongsView,
+    SongsWithImagesView  # New views
+)
 
 urlpatterns = [
     path('', SongListCreateView.as_view(), name='song-list-create'),
@@ -8,6 +14,10 @@ urlpatterns = [
     path('<int:song_id>/bookmark-status/', BookmarkStatusView.as_view()),
     path('<int:song_id>/comment-status/', CommentStatusView.as_view()),
     path('random-song/', RandomSongView.as_view(), name='random-song'),
+    path('top-rated-songs/', TopRatedSongsView.as_view(), name='top-rated-songs'),
+    path('number-one-songs/', NumberOneSongsView.as_view(), name='number-one-songs'),
+    path('songs-with-images/', SongsWithImagesView.as_view(), name='songs-with-images'), 
+    path('random-songs-by-decade/', RandomSongsByDecadeView.as_view(), name='random-songs-by-decade'),
     path('<slug:slug>/', SongDetailBySlugView.as_view(), name='song-detail-slug'),
     path('<int:pk>/comment/', UserSongCommentCreateView.as_view(), name='user-song-comment-create'),
     path('<int:song_pk>/comment/<int:comment_pk>/', UserSongCommentUpdateView.as_view(), name='user-song-comment-update'),

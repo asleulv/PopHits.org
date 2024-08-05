@@ -1,9 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db import transaction
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
-from django.db.models import Avg, Count
+
 
 class Song(models.Model):
     title = models.CharField(max_length=100)
@@ -84,4 +83,5 @@ class Bookmark(models.Model):
 
     def __str__(self):
         return f"Bookmarks for {self.user.username}"
+    
 

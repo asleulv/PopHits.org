@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Table, Input, Button, Space } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { Table, Button, Space, Switch, Select } from "antd";
 import { getSongs } from "../../services/api";
 
-const SongTable = () => {
+const { Option } = Select;
+
+const SongList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -13,33 +16,52 @@ const SongTable = () => {
   const [totalSongs, setTotalSongs] = useState(0);
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
-  const [searchText, setSearchText] = useState("");
-  const location = useLocation();
+  const [onlyNumberOneHits, setOnlyNumberOneHits] = useState(false);
+  const [yearFilter, setYearFilter] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [artistName, setArtistName] = useState("");
 
   useEffect(() => {
-    fetchData();
-  }, [page, perPage, sortField, sortOrder, searchText, location]);
+    window.scrollTo(0, 0);
 
-  const fetchData = async () => {
+    const queryParams = new URLSearchParams(location.search);
+    const query = queryParams.get("query");
+    const filter = queryParams.get("filter");
+    setSearchQuery(query || "");
+    setOnlyNumberOneHits(filter === "number-one");
+
+    const pathname = location.pathname;
+    const artistSlug = pathname.includes("/artist/")
+      ? pathname.split("/artist/")[1].split('/')[0]
+      : null;
+    const yearPath = pathname.includes("/year/")
+      ? pathname.split("/year/")[1]
+      : null;
+
+    setYearFilter(yearPath || null);
+    fetchData(query || "", artistSlug, yearPath, filter === "number-one");
+  }, [location.pathname, location.search, page, perPage, sortField, sortOrder, onlyNumberOneHits, yearFilter]);
+
+  const fetchData = async (query, artistSlug, year, numberOneFilter) => {
     try {
       setLoading(true);
-  
-      const pathname = location.pathname;
-      const artistSlug = pathname.split("/artist/")[1];
-      const year = pathname.split("/year/")[1];
-  
+
+      let peakRankFilter = numberOneFilter ? "1" : null;
+
       let data;
-  
       if (artistSlug) {
-        data = await getSongs(page, perPage, "artist", artistSlug, sortField, sortOrder, searchText);
+        data = await getSongs(page, perPage, 'artist', artistSlug, sortField, sortOrder, query, peakRankFilter);
+        setArtistName(artistSlug.replace(/-/g, " "));
       } else if (year) {
-        data = await getSongs(page, perPage, "year", year, sortField, sortOrder, searchText);
+        data = await getSongs(page, perPage, 'year', year, sortField, sortOrder, query, peakRankFilter);
+        setArtistName(""); 
       } else {
-        data = await getSongs(page, perPage, null, null, sortField, sortOrder, searchText);
+        data = await getSongs(page, perPage, null, null, sortField, sortOrder, query, peakRankFilter);
+        setArtistName("");
       }
-  
+
       const songsData = Array.isArray(data) ? data[0] : data;
-  
+
       setSongs(songsData.results);
       setTotalSongs(songsData.count);
       setLoading(false);
@@ -57,19 +79,63 @@ const SongTable = () => {
     setPerPage(pagination.pageSize);
   };
 
-  const handleSearch = (value) => {
-    setSearchText(value);
+  const handleReset = () => {
+    setPage(1);
+    setPerPage(25);
+    setSortField(null);
+    setSortOrder(null);
+    setOnlyNumberOneHits(false);
+    setYearFilter(null);
+    setSearchQuery("");
+
+    const artistSlug = location.pathname.includes("/artist/")
+      ? location.pathname.split("/artist/")[1].split('/')[0]
+      : null;
+
+    if (artistSlug) {
+      navigate(`/artist/${artistSlug}`);
+    } else {
+      navigate("/songs");
+    }
   };
 
-  const handleReset = () => {
-    setSearchText(""); // Clear search text
-    setPage(1); // Reset page to 1
-    setPerPage(25); // Reset items per page to default
-    setSortField(null); // Reset sort field
-    setSortOrder(null); // Reset sort order
+  const handleSwitchChange = (checked) => {
+    setOnlyNumberOneHits(checked);
 
-    // Navigate to the initial table route
-    navigate("/songs");
+    const queryParams = new URLSearchParams(location.search);
+    const query = queryParams.get("query");
+    const artistSlug = location.pathname.includes("/artist/")
+      ? location.pathname.split("/artist/")[1].split('/')[0]
+      : null;
+    const path = artistSlug ? `/artist/${artistSlug}` : (yearFilter ? `/year/${yearFilter}` : '/songs');
+
+    navigate(`${path}${query ? `?query=${query}&filter=${checked ? 'number-one' : ''}` : `?filter=${checked ? 'number-one' : ''}`}`);
+  };
+
+  const handleYearChange = (value) => {
+    setYearFilter(value === "all" ? null : value);
+
+    const queryParams = new URLSearchParams(location.search);
+    const query = queryParams.get("query");
+    const filter = onlyNumberOneHits ? '&filter=number-one' : '';
+    const artistSlug = location.pathname.includes("/artist/")
+      ? location.pathname.split("/artist/")[1].split('/')[0]
+      : null;
+    let path = value === "all" ? (artistSlug ? `/artist/${artistSlug}` : '/songs') : `/year/${value}`;
+
+    navigate(`${path}${query ? `?query=${query}${filter}` : filter}`);
+  };
+
+  const capitalizeWords = (str) => {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const capitalizeFirstLetter = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
 
   const columns = [
@@ -78,7 +144,7 @@ const SongTable = () => {
       dataIndex: "title",
       key: "title",
       sorter: true,
-      render: (text, record) => <Link to={`/songs/${record.slug}`}>{text}</Link>,
+      render: (text, record) => <Link to={`/songs/${record.slug}`}><strong>{text}</strong></Link>,
     },
     {
       title: "Artist",
@@ -108,18 +174,47 @@ const SongTable = () => {
     },
   ];
 
+  const years = Array.from({ length: 51 }, (_, i) => (1958 + i).toString());
+
+  const getHeading = () => {
+    if (yearFilter) {
+      return `All ${yearFilter} hits`;
+    }
+    if (artistName) {
+      return `All hits by ${capitalizeWords(artistName)}`;
+    }
+    if (searchQuery) {
+      return `Displaying results for "${searchQuery}"`;
+    }
+    return "All hits";
+  };
+
   return (
     <>
+      <div className="message-container">
+        {getHeading()}
+      </div>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 16, padding: 8 }}>
         <Space>
-          <Input.Search
-            placeholder="Search artist/title"
-            onSearch={handleSearch}
-            enterButton={<SearchOutlined />}
-            allowClear
-            style={{ width: 300 }}
-          />
-          <Button onClick={handleReset}>Reset</Button>
+          <Space>
+            <span>#1 hits filter</span>
+            <Switch onChange={handleSwitchChange} checked={onlyNumberOneHits} />
+          </Space>
+          <Space>
+            <span>Jump to year:</span>
+            <Select
+              placeholder="Select Year"
+              style={{ width: 120 }}
+              onChange={handleYearChange}
+              value={yearFilter || "all"}
+            >
+              <Option value="all">All Years</Option>
+              {years.map(year => (
+                <Option key={year} value={year}>{year}</Option>
+              ))}
+            </Select>
+            <Button onClick={handleReset}>Reset</Button>
+          </Space>
         </Space>
       </div>
       <div style={{ overflowX: "auto" }}>
@@ -149,4 +244,4 @@ const SongTable = () => {
   );
 };
 
-export default SongTable;
+export default SongList;

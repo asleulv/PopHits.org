@@ -304,7 +304,7 @@ const SongDetail = () => {
               </button>
             )}
             {song.average_user_score !== null && (
-              <div className="circle-button rating-button">
+              <div className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
                 <span>
                   {song.average_user_score === 0
                     ? "-"
@@ -325,7 +325,7 @@ const SongDetail = () => {
                   ⏱Weeks on chart: {song.weeks_on_chart}
                 </span>
                 <span className="info-item">
-                  ✋🏿# of ratings: {song.total_ratings}
+                🖐🏾# of ratings: {song.total_ratings}
                 </span>
               </p>
             </div>
