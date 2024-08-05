@@ -123,7 +123,7 @@ const FrontPage = () => {
   const years = Array.from({ length: 51 }, (_, i) => 1958 + i);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="px-0 py-8 sm:px-4 md:px-6 lg:px-8 mx-auto max-w-full">
       <Helmet>
         <title>PopHits.org - 50 years of hit songs</title>
         <meta
@@ -132,88 +132,111 @@ const FrontPage = () => {
         />
       </Helmet>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row md:space-x-8 mb-12">
-          <div className="flex-1 mb-6 md:mb-0">
-            <h1 className="text-4xl font-bold mb-6 text-center md:text-left">
-              50 Years of Hits
-            </h1>
-            <p className="mb-6 text-center md:text-left text-lg">
-  <strong>PopHits.org is a comprehensive database of every Hot 100 hit from the golden era of physical media (1958-2008).</strong>
-</p>
-<p className="mb-6 text-center md:text-left text-lg">
-  Here, you can listen to half a century of pop music hits and rate them as you go. There are about 20,000 of them so you better get started!
-</p>
-<div className="mb-6 text-center md:text-left text-lg">
-  <p>🔦 Explore and find unheard gems</p>
-  <p>🪩 Rediscover old favourites</p>
-  <p>
-    🕺 Create playlists from your favorites (
-    <a href="https://www.youtube.com/watch?v=818njtSUKd8&t=1s" className="text-blue-500 hover:underline">instructions</a>
-    )
-  </p>
-</div>
-          </div>
-
-          {songWithImage && (
-  <div className="flex-1 mb-6 md:mb-0">
-    <div className="bg-gray-800 text-white p-6 rounded-lg">
-      <h2 className="text-2xl font-semibold mb-4 text-center md:text-left">
-        📀 Featured hit
-      </h2>
-      <div className="relative max-w-4xl mx-auto bg-gray-700 rounded-lg shadow-lg overflow-hidden">
-        <img
-          src={songWithImage.image_upload}
-          alt={songWithImage.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 flex flex-col justify-end p-4 bg-black bg-opacity-50 text-white">
-          <div className="text-center md:text-left text-xl md:text-2xl">
-            <Link
-              to={`/artist/${songWithImage.artist_slug}`}
-              className="text-blue-200 hover:underline"
-            >
-              {songWithImage.artist}
-            </Link>
-            {" - "}
-            <Link
-              to={`/songs/${songWithImage.slug}`}
-              className="text-blue-200 hover:underline"
-            >
-              {songWithImage.title}
-            </Link>
-            {" ("}
-            <Link
-              to={`/year/${songWithImage.year}`}
-              className="text-blue-200 hover:underline"
-            >
-              {songWithImage.year}
-            </Link>
-            {")"}
-          </div>
-          <p className="mt-2 text-sm text-center md:text-left">
-            {songWithImage.average_user_score > 0 ? (
-              <>
-                Average User Rating:{" "}
-                <span className="font-bold">
-                  {songWithImage.average_user_score.toFixed(1)}
-                </span>
-              </>
-            ) : (
-              "No ratings yet"
-            )}
+      <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full">
+        <div className="flex-1 mb-6 md:mb-0">
+          <h1 className="text-4xl font-bold mb-6 text-center md:text-left">
+            50 Years of Hits
+          </h1>
+          <p className="mb-6 text-center md:text-left text-lg">
+            <strong>
+              PopHits.org is a comprehensive database of every Hot 100 hit from
+              the golden era of physical media (1958-2008).
+            </strong>
           </p>
+          <p className="mb-6 text-center md:text-left text-lg">
+            Here, you can listen to half a century of pop music hits and rate
+            them as you go. There are about 20,000 of them so you better get
+            started!
+          </p>
+          <div className="mb-6 text-center md:text-left text-lg">
+            <p>🔦 Explore and find unheard gems</p>
+            <p>🪩 Rediscover old favourites</p>
+            <p>
+              🕺 Create playlists from your favorites (
+              <a
+                href="https://www.youtube.com/watch?v=818njtSUKd8&t=1s"
+                className="text-blue-500 hover:underline"
+              >
+                instructions
+              </a>
+              )
+            </p>
+          </div>
         </div>
+
+        {songWithImage && (
+          <div className="flex-1 mb-0 md:mb-0 w-full">
+            <div className="bg-gray-800 text-white p-6 w-full relative">
+              <h2 className="text-2xl font-semibold mb-4 text-center">
+                📀 Featured hit
+              </h2>
+              <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden">
+                <img
+                  src={songWithImage.image_upload}
+                  alt={songWithImage.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex flex-col justify-end p-4 bg-black bg-opacity-50 text-white">
+                  <div className="text-center text-xl md:text-2xl">
+                    <Link
+                      to={`/artist/${songWithImage.artist_slug}`}
+                      className="text-blue-200 hover:underline"
+                    >
+                      {songWithImage.artist}
+                    </Link>
+                    {" - "}
+                    <Link
+                      to={`/songs/${songWithImage.slug}`}
+                      className="text-blue-200 hover:underline"
+                    >
+                      {songWithImage.title}
+                    </Link>
+                    {" ("}
+                    <Link
+                      to={`/year/${songWithImage.year}`}
+                      className="text-blue-200 hover:underline"
+                    >
+                      {songWithImage.year}
+                    </Link>
+                    {")"}
+                  </div>
+                  <p className="mt-2 text-sm text-center">
+                    {songWithImage.average_user_score > 0 ? (
+                      <>
+                        Average User Rating:{" "}
+                        <span className="font-bold">
+                          {songWithImage.average_user_score.toFixed(1)}
+                        </span>
+                      </>
+                    ) : (
+                      "No ratings yet"
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  </div>
-)}
 
-
+      <section className="mb-0 text-black p-6 w-full">
+        <h2 className="text-2xl font-semibold mb-4 text-center">
+          📅 Hits by year
+        </h2>
+        <div className="flex flex-wrap justify-center gap-2">
+          {years.map((year) => (
+            <Link
+              key={year}
+              to={`/year/${year}`}
+              className="px-4 py-2 rounded-lg text-md bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-gray-100"
+            >
+              {year}
+            </Link>
+          ))}
         </div>
-      </div>
+      </section>
 
-      <section className="mb-12 bg-gray-800 text-white p-6 rounded-lg">
+      <section className="mb-0 bg-gray-800 text-white p-6 w-full">
         <h2 className="text-2xl font-semibold mb-4 text-center">
           🔀 Random hits by decade{" "}
           <button
@@ -229,12 +252,10 @@ const FrontPage = () => {
               {Object.keys(groupedByDecade).map((decade) => (
                 <button
                   key={decade}
-                  className={`px-4 py-2 rounded-lg text-sm ${
-                    activeDecade === decade
-                      ? "bg-pink-500 text-white"
-                      : "bg-gray-200 text-gray-700"
-                  }`}
                   onClick={() => setActiveDecade(decade)}
+                  className={`px-4 py-2 rounded-lg text-md bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-gray-100 ${
+                    activeDecade === decade ? "bg-pink-400 text-gray-100" : ""
+                  }`}
                 >
                   {decade}
                 </button>
@@ -242,11 +263,9 @@ const FrontPage = () => {
             </div>
           </div>
           <div className="w-full">
-            {activeDecade &&
-            groupedByDecade[activeDecade] &&
-            groupedByDecade[activeDecade].length > 0 ? (
+            {activeDecade && groupedByDecade[activeDecade].length > 0 ? (
               groupedByDecade[activeDecade].map((song) => (
-                <div key={song.id} className="mb-4">
+                <div key={song.id} className="mb-4 w-full">
                   <iframe
                     src={`https://open.spotify.com/embed/track/${song.spotify_url
                       .split("/")
@@ -258,7 +277,7 @@ const FrontPage = () => {
                     allow="encrypted-media"
                     className="w-full"
                   ></iframe>
-                  <p className="mt-2 text-center">
+                  <p className="mt-2 text-center text-sm">
                     <Link
                       to={`/songs/${song.slug}`}
                       className="text-blue-200 hover:underline"
@@ -290,31 +309,12 @@ const FrontPage = () => {
         </div>
       </section>
 
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4 text-center">
-          ❤️‍🔥 Top 10 user ranked hits{" "}
+      <section className="mb-0 text-white p-6 w-full">
+        <h2 className="text-2xl font-semibold text-black mb-4 text-center">
+          ❤️‍🔥 Top 10 user ranked hits
         </h2>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50 hidden md:table-header-group">
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  #
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Title
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Artist
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Year
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Score
-                </th>
-              </tr>
-            </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {topRatedSongs && topRatedSongs.length > 0 ? (
                 topRatedSongs.map((song, index) => (
@@ -322,27 +322,55 @@ const FrontPage = () => {
                     key={song.id}
                     className="flex flex-col md:table-row md:w-full"
                   >
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap">
-                      <span className="block md:hidden font-medium text-gray-500 mr-2">
-                        #
+                    {/* Ranking Cell */}
+                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-black">
+                      <span className="block md:hidden font-medium text-gray-500">
+                        {index + 1}
                       </span>
-                      {index + 1}
+                      <span className="hidden md:block">{index + 1}</span>
                     </td>
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap">
-                      <span className="block md:hidden font-medium text-gray-500 mr-2">
-                        Title
+
+                    {/* Info Cell with Title, Artist, Year, and Score */}
+                    <td className="flex flex-col md:table-cell px-4 py-2 whitespace-nowrap">
+                      <span className="block md:hidden text-gray-700">
+                        <Link
+                          to={`/songs/${song.slug}`}
+                          className="text-blue-800 font-bold"
+                        >
+                          {song.title}
+                        </Link>
+                        {" - "}
+                        <Link
+                          to={`/artist/${song.artist_slug}`}
+                          className="text-blue-800 hover:underline"
+                        >
+                          {song.artist}
+                        </Link>
+                        {" ("}
+                        <Link
+                          to={`/year/${song.year}`}
+                          className="text-blue-800 hover:underline"
+                        >
+                          {song.year}
+                        </Link>
+                        {") "}
+                        <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
+                          {song.average_user_score}
+                        </span>
                       </span>
-                      <Link
-                        to={`/songs/${song.slug}`}
-                        className="text-blue-800 font-bold px-2 py-1 rounded"
-                      >
-                        {song.title}
-                      </Link>
+
+                      <span className="hidden md:block">
+                        <Link
+                          to={`/songs/${song.slug}`}
+                          className="text-blue-800 font-bold"
+                        >
+                          {song.title}
+                        </Link>
+                      </span>
                     </td>
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap">
-                      <span className="block md:hidden font-medium text-gray-500 mr-2">
-                        Artist
-                      </span>
+
+                    {/* Separate cells for Artist, Year, and Score */}
+                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap hidden md:block">
                       <Link
                         to={`/artist/${song.artist_slug}`}
                         className="text-blue-800 hover:underline"
@@ -350,10 +378,7 @@ const FrontPage = () => {
                         {song.artist}
                       </Link>
                     </td>
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap">
-                      <span className="block md:hidden font-medium text-gray-500 mr-2">
-                        Year
-                      </span>
+                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap hidden md:block">
                       <Link
                         to={`/year/${song.year}`}
                         className="text-blue-800 hover:underline"
@@ -361,10 +386,7 @@ const FrontPage = () => {
                         {song.year}
                       </Link>
                     </td>
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap">
-                      <span className="block md:hidden font-medium text-gray-500 mr-2">
-                        Score
-                      </span>
+                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap hidden md:block">
                       <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
                         {song.average_user_score}
                       </span>
@@ -384,8 +406,8 @@ const FrontPage = () => {
         <div className="text-center mt-4"></div>
       </section>
 
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4 text-center">
+      <section className="mb-12 text-white p-6 w-full">
+        <h2 className="text-2xl font-semibold mb-4 text-black text-center">
           🔥 The number ones{" "}
           <Link
             to="/songs?filter=number-one"
@@ -437,22 +459,7 @@ const FrontPage = () => {
         </div>
       </section>
 
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4 text-center">
-          📅 Hits by year
-        </h2>
-        <div className="flex flex-wrap justify-center gap-2">
-          {years.map((year) => (
-            <Link
-              key={year}
-              to={`/year/${year}`}
-              className="px-4 py-2 rounded-lg text-md bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-gray-100"
-            >
-              {year}
-            </Link>
-          ))}
-        </div>
-      </section>
+      
     </div>
   );
 };
