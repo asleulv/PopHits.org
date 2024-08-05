@@ -92,17 +92,21 @@ export const getAllSongs = async (page, perPage, sortBy, sortOrder, searchQuery)
 };
 
 // Function to get all songs or songs by filter
-export const getSongs = async (page, perPage, filterType, filterValue, sortBy, sortOrder, searchQuery) => {
+export const getSongs = async (page, perPage, filterType, filterValue, sortBy, sortOrder, searchQuery, peakRankFilter) => {
   try {
-    let url = '';
+    // Initialize URL with pagination parameters
+    let url = `?page=${page}&page_size=${perPage}`;
 
     // Append filterType and filterValue if provided
     if (filterType && filterValue) {
       if (filterType === 'artist' || filterType === 'year') {
-        url = `?${filterType}=${filterValue}`;
+        url += `&${filterType}=${filterValue}`;
       }
-    } else {
-      url = `?page=${page}&page_size=${perPage}`;
+    }
+
+    // Append peakRankFilter if provided
+    if (peakRankFilter) {
+      url += `&peak_rank=${peakRankFilter}`;
     }
 
     // Append sortBy if provided
@@ -120,6 +124,7 @@ export const getSongs = async (page, perPage, filterType, filterValue, sortBy, s
       url += `&search=${searchQuery}`;
     }
 
+    // Fetch data from API
     const response = await songApi.get(url);
     return response.data;
   } catch (error) {
@@ -127,6 +132,7 @@ export const getSongs = async (page, perPage, filterType, filterValue, sortBy, s
     throw error;
   }
 };
+
 
 
 
@@ -360,6 +366,50 @@ export const getBookmarkStatusForSong = async (songId) => {
     });
     return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+
+// Function to get top-rated songs
+export const getTopRatedSongs = async () => {
+  try {
+    const response = await songApi.get('/top-rated-songs/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching top-rated songs:', error);
+    throw error;
+  }
+};
+
+// Function to get random hits by decade
+export const getRandomHitsByDecade = async () => {
+  try {
+    const response = await songApi.get('/random-songs-by-decade/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching random hits by decade:', error);
+    throw error;
+  }
+};
+
+// Function to get number one hits
+export const getNumberOneHits = async () => {
+  try {
+    const response = await songApi.get('/number-one-songs/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching number one hits:', error);
+    throw error;
+  }
+};
+
+// Function to get songs with images
+export const getSongsWithImages = async () => {
+  try {
+    const response = await songApi.get('/songs-with-images/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching songs with images:', error);
     throw error;
   }
 };

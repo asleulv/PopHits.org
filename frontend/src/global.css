@@ -82,7 +82,7 @@ a:hover {
 
 .footer {
   background-color: #0d458b;
-  text-align: center;
+
   font-family: "Sansita", sans-serif;
   font-size: large;
 }
@@ -653,4 +653,14 @@ textarea {
      overflow-x: auto; /* Enable horizontal scrolling */
   }
  }
+
+ .message-container {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c3e50; /* Darker color for better visibility */
+  background-color: #ecf0f1; /* Light background to make it stand out */
+}
+
 
