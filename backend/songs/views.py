@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
+from django.db.models.functions import Random
+from django.core.cache import cache
 from .models import Song, UserSongRating, UserSongComment, Bookmark
 from .serializers import SongSerializer, UserSongCommentSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -299,17 +301,27 @@ class RandomSongsByDecadeView(APIView):
     serializer_class = SongSerializer
 
     def get(self, request, *args, **kwargs):
+        cache_key = 'random_songs_by_decade'
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data)
+
         current_year = datetime.datetime.now().year
         decades = [(year, year + 9) for year in range(1950, current_year, 10)]
 
         random_songs_by_decade = []
         for start_year, end_year in decades:
-            songs_in_decade = Song.objects.filter(year__gte=start_year, year__lte=end_year, spotify_url__isnull=False).exclude(spotify_url='')
-            if songs_in_decade.exists():
-                random_song = random.choice(songs_in_decade)
-                random_songs_by_decade.append(random_song)
+            songs_in_decade = Song.objects.filter(
+                year__gte=start_year, 
+                year__lte=end_year, 
+                spotify_url__isnull=False
+            ).exclude(spotify_url='').order_by(Random()).first()
+
+            if songs_in_decade:
+                random_songs_by_decade.append(songs_in_decade)
 
         serializer = self.serializer_class(random_songs_by_decade, many=True)
+        cache.set(cache_key, serializer.data, timeout=60*15)  # Cache for 15 minutes
         return Response(serializer.data)
     
 class NumberOneSongsView(generics.ListAPIView):
