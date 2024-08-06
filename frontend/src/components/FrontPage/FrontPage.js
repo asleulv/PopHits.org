@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { Grid } from "react-loader-spinner";
 import {
   getTopRatedSongs,
   getRandomHitsByDecade,
@@ -13,6 +14,7 @@ const FrontPage = () => {
   const [randomHitsByDecade, setRandomHitsByDecade] = useState([]);
   const [numberOneHits, setNumberOneHits] = useState([]);
   const [songWithImage, setSongWithImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [activeDecade, setActiveDecade] = useState(null);
 
@@ -48,7 +50,7 @@ const FrontPage = () => {
       await fetchTopRatedSongs();
       await fetchRandomHitsByDecade();
       await fetchNumberOneHits();
-      setLoading(false);
+      setIsLoading(false);  // Correct state variable
     };
 
     fetchAllData();
@@ -115,8 +117,20 @@ const FrontPage = () => {
     }
   };
 
-  if (loading) {
-    return <p>Loading...</p>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Grid
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="grid-loading"
+          wrapperStyle={{}}
+          wrapperClass="grid-wrapper"
+          color="#f472b6 "
+        />
+      </div>
+    );
   }
 
   // Generate year buttons from 1958 to 2008
@@ -134,25 +148,25 @@ const FrontPage = () => {
 
       <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full">
         <div className="flex-1 mb-6 md:mb-0">
-          <h1 className="text-4xl font-bold mb-6 text-center md:text-left">
+          <h1 className="text-2xl md:text-4xl font-bold mb-6 text-center md:text-left">
             50 Years of Hits
           </h1>
-          <p className="mb-6 text-center md:text-left text-lg">
+          <p className="mb-6 text-center md:text-left text-sm md:text-lg">
             <strong>
-              PopHits.org is a comprehensive database of every Hot 100 hit from
-              the golden era of physical media (1958-2008).
+              PopHits.org is a database of every Hot 100 hit from the golden era
+              of physical media (1958-2008).
             </strong>
           </p>
-          <p className="mb-6 text-center md:text-left text-lg">
+          <p className="mb-6 text-center md:text-left text-sm md:text-lg">
             Here, you can listen to half a century of pop music hits and rate
             them as you go. There are about 20,000 of them so you better get
             started!
           </p>
-          <div className="mb-6 text-center md:text-left text-lg">
-            <p>🔦 Explore and find unheard gems</p>
-            <p>🪩 Rediscover old favourites</p>
+          <div className="mb-6 text-center md:text-left text-sm md:text-lg">
+            <p>👉🏼 Explore and find unheard gems</p>
+            <p>👉🏼 Rediscover old favourites</p>
             <p>
-              🕺 Create playlists from your favorites (
+              👉🏼 Create playlists from your favorites (
               <a
                 href="https://www.youtube.com/watch?v=818njtSUKd8&t=1s"
                 className="text-blue-500 hover:underline"
@@ -167,7 +181,7 @@ const FrontPage = () => {
         {songWithImage && (
           <div className="flex-1 mb-0 md:mb-0 w-full">
             <div className="bg-gray-800 text-white p-6 w-full relative">
-              <h2 className="text-2xl font-semibold mb-4 text-center">
+              <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
                 📀 Featured hit
               </h2>
               <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden">
@@ -220,7 +234,7 @@ const FrontPage = () => {
       </div>
 
       <section className="mb-0 text-black p-6 w-full">
-        <h2 className="text-2xl font-semibold mb-4 text-center">
+      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
           📅 Hits by year
         </h2>
         <div className="flex flex-wrap justify-center gap-2">
@@ -237,11 +251,11 @@ const FrontPage = () => {
       </section>
 
       <section className="mb-0 bg-gray-800 text-white p-6 w-full">
-        <h2 className="text-2xl font-semibold mb-4 text-center">
+      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
           🔀 Random hits by decade{" "}
           <button
             onClick={refreshRandomHitsByDecade}
-            className="text-blue-500 hover:underline"
+            className="text-blue-200 hover:underline"
           >
             (refresh)
           </button>
@@ -309,105 +323,107 @@ const FrontPage = () => {
         </div>
       </section>
 
-      <section className="mb-0 text-white p-6 w-full">
-        <h2 className="text-2xl font-semibold text-black mb-4 text-center">
-          ❤️‍🔥 Top 10 user ranked hits
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <tbody className="bg-white divide-y divide-gray-200">
-              {topRatedSongs && topRatedSongs.length > 0 ? (
-                topRatedSongs.map((song, index) => (
-                  <tr
-                    key={song.id}
-                    className="flex flex-col md:table-row md:w-full"
+      <section className="mb-0 text-black p-6 w-full">
+  <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+    ❤️‍🔥 Top 10 user ranked hits
+  </h2>
+  <div className="overflow-x-auto">
+    <table className="min-w-full divide-y divide-gray-200">
+      <tbody className="bg-white divide-y divide-gray-200">
+        {topRatedSongs && topRatedSongs.length > 0 ? (
+          topRatedSongs.map((song, index) => (
+            <tr
+              key={song.id}
+              className="flex flex-col md:table-row md:w-full text-center md:text-left"
+            >
+              {/* Ranking Cell */}
+              <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-black text-xl md:text-base">
+                <span className="block md:hidden font-medium text-gray-500">
+                  #{index + 1}
+                </span>
+                <span className="hidden md:block">{index + 1}</span>
+              </td>
+
+              {/* Info Cell with Title, Artist, Year, and Score */}
+              <td className="flex flex-col md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base">
+                <span className="block md:hidden text-gray-700">
+                  <Link
+                    to={`/songs/${song.slug}`}
+                    className="text-blue-800 font-bold"
                   >
-                    {/* Ranking Cell */}
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-black">
-                      <span className="block md:hidden font-medium text-gray-500">
-                        {index + 1}
-                      </span>
-                      <span className="hidden md:block">{index + 1}</span>
-                    </td>
+                    {song.title}
+                  </Link>
+                  {" - "}
+                  <Link
+                    to={`/artist/${song.artist_slug}`}
+                    className="text-blue-800 hover:underline"
+                  >
+                    {song.artist}
+                  </Link>
+                  {" ("}
+                  <Link
+                    to={`/year/${song.year}`}
+                    className="text-blue-800 hover:underline"
+                  >
+                    {song.year}
+                  </Link>
+                  {") "}
+                  <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
+                    {song.average_user_score}
+                  </span>
+                </span>
 
-                    {/* Info Cell with Title, Artist, Year, and Score */}
-                    <td className="flex flex-col md:table-cell px-4 py-2 whitespace-nowrap">
-                      <span className="block md:hidden text-gray-700">
-                        <Link
-                          to={`/songs/${song.slug}`}
-                          className="text-blue-800 font-bold"
-                        >
-                          {song.title}
-                        </Link>
-                        {" - "}
-                        <Link
-                          to={`/artist/${song.artist_slug}`}
-                          className="text-blue-800 hover:underline"
-                        >
-                          {song.artist}
-                        </Link>
-                        {" ("}
-                        <Link
-                          to={`/year/${song.year}`}
-                          className="text-blue-800 hover:underline"
-                        >
-                          {song.year}
-                        </Link>
-                        {") "}
-                        <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
-                          {song.average_user_score}
-                        </span>
-                      </span>
+                <span className="hidden md:block">
+                  <Link
+                    to={`/songs/${song.slug}`}
+                    className="text-blue-800 font-bold"
+                  >
+                    {song.title}
+                  </Link>
+                </span>
+              </td>
 
-                      <span className="hidden md:block">
-                        <Link
-                          to={`/songs/${song.slug}`}
-                          className="text-blue-800 font-bold"
-                        >
-                          {song.title}
-                        </Link>
-                      </span>
-                    </td>
+              {/* Separate cells for Artist, Year, and Score */}
+              <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
+                <Link
+                  to={`/artist/${song.artist_slug}`}
+                  className="text-blue-800 hover:underline"
+                >
+                  {song.artist}
+                </Link>
+              </td>
+              <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
+                <Link
+                  to={`/year/${song.year}`}
+                  className="text-blue-800 hover:underline"
+                >
+                  {song.year}
+                </Link>
+              </td>
+              <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
+                <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
+                  {song.average_user_score}
+                </span>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr className="flex flex-col md:table-row md:w-full">
+            <td colSpan="5" className="px-4 py-2 text-center">
+              Loading top-rated songs...
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  <div className="text-center mt-4"></div>
+</section>
 
-                    {/* Separate cells for Artist, Year, and Score */}
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap hidden md:block">
-                      <Link
-                        to={`/artist/${song.artist_slug}`}
-                        className="text-blue-800 hover:underline"
-                      >
-                        {song.artist}
-                      </Link>
-                    </td>
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap hidden md:block">
-                      <Link
-                        to={`/year/${song.year}`}
-                        className="text-blue-800 hover:underline"
-                      >
-                        {song.year}
-                      </Link>
-                    </td>
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap hidden md:block">
-                      <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
-                        {song.average_user_score}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr className="flex flex-col md:table-row md:w-full">
-                  <td colSpan="5" className="px-4 py-2 text-center">
-                    Loading top-rated songs...
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="text-center mt-4"></div>
-      </section>
 
-      <section className="mb-12 text-white p-6 w-full">
-        <h2 className="text-2xl font-semibold mb-4 text-black text-center">
+
+      <section className="mb-12 text-black p-6 w-full">
+      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
           🔥 The number ones{" "}
           <Link
             to="/songs?filter=number-one"
@@ -421,7 +437,7 @@ const FrontPage = () => {
             randomNumberOneHits.map((song) => (
               <div
                 key={song.id}
-                className="bg-gray-800 p-6 rounded-lg shadow-lg text-center hover:shadow-2xl transition-shadow text-white"
+                className="bg-gray-800 p-6 shadow-lg text-center hover:shadow-2xl transition-shadow text-white"
               >
                 <h3 className="text-xl font-semibold mb-2">
                   <Link
@@ -458,8 +474,6 @@ const FrontPage = () => {
           )}
         </div>
       </section>
-
-      
     </div>
   );
 };
