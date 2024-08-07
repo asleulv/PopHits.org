@@ -50,7 +50,7 @@ const FrontPage = () => {
       await fetchTopRatedSongs();
       await fetchRandomHitsByDecade();
       await fetchNumberOneHits();
-      setIsLoading(false);  // Correct state variable
+      setIsLoading(false); // Correct state variable
     };
 
     fetchAllData();
@@ -234,7 +234,7 @@ const FrontPage = () => {
       </div>
 
       <section className="mb-0 text-black p-6 w-full">
-      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
           📅 Hits by year
         </h2>
         <div className="flex flex-wrap justify-center gap-2">
@@ -251,7 +251,7 @@ const FrontPage = () => {
       </section>
 
       <section className="mb-0 bg-gray-800 text-white p-6 w-full">
-      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
           🔀 Random hits by decade{" "}
           <button
             onClick={refreshRandomHitsByDecade}
@@ -324,106 +324,107 @@ const FrontPage = () => {
       </section>
 
       <section className="mb-0 text-black p-6 w-full">
-  <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
-    ❤️‍🔥 Top 10 user ranked hits
-  </h2>
-  <div className="overflow-x-auto">
-    <table className="min-w-full divide-y divide-gray-200">
-      <tbody className="bg-white divide-y divide-gray-200">
-        {topRatedSongs && topRatedSongs.length > 0 ? (
-          topRatedSongs.map((song, index) => (
-            <tr
-              key={song.id}
-              className="flex flex-col md:table-row md:w-full text-center md:text-left"
-            >
-              {/* Ranking Cell */}
-              <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-black text-xl md:text-base">
-                <span className="block md:hidden font-medium text-gray-500">
-                  #{index + 1}
-                </span>
-                <span className="hidden md:block">{index + 1}</span>
-              </td>
-
-              {/* Info Cell with Title, Artist, Year, and Score */}
-              <td className="flex flex-col md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base">
-                <span className="block md:hidden text-gray-700">
-                  <Link
-                    to={`/songs/${song.slug}`}
-                    className="text-blue-800 font-bold"
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+          ❤️‍🔥 Top 10 user ranked hits
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200">
+              {topRatedSongs && topRatedSongs.length > 0 ? (
+                topRatedSongs.map((song, index) => (
+                  <tr
+                    key={song.id}
+                    className="flex flex-col md:table-row md:w-full text-center md:text-left"
                   >
-                    {song.title}
-                  </Link>
-                  {" - "}
-                  <Link
-                    to={`/artist/${song.artist_slug}`}
-                    className="text-blue-800 hover:underline"
-                  >
-                    {song.artist}
-                  </Link>
-                  {" ("}
-                  <Link
-                    to={`/year/${song.year}`}
-                    className="text-blue-800 hover:underline"
-                  >
-                    {song.year}
-                  </Link>
-                  {") "}
-                  <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
-                    {song.average_user_score}
-                  </span>
-                </span>
+                    {/* Ranking Cell */}
+                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-black text-xl md:text-base items-center justify-center md:justify-start">
+                      <span className="block md:hidden font-medium text-gray-500">
+                        #{index + 1}
+                      </span>
+                      <span className="hidden md:block">{index + 1}</span>
+                    </td>
 
-                <span className="hidden md:block">
-                  <Link
-                    to={`/songs/${song.slug}`}
-                    className="text-blue-800 font-bold"
-                  >
-                    {song.title}
-                  </Link>
-                </span>
-              </td>
+                    {/* Info Cell with Title, Artist, Year, and Score */}
+                    <td className="flex flex-col md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base">
+                      <span className="block md:hidden text-gray-700">
+                        <Link
+                          to={`/songs/${song.slug}`}
+                          className="text-blue-800 font-bold"
+                        >
+                          {song.title}
+                        </Link>
+                        <br className="block md:hidden" />{" "}
+                        {/* Line break on mobile */}
+                        <Link
+                          to={`/artist/${song.artist_slug}`}
+                          className="text-blue-800 hover:underline"
+                        >
+                          {song.artist}
+                        </Link>
+                        <br className="block md:hidden" />{" "}
+                        {/* Line break on mobile */}
+                        <Link
+                          to={`/year/${song.year}`}
+                          className="text-blue-800 hover:underline"
+                        >
+                          {song.year}
+                        </Link>
+                        <br className="block md:hidden" />{" "}
+                        {/* Line break on mobile */}
+                        <span className="block md:hidden bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded mt-1">
+                          Rating: {song.average_user_score}/10
+                        </span>
+                      </span>
 
-              {/* Separate cells for Artist, Year, and Score */}
-              <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
-                <Link
-                  to={`/artist/${song.artist_slug}`}
-                  className="text-blue-800 hover:underline"
-                >
-                  {song.artist}
-                </Link>
-              </td>
-              <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
-                <Link
-                  to={`/year/${song.year}`}
-                  className="text-blue-800 hover:underline"
-                >
-                  {song.year}
-                </Link>
-              </td>
-              <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
-                <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
-                  {song.average_user_score}
-                </span>
-              </td>
-            </tr>
-          ))
-        ) : (
-          <tr className="flex flex-col md:table-row md:w-full">
-            <td colSpan="5" className="px-4 py-2 text-center">
-              Loading top-rated songs...
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  </div>
-  <div className="text-center mt-4"></div>
-</section>
+                      <span className="hidden md:block">
+                        <Link
+                          to={`/songs/${song.slug}`}
+                          className="text-blue-800 font-bold"
+                        >
+                          {song.title}
+                        </Link>
+                      </span>
+                    </td>
 
-
+                    {/* Separate cells for Artist, Year, and Score */}
+                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
+                      <Link
+                        to={`/artist/${song.artist_slug}`}
+                        className="text-blue-800 hover:underline"
+                      >
+                        {song.artist}
+                      </Link>
+                    </td>
+                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
+                      <Link
+                        to={`/year/${song.year}`}
+                        className="text-blue-800 hover:underline"
+                      >
+                        {song.year}
+                      </Link>
+                    </td>
+                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
+                      <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
+                        {song.average_user_score}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr className="flex flex-col md:table-row md:w-full">
+                  <td colSpan="5" className="px-4 py-2 text-center">
+                    Loading top-rated songs...
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="text-center mt-4"></div>
+      </section>
 
       <section className="mb-12 text-black p-6 w-full">
-      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
           🔥 The number ones{" "}
           <Link
             to="/songs?filter=number-one"
