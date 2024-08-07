@@ -300,28 +300,24 @@ class TopRatedSongsView(APIView):
 class RandomSongsByDecadeView(APIView):
     serializer_class = SongSerializer
 
+    # @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
     def get(self, request, *args, **kwargs):
-        cache_key = 'random_songs_by_decade'
-        cached_data = cache.get(cache_key)
-        if cached_data:
-            return Response(cached_data)
-
         current_year = datetime.datetime.now().year
         decades = [(year, year + 9) for year in range(1950, current_year, 10)]
 
         random_songs_by_decade = []
         for start_year, end_year in decades:
-            songs_in_decade = Song.objects.filter(
+            songs_in_decade = list(Song.objects.filter(
                 year__gte=start_year, 
                 year__lte=end_year, 
                 spotify_url__isnull=False
-            ).exclude(spotify_url='').order_by(Random()).first()
+            ).exclude(spotify_url=''))
 
             if songs_in_decade:
-                random_songs_by_decade.append(songs_in_decade)
+                random_song = random.choice(songs_in_decade)
+                random_songs_by_decade.append(random_song)
 
         serializer = self.serializer_class(random_songs_by_decade, many=True)
-        cache.set(cache_key, serializer.data, timeout=60*15)  # Cache for 15 minutes
         return Response(serializer.data)
     
 class NumberOneSongsView(generics.ListAPIView):
