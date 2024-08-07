@@ -145,6 +145,7 @@ const SongList = () => {
       key: "title",
       sorter: true,
       render: (text, record) => <Link to={`/songs/${record.slug}`}><strong>{text}</strong></Link>,
+      width: 250, // Adjust width as needed
     },
     {
       title: "Artist",
@@ -152,6 +153,7 @@ const SongList = () => {
       key: "artist",
       sorter: true,
       render: (text, record) => <Link to={`/artist/${record.artist_slug}`}>{text}</Link>,
+      width: 200, // Adjust width as needed
     },
     {
       title: "Year",
@@ -159,18 +161,21 @@ const SongList = () => {
       key: "year",
       sorter: true,
       render: (text, record) => <Link to={`/year/${text}`}>{text}</Link>,
+      width: 120, // Adjust width as needed
     },
     {
       title: "Peak Rank",
       dataIndex: "peak_rank",
       key: "peak_rank",
       sorter: true,
+      width: 120, // Adjust width as needed
     },
     {
       title: "Average Score",
       dataIndex: "average_user_score",
       key: "average_user_score",
       sorter: true,
+      width: 150, // Adjust width as needed
     },
   ];
 
@@ -226,9 +231,7 @@ const SongList = () => {
             current: page,
             pageSize: perPage,
             total: totalSongs,
-            onChange: (newPage) => {
-              setPage(newPage);
-            },
+            onChange: (newPage) => setPage(newPage),
             onShowSizeChange: (current, newSize) => {
               setPage(1);
               setPerPage(newSize);
