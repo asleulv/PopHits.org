@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/auth";
 import { slide as Menu } from "react-burger-menu";
 import oldhitsLogo from "./oldhits_logo.png";
-import { FaHome, FaHouseUser, FaUser } from "react-icons/fa";
+import { FaHome, FaHouseUser, FaUser, FaDiceD6 } from "react-icons/fa";
 import { BsMusicPlayerFill } from "react-icons/bs";
 import { FaCircleInfo } from "react-icons/fa6";
 import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
@@ -90,6 +90,18 @@ const Navbar = ({ isAuthenticated }) => {
                     <BsMusicPlayerFill />
                   </span>
                   Database
+                </Link>
+              </li>
+              <li className="navbar-menu-item">
+                <Link
+                  to="/random"
+                  className="navbar-menu-link hover:text-gray-300"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="navbar-menu-icon">
+                  <FaDiceD6 />
+                  </span>
+                  Random hit
                 </Link>
               </li>
               <li className="navbar-menu-item">
