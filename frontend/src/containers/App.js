@@ -1,11 +1,7 @@
+// src/containers/App.js
 import React, { useEffect, useRef, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import {
-  Routes,
-  Route,
-  BrowserRouter as Router,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import About from "../components/About/About";
@@ -23,6 +19,7 @@ import { useAuth } from "../services/auth";
 import { getRandomHit } from "../services/api";
 import { ThreeDots } from "react-loader-spinner";
 import CookieConsent from 'react-cookie-consent'; // Import CookieConsent
+import usePageTracking from "../hooks/usePageTracking"; // Import your custom hook
 
 const queryClient = new QueryClient();
 
@@ -45,7 +42,6 @@ const RandomSongRedirect = () => {
       };
 
       fetchAndRedirect();
-
       hasRedirected.current = true;
     }
   }, [navigate]);
@@ -71,11 +67,12 @@ const RandomSongRedirect = () => {
 };
 
 const App = () => {
+  usePageTracking(); // Ensure this is inside a Router context
   const { isAuthenticated } = useAuth();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
+
         <Navbar isAuthenticated={isAuthenticated} />
         <div className="app-container">
           {/* Cookie Consent Banner */}
@@ -90,7 +87,7 @@ const App = () => {
             This website uses cookies to enhance the user experience.{" "}
             <a href="/privacy-policy" style={{ color: "#FFD700" }}>Learn more</a>
           </CookieConsent>
-          
+
           <Routes>
             <Route path="/" element={<FrontPage />} />
             <Route path="/search" element={<SongList />} />
@@ -114,7 +111,7 @@ const App = () => {
           </Routes>
         </div>
         <Footer />
-      </Router>
+
     </QueryClientProvider>
   );
 };
