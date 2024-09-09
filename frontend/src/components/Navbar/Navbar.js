@@ -4,7 +4,7 @@ import { useAuth } from "../../services/auth";
 import { slide as Menu } from "react-burger-menu";
 import oldhitsLogo from "./oldhits_logo.png";
 import { FaHome, FaHouseUser, FaUser, FaDiceD6 } from "react-icons/fa";
-import { BsMusicPlayerFill } from "react-icons/bs";
+import { BsMusicPlayerFill, BsListOl } from "react-icons/bs";
 import { FaCircleInfo } from "react-icons/fa6";
 import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
 import { GiBullseye } from "react-icons/gi";
@@ -94,12 +94,24 @@ const Navbar = ({ isAuthenticated }) => {
               </li>
               <li className="navbar-menu-item">
                 <Link
+                  to="/playlist-generator"
+                  className="navbar-menu-link hover:text-gray-300"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="navbar-menu-icon">
+                    <BsListOl />
+                  </span>
+                  Create Playlist
+                </Link>
+              </li>
+              <li className="navbar-menu-item">
+                <Link
                   to="/random"
                   className="navbar-menu-link hover:text-gray-300"
                   onClick={() => setMenuOpen(false)}
                 >
                   <span className="navbar-menu-icon">
-                  <FaDiceD6 />
+                    <FaDiceD6 />
                   </span>
                   Random hit
                 </Link>
@@ -179,13 +191,13 @@ const Navbar = ({ isAuthenticated }) => {
       {/* Search Bar below the Navbar */}
       <div className="bg-gray-800 p-2">
         <div className="container mx-auto flex justify-end">
-          <div style={{ width: '60%', marginTop: 0, marginBottom: 0 }}>
+          <div style={{ width: "60%", marginTop: 0, marginBottom: 0 }}>
             <Search
               placeholder="ARTIST / SONG"
               onSearch={handleSearch}
               enterButton={<SearchOutlined />}
               allowClear
-              style={{ width: '100%' }}
+              style={{ width: "100%", borderRadius: 0 }} // Remove rounded corners
             />
           </div>
         </div>

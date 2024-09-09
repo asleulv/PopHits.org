@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from django.db.models.functions import Random
+from django.db.models import Q
 from django.core.cache import cache
 from .models import Song, UserSongRating, UserSongComment, Bookmark
 from .serializers import SongSerializer, UserSongCommentSerializer
@@ -332,3 +333,67 @@ class SongsWithImagesView(generics.ListAPIView):
 
     def get_queryset(self):
         return Song.objects.exclude(image_upload='').exclude(image_upload__isnull=True)
+    
+class PlaylistGeneratorView(APIView):
+    """
+    API View to generate a playlist of random songs based on the number of songs,
+    hit level (1 for top hits, 10 for more obscure hits), and selected decades.
+    """
+
+    def get(self, request):
+        try:
+            # Get parameters from the request
+            num_songs = int(request.GET.get('number_of_songs', 10))
+            hit_level = int(request.GET.get('hit_size', 1))
+            decades = request.GET.getlist('decades', [])  # Decades to include
+
+            # Define the peak rank cutoff logic based on hit level
+            rank_cutoffs = {
+                1: 1,
+                2: 3,
+                3: 5,
+                4: 10,
+                5: 20,
+                6: 30,
+                7: 50,
+                8: 60,
+                9: 80,
+                10: 100
+            }
+            max_peak_rank = rank_cutoffs.get(hit_level, 100)
+
+            # Filter songs by peak_rank and selected decades
+            filtered_songs = Song.objects.filter(
+                peak_rank__lte=max_peak_rank,
+                spotify_url__isnull=False
+            ).exclude(spotify_url='')
+
+            # If no decades are provided, exclude all songs
+            if not decades:
+                return Response({'detail': 'Decades parameter is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Apply decade filtering if provided
+            if decades:
+                decade_filters = Q()
+                for decade in decades:
+                    try:
+                        start_year = int(decade)
+                        end_year = start_year + 9
+                        decade_filters |= Q(year__gte=start_year, year__lte=end_year)
+                    except ValueError:
+                        return Response({'detail': 'Invalid decade format.'}, status=status.HTTP_400_BAD_REQUEST)
+
+                filtered_songs = filtered_songs.filter(decade_filters)
+
+            if len(filtered_songs) == 0:
+                return Response({'detail': 'No songs match the criteria.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Randomly select the required number of songs
+            song_list = random.sample(list(filtered_songs), min(num_songs, len(filtered_songs)))
+
+            # Serialize the result
+            serializer = SongSerializer(song_list, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({'detail': 'An error occurred while processing your request.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
