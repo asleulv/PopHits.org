@@ -665,3 +665,7 @@ textarea {
     padding: 8px; /* Adjust padding */
   }
 }
+
+.ant-input-affix-wrapper {
+  border-radius: 0 !important; /* Remove rounded corners */
+}

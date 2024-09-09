@@ -414,6 +414,29 @@ export const getSongsWithImages = async () => {
   }
 };
 
+// Function to generate a playlist
+export const generatePlaylist = async (numSongs, hitLevel, selectedDecades) => {
+  try {
+    // Initialize URLSearchParams
+    const params = new URLSearchParams({
+      number_of_songs: numSongs,
+      hit_size: hitLevel
+    });
+    
+    // Append each decade separately
+    selectedDecades.forEach(decade => params.append('decades', decade));
+
+    const response = await songApi.get('generate-playlist/', {
+      params: params
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error generating playlist:', error);
+    throw error;
+  }
+};
+
+
 
 
 

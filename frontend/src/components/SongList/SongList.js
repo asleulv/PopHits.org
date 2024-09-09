@@ -263,7 +263,7 @@ const SongList = () => {
     <>
       <div className="text-center my-4 text-xl font-bold">{getHeading()}</div>
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-4 p-4 rounded-lg">
-        <div className="flex items-center border border-blue-200 p-4 bg-white w-full md:w-1/3">
+        <div className="flex items-center border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
           <span className="text-lg font-semibold mr-4">#1 hits filter</span>
           <Switch
             onChange={handleSwitchChange}
@@ -272,7 +272,7 @@ const SongList = () => {
           />
         </div>
 
-        <div className="flex flex-col border border-blue-200 p-4 bg-white w-full md:w-1/3">
+        <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
           <span className="mb-2 text-lg font-semibold">Jump to year:</span>
           <Select
             placeholder="Select Year"
@@ -294,7 +294,7 @@ const SongList = () => {
         <div className="w-full md:w-1/3 flex items-center">
           <Button
             onClick={handleReset}
-            className="w-full px-6 py-3 text-lg text-black border border-pink-300 rounded flex items-center justify-center hover:bg-blue-600"
+            className="w-full px-6 py-3 text-lg text-white border border-pink-300 rounded flex items-center justify-center hover:bg-blue-600 bg-pink-400"
           >
             <svg
               className="w-5 h-5 mr-2"

@@ -4,7 +4,7 @@ from .views import (
     UserSongRatingCreateView, UserSongCommentUpdateView, get_user_rating_for_song, 
     UserBookmarkView, UserBookmarkedSongsView, BookmarkStatusView, CommentStatusView,
     RandomSongView, TopRatedSongsView, RandomSongsByDecadeView, NumberOneSongsView,
-    SongsWithImagesView  # New views
+    SongsWithImagesView, PlaylistGeneratorView  # New views
 )
 
 urlpatterns = [
@@ -18,6 +18,7 @@ urlpatterns = [
     path('number-one-songs/', NumberOneSongsView.as_view(), name='number-one-songs'),
     path('songs-with-images/', SongsWithImagesView.as_view(), name='songs-with-images'), 
     path('random-songs-by-decade/', RandomSongsByDecadeView.as_view(), name='random-songs-by-decade'),
+    path('generate-playlist/', PlaylistGeneratorView.as_view(), name='generate-playlist'),
     path('<slug:slug>/', SongDetailBySlugView.as_view(), name='song-detail-slug'),
     path('<int:pk>/comment/', UserSongCommentCreateView.as_view(), name='user-song-comment-create'),
     path('<int:song_pk>/comment/<int:comment_pk>/', UserSongCommentUpdateView.as_view(), name='user-song-comment-update'),
