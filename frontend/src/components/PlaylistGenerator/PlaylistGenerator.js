@@ -37,10 +37,14 @@ const PlaylistGenerator = () => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       const hash = window.location.hash;
+
+      // Handle authentication callback if present in the URL
       if (hash) {
-        handleAuthCallback(hash); // Handle authentication callback if necessary
+        handleAuthCallback(hash);
+        return; // Exit early to prevent further processing
       }
 
+      // Check if user is authenticated
       if (!isAuthenticated()) {
         setAuthUrl(getSpotifyAuthUrl());
         setIsConnected(false);
@@ -63,7 +67,7 @@ const PlaylistGenerator = () => {
     };
 
     checkAuthStatus();
-  }, []);
+  }, [authUrl, isConnected]); // Add dependencies if necessary
 
   const handleGeneratePlaylist = async () => {
     setLoading(true);
@@ -172,176 +176,199 @@ const PlaylistGenerator = () => {
 
   return (
     <div className="p-4 min-h-screen">
-  <div className="text-center my-4 text-xl font-bold">
-    🤖 Hit Song Playlist Generator
-  </div>
+      <div className="text-center my-4 text-xl font-bold">
+        🤖 Hit Song Playlist Generator
+      </div>
 
-  {/* Spotify Authentication Button */}
-  {!isConnected && (
-    <div className="mb-4 text-center">
-      <Button
-        type="primary"
-        href={authUrl}
-        className="w-full md:w-1/3 mb-4 bg-blue-500 border-blue-600 text-white hover:bg-blue-600 hover:border-blue-700"
-      >
-        Connect to Spotify
-      </Button>
-    </div>
-  )}
+      {/* Introduction */}
+      <div className="mb-4">
+        <p className="mb-6 text-center md:text-left text-sm md:text-lg">
+          Generate your random hit playlists and filter on decades and how
+          big/obscure hits you want to include. After the list has been
+          generated, you can easily send it as a playlist to Spotify. To build
+          playlists from your ranked or bookmarked songs, please visit your{" "}
+          <a href="/profile" className="text-blue-500 underline">
+            profile
+          </a>{" "}
+          (registered users only).
+        </p>
+        {!isConnected && (
+          <p className="mb-6 text-center md:text-center text-sm md:text-lg bg-yellow-200 border border-yellow-400 text-yellow-800 p-4 rounded-lg">
+            ⚠️ To be able to send playlists to Spotify, you need to connect your
+            Spotify account.
+          </p>
+        )}
+      </div>
 
-  {/* Instructions for Decades Filter */}
-  <div className="mb-4">
-    <p className="mb-6 text-center md:text-left text-sm md:text-lg">
-      Generate your random hit playlists and filter on decades and how big/obscure hits you want to include. After the list has been generated, you can easily send it as a playlist to Spotify. To build playlists from your ranked or bookmarked songs, please visit your{" "}
-      <a href="/profile" className="text-blue-500 underline">
-        profile
-      </a>{" "}
-      (registered users only).
-    </p>
-  </div>
+      {/* Container to match the width */}
+      <div className="w-full">
+        {/* Spotify Authentication Button */}
+        {!isConnected ? (
+          // If the user is not connected, show the "Connect to Spotify" button
+          <div className="mb-4 text-center">
+            <Button
+              type="primary"
+              href={authUrl}
+              className="w-full md:w-1/3 mb-4 bg-blue-500 border-blue-600 text-white hover:bg-blue-600 hover:border-blue-700"
+            >
+              Connect to Spotify
+            </Button>
+          </div>
+        ) : (
+          // If the user is connected, show the "Disconnect from Spotify" button
+          <div className="mb-4 text-center">
+            <Button
+              type="primary"
+              onClick={() => {
+                clearAccessToken(); // Clear Spotify tokens
+                setIsConnected(false); // Update state to reflect disconnection
+                message.info("You have been disconnected from Spotify.");
+              }}
+              className="w-full md:w-1/3 mb-4 bg-red-500 border-red-600 text-white hover:bg-red-600 hover:border-red-700"
+            >
+              Disconnect from Spotify
+            </Button>
+          </div>
+        )}
 
-    {/* Container to match the width */}
-  <div className="w-full">
+        {/* Decades filter - Full-width frame */}
+        <div className="mb-4 border border-gray-300 p-4 bg-gray-50 w-full">
+          <span className="block mb-2 text-lg font-semibold">
+            Select Decades:
+          </span>
+          <Select
+            mode="multiple"
+            value={selectedDecades}
+            onChange={(values) => setSelectedDecades(values)}
+            className="w-full"
+          >
+            {decadesOptions.map(({ label, value }) => (
+              <Option key={value} value={value}>
+                {label}
+              </Option>
+            ))}
+          </Select>
+        </div>
 
-{/* Decades filter - Full-width frame */}
-<div className="mb-4 border border-gray-300 p-4 bg-gray-50 w-full">
-  <span className="block mb-2 text-lg font-semibold">
-    Select Decades:
-  </span>
-  <Select
-    mode="multiple"
-    value={selectedDecades}
-    onChange={(values) => setSelectedDecades(values)}
-    className="w-full"
-  >
-    {decadesOptions.map(({ label, value }) => (
-      <Option key={value} value={value}>
-        {label}
-      </Option>
-    ))}
-  </Select>
-</div>
+        {/* Three columns layout */}
+        <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
+          {/* First column: Select Number of Songs */}
+          <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
+            <span className="mb-2 text-lg font-semibold">
+              Select Number of Songs:
+            </span>
+            <Select
+              value={numSongs}
+              onChange={(value) => setNumSongs(value)}
+              className="w-full text-lg"
+            >
+              {[10, 20, 25, 50, 100].map((num) => (
+                <Option key={num} value={num}>
+                  {num}
+                </Option>
+              ))}
+            </Select>
+          </div>
 
-{/* Three columns layout */}
-<div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
-  {/* First column: Select Number of Songs */}
-  <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
-    <span className="mb-2 text-lg font-semibold">
-      Select Number of Songs:
-    </span>
-    <Select
-      value={numSongs}
-      onChange={(value) => setNumSongs(value)}
-      className="w-full text-lg"
-    >
-      {[10, 20, 25, 50, 100].map((num) => (
-        <Option key={num} value={num}>
-          {num}
-        </Option>
-      ))}
-    </Select>
-  </div>
+          {/* Second column: Hit Size */}
+          <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
+            <span className="mb-2 text-lg font-semibold">
+              Hit Level (1 = #1 hits, 10 = obscure):
+            </span>
+            <Select
+              value={hitLevel}
+              onChange={(value) => setHitLevel(value)}
+              className="w-full text-lg"
+            >
+              {[...Array(10).keys()].map((level) => (
+                <Option key={level + 1} value={level + 1}>
+                  {level + 1}
+                </Option>
+              ))}
+            </Select>
+          </div>
 
-  {/* Second column: Hit Size */}
-  <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
-    <span className="mb-2 text-lg font-semibold">
-      Hit Level (1 = #1 hits, 10 = obscure):
-    </span>
-    <Select
-      value={hitLevel}
-      onChange={(value) => setHitLevel(value)}
-      className="w-full text-lg"
-    >
-      {[...Array(10).keys()].map((level) => (
-        <Option key={level + 1} value={level + 1}>
-          {level + 1}
-        </Option>
-      ))}
-    </Select>
-  </div>
+          {/* Third column: Playlist Name and Buttons */}
+          <div className="flex flex-col justify-end gap-4 w-full md:w-1/3">
+            {/* Input for playlist name */}
+            <Input
+              placeholder="Enter playlist name"
+              value={playlistName}
+              onChange={(e) => setPlaylistName(e.target.value)}
+              className="w-full mb-4 p-2 border border-gray-300  text-lg font-semibold focus:border-blue-500 focus:ring focus:ring-blue-200"
+            />
 
-  {/* Third column: Playlist Name and Buttons */}
-  <div className="flex flex-col justify-end gap-4 w-full md:w-1/3">
-    {/* Input for playlist name */}
-    <Input
-      placeholder="Enter playlist name"
-      value={playlistName}
-      onChange={(e) => setPlaylistName(e.target.value)}
-      className="w-full mb-4 p-2 border border-gray-300  text-lg font-semibold focus:border-blue-500 focus:ring focus:ring-blue-200"
-    />
+            <Button
+              onClick={handleGeneratePlaylist}
+              className="w-full px-6 py-3 text-lg text-white border border-pink-300 flex items-center justify-center hover:bg-blue-600 bg-pink-400"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 12l5 5L20 7"
+                />
+              </svg>
+              Generate Playlist
+            </Button>
 
-    <Button
-      onClick={handleGeneratePlaylist}
-      className="w-full px-6 py-3 text-lg text-white border border-pink-300 flex items-center justify-center hover:bg-blue-600 bg-pink-400"
-    >
-      <svg
-        className="w-5 h-5 mr-2"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M5 12l5 5L20 7"
-        />
-      </svg>
-      Generate Playlist
-    </Button>
+            {playlist.length > 0 && (
+              <Button
+                onClick={createSpotifyPlaylist}
+                className="w-full px-6 py-3 text-lg text-white border border-green-700 rounded flex items-center justify-center hover:bg-green-700 bg-green-400"
+                loading={creatingPlaylist}
+                disabled={!isConnected} // Disable the button if not connected
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Send to Spotify
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
 
-    {playlist.length > 0 && (
-      <Button
-        onClick={createSpotifyPlaylist}
-        className="w-full px-6 py-3 text-lg text-white border border-green-700 rounded flex items-center justify-center hover:bg-green-700 bg-green-400"
-        loading={creatingPlaylist}
-      >
-        <svg
-          className="w-5 h-5 mr-2"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 4v16m8-8H4"
-          />
-        </svg>
-        Send to Spotify
-      </Button>
-    )}
-  </div>
-</div>
-
-</div>
-
-  {loading ? (
-    <div className="text-center">
-      <Spin tip="Generating playlist..." />
-    </div>
-  ) : (
-    <>
-      {errorMessage ? (
-        <div className="text-center text-red-500 mt-4">{errorMessage}</div>
+      {loading ? (
+        <div className="text-center">
+          <Spin tip="Generating playlist..." />
+        </div>
       ) : (
-        playlist.length > 0 && (
-          <Table
-            dataSource={playlist}
-            columns={columns}
-            rowKey="id"
-            pagination={false}
-            className="mt-4"
-          />
-        )
+        <>
+          {errorMessage ? (
+            <div className="text-center text-red-500 mt-4">{errorMessage}</div>
+          ) : (
+            playlist.length > 0 && (
+              <Table
+                dataSource={playlist}
+                columns={columns}
+                rowKey="id"
+                pagination={false}
+                className="mt-4"
+              />
+            )
+          )}
+        </>
       )}
-    </>
-  )}
-</div>
-
+    </div>
   );
 };
 
