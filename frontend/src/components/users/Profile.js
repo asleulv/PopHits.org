@@ -111,7 +111,7 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="profile-headers">User Profile</h2>
+      <h2 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">User Profile</h2>
       {userProfile ? (
         <div className="profile-user-container">
           <div className="profile-user-box">

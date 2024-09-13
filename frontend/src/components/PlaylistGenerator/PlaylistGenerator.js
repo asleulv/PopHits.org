@@ -176,7 +176,7 @@ const PlaylistGenerator = () => {
 
   return (
     <div className="p-4 min-h-screen">
-      <div className="text-center my-4 text-xl font-bold">
+      <div className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">
         🤖 Hit Song Playlist Generator
       </div>
 

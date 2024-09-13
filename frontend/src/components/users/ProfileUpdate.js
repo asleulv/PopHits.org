@@ -58,7 +58,7 @@ const ProfileUpdate = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-semibold mb-4 text-center">Update Profile</h2>
+      <h2 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">Update Profile</h2>
       <div className="mb-4">
         <label className="block mb-1">Username:</label>
         <input
