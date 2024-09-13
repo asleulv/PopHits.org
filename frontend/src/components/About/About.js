@@ -9,7 +9,7 @@ const About = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="about-header">
-        <h1 className="mb-4 text-center font-cherry">About PopHits.org</h1>
+        <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">About PopHits.org</h1>
         <div className="about-header-text">
           🧙🏽‍♂️ From Ricky Nelson to Taylor Swift...
         </div>

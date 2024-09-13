@@ -148,7 +148,7 @@ const FrontPage = () => {
 
       <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full">
         <div className="flex-1 mb-6 md:mb-0">
-          <h1 className="text-2xl md:text-4xl font-bold mb-6 text-center md:text-left">
+          <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">
             50 Years of Hits
           </h1>
           <p className="mb-6 text-center md:text-left text-sm md:text-lg">
@@ -181,7 +181,7 @@ const FrontPage = () => {
         {songWithImage && (
           <div className="flex-1 mb-0 md:mb-0 w-full">
             <div className="bg-gray-800 text-white p-6 w-full relative">
-              <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+              <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
                 📀 Featured hit
               </h2>
               <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden">
@@ -234,7 +234,7 @@ const FrontPage = () => {
       </div>
 
       <section className="mb-0 text-black p-6 w-full">
-        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
           📅 Hits by year
         </h2>
         <div className="flex flex-wrap justify-center gap-2">
@@ -251,7 +251,7 @@ const FrontPage = () => {
       </section>
 
       <section className="mb-0 bg-gray-800 text-white p-6 w-full">
-        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
           🔀 Random hits by decade{" "}
           <button
             onClick={refreshRandomHitsByDecade}
@@ -324,7 +324,7 @@ const FrontPage = () => {
       </section>
 
       <section className="mb-0 text-black p-6 w-full">
-        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
           ❤️‍🔥 Top 10 user ranked hits
         </h2>
         <div className="overflow-x-auto">
@@ -424,7 +424,7 @@ const FrontPage = () => {
       </section>
 
       <section className="mb-12 text-black p-6 w-full">
-        <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
           🔥 The number ones{" "}
           <Link
             to="/songs?filter=number-one"
