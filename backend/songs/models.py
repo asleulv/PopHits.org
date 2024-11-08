@@ -30,6 +30,26 @@ class Song(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.artist}, Year: {self.year}, Peak Rank: {self.peak_rank}"
+    
+class NumberOneSong(models.Model):
+    title = models.CharField(max_length=100)
+    artist = models.CharField(max_length=100)
+    year = models.IntegerField()
+    peak_rank = models.IntegerField()
+    weeks_on_chart = models.IntegerField()
+    average_user_score = models.FloatField(default=0.0)
+    total_ratings = models.IntegerField(default=0)
+    spotify_url = models.URLField(blank=True, null=True)
+    youtube_url = models.URLField(blank=True, null=True)
+    slug = models.SlugField(max_length=255, unique=True)
+    artist_slug = models.SlugField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        ordering = ['-year']
+        indexes = [
+            models.Index(fields=['-year']),
+            models.Index(fields=['artist']),
+        ]
 
 class UserSongRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
