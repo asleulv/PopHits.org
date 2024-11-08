@@ -318,6 +318,13 @@ const SongList = () => {
         <span>Swipe left/right to view more columns</span>
       </div>
       <div className="table-container overflow-x-auto">
+      <style>
+  {`
+    .ant-table-tbody > tr > td {
+      padding: 6px 10px !important;
+    }
+  `}
+</style>
         <Table
           dataSource={songs}
           columns={columns}
