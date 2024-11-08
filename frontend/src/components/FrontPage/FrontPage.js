@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Grid } from "react-loader-spinner";
 import {
   getTopRatedSongs,
   getRandomHitsByDecade,
-  getNumberOneHits,
   getSongsWithImages,
 } from "../../services/api";
+
+const NumberOneHitsSection = lazy(() => import('./NumberOneHitsSection'));
 
 const FrontPage = () => {
   const [topRatedSongs, setTopRatedSongs] = useState([]);
   const [randomHitsByDecade, setRandomHitsByDecade] = useState([]);
-  const [numberOneHits, setNumberOneHits] = useState([]);
   const [songWithImage, setSongWithImage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -37,19 +37,10 @@ const FrontPage = () => {
       }
     };
 
-    const fetchNumberOneHits = async () => {
-      try {
-        const response = await getNumberOneHits();
-        setNumberOneHits(response.songs || response);
-      } catch (error) {
-        console.error("Error fetching number one hits:", error);
-      }
-    };
 
     const fetchAllData = async () => {
       await fetchTopRatedSongs();
       await fetchRandomHitsByDecade();
-      await fetchNumberOneHits();
       setIsLoading(false); // Correct state variable
     };
 
@@ -106,7 +97,6 @@ const FrontPage = () => {
     return shuffled.slice(0, num);
   };
 
-  const randomNumberOneHits = getRandomSubset(numberOneHits, 8);
 
   const refreshRandomHitsByDecade = async () => {
     try {
@@ -423,58 +413,11 @@ const FrontPage = () => {
         <div className="text-center mt-4"></div>
       </section>
 
-      <section className="mb-12 text-black p-6 w-full">
-        <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
-          🔥 The number ones{" "}
-          <Link
-            to="/songs?filter=number-one"
-            className="text-blue-500 hover:underline"
-          >
-            (full list)
-          </Link>
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {randomNumberOneHits.length > 0 ? (
-            randomNumberOneHits.map((song) => (
-              <div
-                key={song.id}
-                className="bg-gray-800 p-6 shadow-lg text-center hover:shadow-2xl transition-shadow text-white"
-              >
-                <h3 className="text-xl font-semibold mb-2">
-                  <Link
-                    to={`/songs/${song.slug}`}
-                    className="text-blue-200 hover:underline"
-                  >
-                    {song.title}
-                  </Link>
-                </h3>
-                <p className="text-sm mb-2">
-                  by{" "}
-                  <Link
-                    to={`/artist/${song.artist_slug}`}
-                    className="text-blue-200 hover:underline"
-                  >
-                    {song.artist}
-                  </Link>
-                </p>
-                <p className="text-xs text-gray-400">
-                  <Link
-                    to={`/year/${song.year}`}
-                    className="text-blue-200 hover:underline"
-                  >
-                    {song.year}
-                  </Link>
-                </p>
-                <p className="mt-2 text-sm font-bold">
-                  Weeks on Chart: {song.weeks_on_chart}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p>No number one hits available.</p>
-          )}
-        </div>
-      </section>
+      <Suspense fallback={<div>Loading Number One Hits...</div>}>
+        <NumberOneHitsSection />
+      </Suspense>
+
+      
     </div>
   );
 };

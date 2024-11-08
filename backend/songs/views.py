@@ -4,9 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from django.db.models.functions import Random
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.core.cache import cache
-from .models import Song, UserSongRating, UserSongComment, Bookmark
+from .models import Song, UserSongRating, UserSongComment, Bookmark, NumberOneSong
 from .serializers import SongSerializer, UserSongCommentSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
@@ -323,10 +325,12 @@ class RandomSongsByDecadeView(APIView):
         return Response(serializer.data)
     
 class NumberOneSongsView(generics.ListAPIView):
+    queryset = NumberOneSong.objects.all()
     serializer_class = SongSerializer
-
-    def get_queryset(self):
-        return Song.objects.filter(peak_rank=1)
+    
+    @method_decorator(cache_page(24 * 3600))  # Cache for 24 hours since data is static
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
     
 class SongsWithImagesView(generics.ListAPIView):
     serializer_class = SongSerializer
