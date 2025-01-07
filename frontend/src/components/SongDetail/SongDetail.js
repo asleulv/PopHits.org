@@ -22,7 +22,7 @@ import {
   WhatsappShareButton,
   FacebookMessengerShareButton,
   FacebookIcon,  // Importing FacebookIcon
-  TwitterIcon,   // Importing TwitterIcon
+  XIcon,   // Importing TwitterIcon
   WhatsappIcon,  // Importing WhatsappIcon
   FacebookMessengerIcon  // Importing FacebookMessengerIcon
 } from 'react-share';
@@ -350,7 +350,7 @@ const SongDetail = () => {
                     hashtags={['popmusic', 'favoritesong', artistHashtag, 'pophitsdotorg']}
                     image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
                 >
-                    <TwitterIcon size={32} round />
+                    <XIcon size={32} round />
                 </TwitterShareButton>
             </div>
             <div style={{ textAlign: 'center', marginRight: '10px' }}>

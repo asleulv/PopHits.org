@@ -141,14 +141,25 @@ WSGI_APPLICATION = "core.wsgi.application"
 #    }
 #}
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'pophits_org',
+#        'USER': 'hairmetalclub',
+#        'PASSWORD': os.getenv('DB_PASSWORD'),
+#        'HOST': 'localhost',   
+#        'PORT': '3306',        
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pophits_org',
-        'USER': 'hairmetalclub',
+        'NAME': os.getenv('DB_NAME', 'pophits'),  # Defaults to 'pophits' if not set
+        'USER': os.getenv('DB_USER', 'pophitsuser'),  # Defaults to 'pophitsuser' if not set
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'localhost',   
-        'PORT': '3306',        
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Defaults to 'localhost' if not set
+        'PORT': os.getenv('DB_PORT', '3306'),  # Defaults to '3306' if not set
     }
 }
 
