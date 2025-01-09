@@ -13,12 +13,12 @@ MEDIA_URL = '/media/'
 
 REACT_BUILD_DIR = BASE_DIR / 'frontend/build'
 
-STATIC_ROOT = os.path.join(REACT_BUILD_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 STATIC_URL = '/static/'
 
 # Include only the React build directory in STATICFILES_DIRS
 STATICFILES_DIRS = [
-    str(REACT_BUILD_DIR),
+    str(REACT_BUILD_DIR / 'static'),  # This tells Django where to find the React static files
 ]
 
 
@@ -28,7 +28,7 @@ STATICFILES_DIRS = [
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org','188.245.244.69']
 SESSION_COOKIE_AGE = 3600
 
 # REGISTRATION EMAIL
@@ -130,27 +130,17 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'hitquiz$pophits',
-#        'USER': 'hitquiz',
-#        'PASSWORD': os.getenv('DB_PASSWORD'),
-#        'HOST': 'hitquiz.mysql.pythonanywhere-services.com',
-#        'PORT': '3306',
-#    }
-#}
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pophits_org',
-        'USER': 'hairmetalclub',
+        'NAME': os.getenv('DB_NAME', 'pophits'),  # Defaults to 'pophits' if not set
+        'USER': os.getenv('DB_USER', 'pophitsuser'),  # Defaults to 'pophitsuser' if not set
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'localhost',   
-        'PORT': '3306',        
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Defaults to 'localhost' if not set
+        'PORT': os.getenv('DB_PORT', '3306'),  # Defaults to '3306' if not set
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
