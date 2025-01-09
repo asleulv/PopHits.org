@@ -1,17 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Button, Select, Table, Spin, Input, message } from "antd";
+import React, { useState } from "react";
+import { Button, Select, Table, Spin, message } from "antd";
 import { generatePlaylist } from "../../services/api";
-import {
-  getSpotifyAuthUrl,
-  handleAuthCallback,
-  isAuthenticated,
-  clearAccessToken,
-} from "../../services/spotifyAuth";
-import {
-  getSpotifyUserId,
-  createPlaylist,
-  addTracksToPlaylist,
-} from "../../services/spotifyPlaylist";
 
 const { Option } = Select;
 
@@ -20,10 +9,6 @@ const PlaylistGenerator = () => {
   const [hitLevel, setHitLevel] = useState(1);
   const [loading, setLoading] = useState(false);
   const [playlist, setPlaylist] = useState([]);
-  const [authUrl, setAuthUrl] = useState("");
-  const [creatingPlaylist, setCreatingPlaylist] = useState(false);
-  const [playlistName, setPlaylistName] = useState("");
-  const [isConnected, setIsConnected] = useState(false);
   const [selectedDecades, setSelectedDecades] = useState([
     "1950",
     "1960",
@@ -32,42 +17,7 @@ const PlaylistGenerator = () => {
     "1990",
     "2000",
   ]);
-  const [errorMessage, setErrorMessage] = useState(""); // Added errorMessage state
-
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      const hash = window.location.hash;
-
-      // Handle authentication callback if present in the URL
-      if (hash) {
-        handleAuthCallback(hash);
-        return; // Exit early to prevent further processing
-      }
-
-      // Check if user is authenticated
-      if (!isAuthenticated()) {
-        setAuthUrl(getSpotifyAuthUrl());
-        setIsConnected(false);
-      } else {
-        const token = localStorage.getItem("spotifyAccessToken");
-        const tokenExpiresAt = localStorage.getItem("spotifyTokenExpiresAt");
-
-        if (
-          token &&
-          tokenExpiresAt &&
-          new Date().getTime() >= parseInt(tokenExpiresAt)
-        ) {
-          clearAccessToken();
-          setIsConnected(false);
-          setAuthUrl(getSpotifyAuthUrl());
-        } else {
-          setIsConnected(true);
-        }
-      }
-    };
-
-    checkAuthStatus();
-  }, [authUrl, isConnected]); // Add dependencies if necessary
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleGeneratePlaylist = async () => {
     setLoading(true);
@@ -92,53 +42,12 @@ const PlaylistGenerator = () => {
     }
   };
 
-  const createSpotifyPlaylist = async () => {
-    if (!isConnected) {
-      message.warning("You need to connect to Spotify first!");
-      return;
-    }
-
-    setCreatingPlaylist(true);
-
-    const accessToken = localStorage.getItem("spotifyAccessToken");
-    const userId = await getSpotifyUserId(accessToken);
-
-    if (!userId) {
-      message.error("Failed to get Spotify user ID. Reconnecting...");
-      setCreatingPlaylist(false);
-      reconnectToSpotify();
-      return;
-    }
-
-    try {
-      const currentDate = new Date().toISOString().split("T")[0];
-      const finalPlaylistName =
-        playlistName || `PopHits.org - Hit Level ${hitLevel} - ${currentDate}`;
-      const playlistId = await createPlaylist(
-        accessToken,
-        userId,
-        finalPlaylistName
-      );
-      const trackUris = playlist
-        .map((song) => song.spotify_url)
-        .filter((url) => url)
-        .join(",");
-
-      await addTracksToPlaylist(accessToken, playlistId, trackUris);
-      message.success(
-        `Playlist '${finalPlaylistName}' created successfully on Spotify!`
-      );
-    } catch (error) {
-      console.error("Failed to create playlist:", error);
-      message.error("Failed to create playlist on Spotify.");
-    } finally {
-      setCreatingPlaylist(false);
-    }
-  };
-
-  const reconnectToSpotify = () => {
-    clearAccessToken();
-    window.location.href = getSpotifyAuthUrl();
+  // Function to handle copying all URLs to clipboard
+  const handleCopyAllUrls = () => {
+    const songUrls = playlist.map((song) => song.spotify_url).join("\n");
+    navigator.clipboard.writeText(songUrls)
+      .then(() => message.success("All song URLs copied to clipboard!"))
+      .catch(() => message.error("Failed to copy song URLs."));
   };
 
   const columns = [
@@ -184,53 +93,12 @@ const PlaylistGenerator = () => {
       <div className="mb-4">
         <p className="mb-6 text-center md:text-left text-sm md:text-lg">
           Generate your random hit playlists and filter on decades and how
-          big/obscure hits you want to include. After the list has been
-          generated, you can easily send it as a playlist to Spotify. To build
-          playlists from your ranked or bookmarked songs, please visit your{" "}
-          <a href="/profile" className="text-blue-500 underline">
-            profile
-          </a>{" "}
-          (registered users only).
+          big/obscure hits you want to include.
         </p>
-        {!isConnected && (
-          <p className="mb-6 text-center md:text-center text-sm md:text-lg bg-yellow-200 border border-yellow-400 text-yellow-800 p-4 rounded-lg">
-            ⚠️ To be able to send playlists to Spotify, you need to connect your
-            Spotify account.
-          </p>
-        )}
       </div>
 
       {/* Container to match the width */}
       <div className="w-full">
-        {/* Spotify Authentication Button */}
-        {!isConnected ? (
-          // If the user is not connected, show the "Connect to Spotify" button
-          <div className="mb-4 text-center">
-            <Button
-              type="primary"
-              href={authUrl}
-              className="w-full md:w-1/3 mb-4 bg-blue-500 border-blue-600 text-white hover:bg-blue-600 hover:border-blue-700"
-            >
-              Connect to Spotify
-            </Button>
-          </div>
-        ) : (
-          // If the user is connected, show the "Disconnect from Spotify" button
-          <div className="mb-4 text-center">
-            <Button
-              type="primary"
-              onClick={() => {
-                clearAccessToken(); // Clear Spotify tokens
-                setIsConnected(false); // Update state to reflect disconnection
-                message.info("You have been disconnected from Spotify.");
-              }}
-              className="w-full md:w-1/3 mb-4 bg-red-500 border-red-600 text-white hover:bg-red-600 hover:border-red-700"
-            >
-              Disconnect from Spotify
-            </Button>
-          </div>
-        )}
-
         {/* Decades filter - Full-width frame */}
         <div className="mb-4 border border-gray-300 p-4 bg-gray-50 w-full">
           <span className="block mb-2 text-lg font-semibold">
@@ -288,16 +156,8 @@ const PlaylistGenerator = () => {
             </Select>
           </div>
 
-          {/* Third column: Playlist Name and Buttons */}
+          {/* Third column: Buttons */}
           <div className="flex flex-col justify-end gap-4 w-full md:w-1/3">
-            {/* Input for playlist name */}
-            <Input
-              placeholder="Enter playlist name"
-              value={playlistName}
-              onChange={(e) => setPlaylistName(e.target.value)}
-              className="w-full mb-4 p-2 border border-gray-300  text-lg font-semibold focus:border-blue-500 focus:ring focus:ring-blue-200"
-            />
-
             <Button
               onClick={handleGeneratePlaylist}
               className="w-full px-6 py-3 text-lg text-white border border-pink-300 flex items-center justify-center hover:bg-blue-600 bg-pink-400"
@@ -319,28 +179,13 @@ const PlaylistGenerator = () => {
               Generate Playlist
             </Button>
 
+            {/* Copy All URLs Button */}
             {playlist.length > 0 && (
               <Button
-                onClick={createSpotifyPlaylist}
-                className="w-full px-6 py-3 text-lg text-white border border-green-700 rounded flex items-center justify-center hover:bg-green-700 bg-green-400"
-                loading={creatingPlaylist}
-                disabled={!isConnected} // Disable the button if not connected
+                onClick={handleCopyAllUrls}
+                className="mt-4 px-6 py-3 text-lg text-white border border-pink-300 flex items-center justify-center hover:bg-green-600 bg-green-400"
               >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                Send to Spotify
+                Copy All URLs
               </Button>
             )}
           </div>
