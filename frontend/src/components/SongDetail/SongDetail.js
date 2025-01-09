@@ -21,11 +21,11 @@ import {
   TwitterShareButton,
   WhatsappShareButton,
   FacebookMessengerShareButton,
-  FacebookIcon,  // Importing FacebookIcon
-  TwitterIcon,   // Importing TwitterIcon
-  WhatsappIcon,  // Importing WhatsappIcon
-  FacebookMessengerIcon  // Importing FacebookMessengerIcon
-} from 'react-share';
+  FacebookIcon, // Importing FacebookIcon
+  XIcon, // Importing TwitterIcon
+  WhatsappIcon, // Importing WhatsappIcon
+  FacebookMessengerIcon, // Importing FacebookMessengerIcon
+} from "react-share";
 
 const SongDetail = () => {
   const { slug } = useParams();
@@ -44,8 +44,6 @@ const SongDetail = () => {
   const userId = userProfile ? userProfile.id : null;
   const [artistHashtag, setArtistHashtag] = useState("");
 
-
-
   const toggleReview = () => {
     setShowReview(!showReview);
   };
@@ -62,7 +60,7 @@ const SongDetail = () => {
         }
       } catch (error) {
         // Handle other errors if needed
-        console.error('Error fetching user rating:', error);
+        console.error("Error fetching user rating:", error);
       }
     };
 
@@ -98,9 +96,8 @@ const SongDetail = () => {
         setIsBookmarked(fetchedSong.is_bookmarked);
         document.title = `${fetchedSong.title} by ${fetchedSong.artist} at PopHits.org`;
 
-        const artistHashtag = fetchedSong.artist.replace(/\s+/g, '');
+        const artistHashtag = fetchedSong.artist.replace(/\s+/g, "");
         setArtistHashtag(artistHashtag);
-
 
         if (isAuthenticated && fetchedSong.comments) {
           const userComment = fetchedSong.comments.find(
@@ -117,8 +114,6 @@ const SongDetail = () => {
         }
       } catch (error) {}
     };
-
-
 
     fetchData();
   }, [slug, isAuthenticated, user]);
@@ -272,17 +267,29 @@ const SongDetail = () => {
     <div className="container mx-auto px-4 py-8">
       {song && (
         <>
-        <Helmet>
-          <title>{`${song.title} by ${song.artist}`}</title>
-          <meta property="og:title" content={`${song.title} by ${song.artist}`} />
-          <meta property="og:description" content={song.review} />
-          <meta property="og:image" content="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png" />
-          <meta property="og:url" content={window.location.href} />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={`${song.title} by ${song.artist}`} />
-          <meta name="twitter:description" content={song.review} />
-          <meta name="twitter:image" content="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png" />
-        </Helmet>
+          <Helmet>
+            <title>{`${song.title} by ${song.artist}`}</title>
+            <meta
+              property="og:title"
+              content={`${song.title} by ${song.artist}`}
+            />
+            <meta property="og:description" content={song.review} />
+            <meta
+              property="og:image"
+              content="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+            />
+            <meta property="og:url" content={window.location.href} />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta
+              name="twitter:title"
+              content={`${song.title} by ${song.artist}`}
+            />
+            <meta name="twitter:description" content={song.review} />
+            <meta
+              name="twitter:image"
+              content="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+            />
+          </Helmet>
           <div className="flex flex-col items-center justify-center">
             <h2 className="song-title">
               <span>{song.title}</span>
@@ -312,68 +319,68 @@ const SongDetail = () => {
                 </span>
               </div>
             )}
-            
           </div>
-          <div className="song-info-container">
-            <div className="song-info-box">
-              <p>
-                <span className="info-item">📅Year: {song.year}</span>
-                <span className="info-item">
-                  📈Peak Position: {song.peak_rank}
-                </span>
-                <span className="info-item">
-                  ⏱Weeks on chart: {song.weeks_on_chart}
-                </span>
-                <span className="info-item">
-                🖐🏾# of ratings: {song.total_ratings}
-                </span>
-              </p>
+          <div className="song-info-container bg-gray-50 text-black p-2 mt-2 mb-4 text-center border border-gray-300 rounded-lg">
+  <div className="song-info-box">
+    <p>
+      <span className="info-item">📅 Year: {song.year}</span>
+      <span className="info-item">📈 Peak Position: {song.peak_rank}</span>
+      <span className="info-item">⏱ Weeks on chart: {song.weeks_on_chart}</span>
+      <span className="info-item">🖐🏾 # of ratings: {song.total_ratings}</span>
+    </p>
+  </div>
+</div>
+
+
+          <div
+            className="social-share-buttons"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <div style={{ textAlign: "center", marginRight: "10px" }}>
+              <FacebookShareButton
+                url={window.location.href}
+                quote={`${song.title} by ${song.artist}`}
+                hashtag="#popmusic"
+                image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+              >
+                <FacebookIcon size={32} round />
+              </FacebookShareButton>
+            </div>
+            <div style={{ textAlign: "center", marginRight: "10px" }}>
+              <TwitterShareButton
+                url={window.location.href}
+                title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at ${song.peak_rank}`}
+                via="PopHitsOrg"
+                hashtags={[
+                  "popmusic",
+                  "favoritesong",
+                  artistHashtag,
+                  "pophitsdotorg",
+                ]}
+                image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+              >
+                <XIcon size={32} round />
+              </TwitterShareButton>
+            </div>
+            <div style={{ textAlign: "center", marginRight: "10px" }}>
+              <WhatsappShareButton
+                url={window.location.href}
+                title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at #${song.peak_rank}`}
+                separator=" - "
+              >
+                <WhatsappIcon size={32} round />
+              </WhatsappShareButton>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <FacebookMessengerShareButton
+                url={window.location.href}
+                appId="your-facebook-app-id" // Replace with your Facebook App ID
+                image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+              >
+                <FacebookMessengerIcon size={32} round />
+              </FacebookMessengerShareButton>
             </div>
           </div>
-
-          <div className="social-share-buttons" style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ textAlign: 'center', marginRight: '10px' }}>
-                <FacebookShareButton
-                    url={window.location.href}
-                    quote={`${song.title} by ${song.artist}`}
-                    hashtag="#popmusic"
-                    image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
-                >
-                    <FacebookIcon size={32} round />
-                </FacebookShareButton>
-            </div>
-            <div style={{ textAlign: 'center', marginRight: '10px' }}>
-                <TwitterShareButton
-                    url={window.location.href}
-                    title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at ${song.peak_rank}`}
-                    via="PopHitsOrg"
-                    hashtags={['popmusic', 'favoritesong', artistHashtag, 'pophitsdotorg']}
-                    image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
-                >
-                    <TwitterIcon size={32} round />
-                </TwitterShareButton>
-            </div>
-            <div style={{ textAlign: 'center', marginRight: '10px' }}>
-                <WhatsappShareButton
-                    url={window.location.href}
-                    title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at #${song.peak_rank}`}
-                    separator=" - "
-                >
-                    <WhatsappIcon size={32} round />
-                </WhatsappShareButton>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-                <FacebookMessengerShareButton
-                    url={window.location.href}
-                    appId="your-facebook-app-id" // Replace with your Facebook App ID
-                    image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
-                >
-                    <FacebookMessengerIcon size={32} round />
-                </FacebookMessengerShareButton>
-            </div>
-        </div>
-
-
 
           <div className="spotify-embed">
             {song.spotify_url ? (
@@ -464,13 +471,13 @@ const SongDetail = () => {
                 </div>
               </div>
             )}
-            <div className="review-text">
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(song.review),
-                }}
-              />
-            </div>
+            <div className="review-text bg-gray-50 text-black p-2 mt-2 mb-4 border border-gray-300 rounded-lg">
+  <p
+    dangerouslySetInnerHTML={{
+      __html: DOMPurify.sanitize(song.review),
+    }}
+  />
+</div>
             {isAuthenticated && (
               <div className="flex flex-wrap">
                 <form style={{ display: "block", width: "100%" }}>

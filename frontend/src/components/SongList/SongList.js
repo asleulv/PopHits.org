@@ -340,6 +340,9 @@ const SongList = () => {
             },
           }}
           onChange={handleTableChange}
+          locale={{
+            emptyText: "🤔 No hits found", // Customize the "No Data" text here
+          }}
         />
       </div>
       <div className="mt-4 text-center">

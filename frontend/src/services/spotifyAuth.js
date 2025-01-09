@@ -3,8 +3,6 @@ const REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const RESPONSE_TYPE = 'token'; // Using implicit grant flow
 
-// Log the redirect URI to check if it's being set correctly
-console.log('Redirect URI:', REDIRECT_URI);
 
 // Function to get Spotify authorization URL
 export const getSpotifyAuthUrl = () => {

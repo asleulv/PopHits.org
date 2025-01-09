@@ -36,3 +36,4 @@ backend/core/_import_review.py
 backend/core/_import.py
 backend/core/_spotify_import.py
 backend/core/_test_mail.py
+backend/core/settings.py
