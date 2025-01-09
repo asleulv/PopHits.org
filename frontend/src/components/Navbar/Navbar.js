@@ -92,6 +92,7 @@ const Navbar = ({ isAuthenticated }) => {
                   Database
                 </Link>
               </li>
+              
               <li className="navbar-menu-item">
                 <Link
                   to="/playlist-generator"
@@ -104,6 +105,7 @@ const Navbar = ({ isAuthenticated }) => {
                   Create Playlist
                 </Link>
               </li>
+              
               <li className="navbar-menu-item">
                 <Link
                   to="/random"
