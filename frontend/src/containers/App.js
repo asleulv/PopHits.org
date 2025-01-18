@@ -9,6 +9,7 @@ import FrontPage from "../components/FrontPage/FrontPage";
 import SongList from "../components/SongList/SongList";
 import SongDetail from "../components/SongDetail/SongDetail";
 import PlaylistGenerator from "../components/PlaylistGenerator/PlaylistGenerator";
+import QuizGenerator from "../components/QuizGenerator/QuizGenerator";
 import CookiePolicy from "../components/CookiePolicy/CookiePolicy";
 import Register from "../components/users/Register";
 import Login from "../components/users/Login";
@@ -97,6 +98,7 @@ const App = () => {
             <Route path="/privacy-policy" element={<CookiePolicy />} />
             <Route path="/songs" element={<SongList />} />
             <Route path="/playlist-generator" element={<PlaylistGenerator />} />
+            <Route path="/quiz-generator" element={<QuizGenerator />} />
             <Route path="/songs/:slug" element={<SongDetail />} />
             <Route path="/artist/:artist_slug" element={<SongList />} />
             <Route path="/year/:year" element={<SongList />} />

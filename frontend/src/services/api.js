@@ -436,6 +436,28 @@ export const generatePlaylist = async (numSongs, hitLevel, selectedDecades) => {
   }
 };
 
+// Function to generate quiz questions
+export const generateQuiz = async (numSongs, hitLevel, selectedDecades) => {
+  try {
+    // Initialize URLSearchParams
+    const params = new URLSearchParams({
+      number_of_songs: numSongs,
+      hit_size: hitLevel
+    });
+    
+    // Append each decade separately
+    selectedDecades.forEach(decade => params.append('decades', decade));
+
+    const response = await songApi.get('generate-quiz/', {
+      params: params
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error generating quiz:', error);
+    throw error;
+  }
+};
+
 
 
 

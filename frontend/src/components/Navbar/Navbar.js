@@ -4,6 +4,7 @@ import { useAuth } from "../../services/auth";
 import { slide as Menu } from "react-burger-menu";
 import oldhitsLogo from "./oldhits_logo.png";
 import { FaHome, FaHouseUser, FaUser, FaDiceD6 } from "react-icons/fa";
+import { MdQuiz } from "react-icons/md";
 import { BsMusicPlayerFill, BsListOl } from "react-icons/bs";
 import { FaCircleInfo } from "react-icons/fa6";
 import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
@@ -103,6 +104,19 @@ const Navbar = ({ isAuthenticated }) => {
                     <BsListOl />
                   </span>
                   Create Playlist
+                </Link>
+              </li>
+
+              <li className="navbar-menu-item">
+                <Link
+                  to="/quiz-generator"
+                  className="navbar-menu-link hover:text-gray-300"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="navbar-menu-icon">
+                    <MdQuiz />
+                  </span>
+                  Create Quiz
                 </Link>
               </li>
               
