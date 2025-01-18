@@ -4,7 +4,7 @@ settings.py
 # Ignore Python bytecode files
 *.pyc
 
-# Ignore virtual environment directories
+# Ignore virtual environment directories       .gitignore
 venv/
 
 # Ignore SQLite database file + data exports
@@ -13,6 +13,19 @@ backend/data.json
 backend/dump.json
 backend/export.sql
 backend/data.csv
+backend/backup.sql
+
+# Ignore build and static directories
+/backend/frontend/build/
+/backend/static/
+/backend/media/
+
+# Ignore media files
+/backend/media/
+
+# Ignore static files (if they are generated automatically)
+/backend/static_root/
+
 
 # Ignore Node.js modules
 frontend/node_modules/
