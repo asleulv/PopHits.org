@@ -73,7 +73,7 @@ const QuizGenerator = () => {
       <div className="mb-4">
         <p className="mb-6 text-center md:text-left text-sm md:text-lg">
           Generate your random hit song quiz questions and filter by decades and
-          how big/obscure hits you want to include.
+          how big or obscure hits you want to include.
         </p>
       </div>
 
