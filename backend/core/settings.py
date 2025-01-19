@@ -1,9 +1,11 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-from django.core.mail import backends
 
 load_dotenv()
+
+# Get the environment (default to 'development' if not set)
+DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,13 +24,10 @@ STATICFILES_DIRS = [
 ]
 
 
-
-
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org','188.245.244.69']
 SESSION_COOKIE_AGE = 3600
 
 # REGISTRATION EMAIL
@@ -128,40 +127,29 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'hitquiz$pophits',
-#        'USER': 'hitquiz',
-#        'PASSWORD': os.getenv('DB_PASSWORD'),
-#        'HOST': 'hitquiz.mysql.pythonanywhere-services.com',
-#        'PORT': '3306',
-#    }
-#}
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pophits_org',
-        'USER': 'hairmetalclub',
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'localhost',   
-        'PORT': '3306',        
+if DJANGO_ENV == 'production':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DB_NAME'),  # Production database name
+            'USER': os.getenv('DB_USER'),  # Production database user
+            'PASSWORD': os.getenv('DB_PASSWORD'),  # Production database password
+            'HOST': os.getenv('DB_HOST', 'localhost'),  # Production host
+            'PORT': os.getenv('DB_PORT', '3306'),  # Production port
+        }
     }
-}
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': os.getenv('DB_NAME', 'pophits'),  # Defaults to 'pophits' if not set
-#        'USER': os.getenv('DB_USER', 'pophitsuser'),  # Defaults to 'pophitsuser' if not set
-#        'PASSWORD': os.getenv('DB_PASSWORD'),
-#        'HOST': os.getenv('DB_HOST', 'localhost'),  # Defaults to 'localhost' if not set
-#        'PORT': os.getenv('DB_PORT', '3306'),  # Defaults to '3306' if not set
-#    }
-#}
+else:  # Development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DB_NAME', 'pophits_org'),  # Development database name
+            'USER': os.getenv('DB_USER', 'hairmetalclub'),  # Development database user
+            'PASSWORD': os.getenv('DB_PASSWORD'),  # Development database password
+            'HOST': os.getenv('DB_HOST', 'localhost'),  # Development host
+            'PORT': os.getenv('DB_PORT', '3306'),  # Development port
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
