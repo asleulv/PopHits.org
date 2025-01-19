@@ -15,7 +15,7 @@ MEDIA_URL = '/media/'
 
 REACT_BUILD_DIR = BASE_DIR / 'frontend/build'
 
-STATIC_ROOT = os.path.join(REACT_BUILD_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
 # Include only the React build directory in STATICFILES_DIRS
