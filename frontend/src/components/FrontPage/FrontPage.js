@@ -138,7 +138,7 @@ const FrontPage = () => {
 
       <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full">
         <div className="flex-1 mb-6 md:mb-0">
-        <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-400 to-blue-900 bg-clip-text text-transparent">
+        <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-400 to-pink-800 bg-clip-text text-transparent">
   50 Years of Hits
 </h1>
 
@@ -151,7 +151,7 @@ const FrontPage = () => {
           </p>
           <p className="mb-6 text-center md:text-left text-sm md:text-lg">
             Here, you can listen to half a century of pop music hits and rate
-            them as you go. There are about <span className="text-pink-400 font-bold">20,000</span> of them so you better get
+            them as you go. There are about <span className="text-pink-700 font-bold">20,000</span> of them so you better get
             started!
           </p>
           <div className="mb-6 text-center md:text-left text-sm md:text-lg">
