@@ -66,9 +66,9 @@ const QuizGenerator = () => {
 
   return (
     <div className="p-4 min-h-screen">
-      <div className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">
+      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">
       🤷‍♂️ Hit Song Quiz Generator
-      </div>
+      </h1>
 
       <div className="mb-4">
         <p className="mb-6 text-center md:text-left text-sm md:text-lg">

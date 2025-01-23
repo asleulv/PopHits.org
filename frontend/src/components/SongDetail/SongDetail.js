@@ -291,14 +291,14 @@ const SongDetail = () => {
             />
           </Helmet>
           <div className="flex flex-col items-center justify-center">
-            <h2 className="song-title">
+            <h1 className="song-title">
               <span>{song.title}</span>
-            </h2>
+              <br />
+              <span className="text-md">
+                by <Link to={`/artist/${song.artist_slug}`}>{song.artist}</Link>
+              </span>
+            </h1>
           </div>
-
-          <h2 className="artist-title" style={{ marginTop: 0 }}>
-            by <Link to={`/artist/${song.artist_slug}`}>{song.artist}</Link>
-          </h2>
           <div className="flex items-center">
             {isAuthenticated && (
               <button
@@ -320,18 +320,26 @@ const SongDetail = () => {
               </div>
             )}
           </div>
+
+          <h2 className="sr-only">Song Information</h2>
           <div className="song-info-container bg-gray-50 text-black p-2 mt-2 mb-4 text-center border border-gray-300 rounded-lg">
-  <div className="song-info-box">
-    <p>
-      <span className="info-item">📅 Year: {song.year}</span>
-      <span className="info-item">📈 Peak Position: {song.peak_rank}</span>
-      <span className="info-item">⏱ Weeks on chart: {song.weeks_on_chart}</span>
-      <span className="info-item">🖐🏾 # of ratings: {song.total_ratings}</span>
-    </p>
-  </div>
-</div>
+            <div className="song-info-box">
+              <p>
+                <span className="info-item">📅 Year: {song.year}</span>
+                <span className="info-item">
+                  📈 Peak Position: {song.peak_rank}
+                </span>
+                <span className="info-item">
+                  ⏱ Weeks on chart: {song.weeks_on_chart}
+                </span>
+                <span className="info-item">
+                  🖐🏾 # of ratings: {song.total_ratings}
+                </span>
+              </p>
+            </div>
+          </div>
 
-
+          <h2 className="sr-only">Share Options</h2>
           <div
             className="social-share-buttons"
             style={{ display: "flex", justifyContent: "center" }}
@@ -382,6 +390,7 @@ const SongDetail = () => {
             </div>
           </div>
 
+          <h2 className="sr-only">Audio Player</h2>
           <div className="spotify-embed">
             {song.spotify_url ? (
               <iframe
@@ -471,15 +480,17 @@ const SongDetail = () => {
                 </div>
               </div>
             )}
+            <h2 className="sr-only">Song Review</h2>
             <div className="review-text bg-gray-50 text-black p-2 mt-2 mb-4 border border-gray-300 rounded-lg">
-  <p
-    dangerouslySetInnerHTML={{
-      __html: DOMPurify.sanitize(song.review),
-    }}
-  />
-</div>
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(song.review),
+                }}
+              />
+            </div>
             {isAuthenticated && (
               <div className="flex flex-wrap">
+                <h2 className="sr-only">User Comments</h2>
                 <form style={{ display: "block", width: "100%" }}>
                   <label className="block mb-2">
                     <p className="mr-2 font-bold">Your Comment:</p>

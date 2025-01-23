@@ -261,7 +261,7 @@ const SongList = () => {
 
   return (
     <>
-      <div className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">{getHeading()}</div>
+      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">{getHeading()}</h1>
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-4 p-4 rounded-lg">
         <div className="flex items-center border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
           <span className="text-lg font-semibold mr-4">#1 hits filter</span>
