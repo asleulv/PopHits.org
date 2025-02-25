@@ -289,6 +289,7 @@ const SongDetail = () => {
               name="twitter:image"
               content="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
             />
+            <link rel="canonical" href={`https://pophits.org/songs/${song.slug}`} />
           </Helmet>
           <div className="flex flex-col items-center justify-center">
             <h1 className="song-title">
