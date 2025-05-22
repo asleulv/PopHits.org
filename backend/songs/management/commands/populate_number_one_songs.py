@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from songs.models import Song, NumberOneSong
 
 class Command(BaseCommand):
@@ -18,20 +19,24 @@ class Command(BaseCommand):
         # Create new NumberOneSong entries
         created_count = 0
         for song in number_one_songs:
-            NumberOneSong.objects.create(
-                title=song.title,
-                artist=song.artist,
-                year=song.year,
-                peak_rank=song.peak_rank,
-                weeks_on_chart=song.weeks_on_chart,
-                average_user_score=song.average_user_score,
-                total_ratings=song.total_ratings,
-                spotify_url=song.spotify_url,
-                youtube_url=song.youtube_url,
-                slug=song.slug,
-                artist_slug=song.artist_slug
-            )
-            created_count += 1
+            try:
+                with transaction.atomic():
+                    NumberOneSong.objects.create(
+                        title=song.title,
+                        artist=song.artist,
+                        year=song.year,
+                        peak_rank=song.peak_rank,
+                        weeks_on_chart=song.weeks_on_chart,
+                        average_user_score=song.average_user_score,
+                        total_ratings=song.total_ratings,
+                        spotify_url=song.spotify_url,
+                        youtube_url=song.youtube_url,
+                        slug=song.slug,
+                        artist_slug=song.artist_slug
+                    )
+                    created_count += 1
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f"Error creating NumberOneSong for '{song.title}' by {song.artist}: {e}"))
             if created_count % 100 == 0:  # Progress update every 100 songs
                 self.stdout.write(f'Processed {created_count}/{total_songs} songs...')
         

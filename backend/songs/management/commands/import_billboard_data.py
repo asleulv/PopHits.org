@@ -365,7 +365,6 @@ class Command(BaseCommand):
                 return f"""<strong>Artist Bio:</strong><br>
 <p>Information about {artist} is currently unavailable.</p>"""
     
-    @transaction.atomic
     def import_data(self, unique_songs, add_spotify=False, add_openai=False, force_update=False):
         """Import the processed data into the database."""
         self.stdout.write("\n=== IMPORTING DATA ===\n")
@@ -452,9 +451,10 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.SUCCESS(f"Added description for '{song_data['title']}' by {song_data['artist']}"))
                 
                 if updated:
-                    existing_song.save()
-                    songs_updated += 1
-                    self.stdout.write(f"Updated existing song: '{song_data['title']}' by {song_data['artist']}")
+                    with transaction.atomic():
+                        existing_song.save()
+                        songs_updated += 1
+                        self.stdout.write(f"Updated existing song: '{song_data['title']}' by {song_data['artist']}")
                 
                 songs_skipped += 1
                 if songs_skipped % 100 == 0:
@@ -486,18 +486,19 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.SUCCESS(f"Generated description for new song '{song_data['title']}' by {song_data['artist']}"))
                 
                 # Create the song
-                Song.objects.create(
-                    title=song_data['title'],
-                    artist=song_data['artist'],
-                    year=song_data['year'],
-                    peak_rank=song_data['peak_position'],
-                    weeks_on_chart=song_data['weeks_on_chart'],
-                    slug=slug,
-                    artist_slug=artist_slug,
-                    spotify_url=spotify_url or "",
-                    review=description
-                )
-                songs_created += 1
+                with transaction.atomic():
+                    Song.objects.create(
+                        title=song_data['title'],
+                        artist=song_data['artist'],
+                        year=song_data['year'],
+                        peak_rank=song_data['peak_position'],
+                        weeks_on_chart=song_data['weeks_on_chart'],
+                        slug=slug,
+                        artist_slug=artist_slug,
+                        spotify_url=spotify_url or "",
+                        review=description
+                    )
+                    songs_created += 1
                 
                 if songs_created % 100 == 0:
                     self.stdout.write(f"Created {songs_created} new songs...")
