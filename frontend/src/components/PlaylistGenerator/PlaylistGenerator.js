@@ -180,7 +180,7 @@ const PlaylistGenerator = () => {
           <div className="flex flex-col justify-end gap-4 w-full md:w-1/3">
             <Button
               onClick={handleGeneratePlaylist}
-              className="w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl shadow-md flex items-center justify-center hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-[1.02]"
+              className="w-full px-6 py-3 text-lg text-pink-400 hover:text-pink-500 rounded-xl shadow-md flex items-center justify-center transition-all duration-200 ease-in-out"
               size="large"
             >
               <RefreshCw className="w-5 h-5 mr-2" />
@@ -191,7 +191,7 @@ const PlaylistGenerator = () => {
             {playlist.length > 0 && (
               <Button
                 onClick={handleCopyAllUrls}
-                className="w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-md flex items-center justify-center hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-[1.02]"
+                className="w-full px-6 py-3 text-lg text-pink-400 hover:text-pink-500 rounded-xl shadow-md flex items-center justify-center transition-all duration-200 ease-in-out"
                 size="large"
               >
                 <Copy className="w-5 h-5 mr-2" />

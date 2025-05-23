@@ -44,7 +44,7 @@ const NumberOneHitsSection = () => {
         </h2>
         <Link
           to="/songs?filter=number-one"
-          className="ml-3 px-4 py-2 rounded-md bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-semibold text-sm shadow-md transform transition-all duration-300 hover:scale-105"
+          className="ml-3 px-4 py-2 rounded-md bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-semibold text-sm shadow-md transform transition-all duration-300 hover:text-white"
         >
           View Full List
         </Link>
@@ -74,7 +74,7 @@ const NumberOneHitsSection = () => {
                   <h3 className="text-lg md:text-xl font-semibold mb-2">
                     <Link
                       to={`/songs/${song.slug}`}
-                      className="text-white hover:text-pink-400 transition-colors"
+                      className="text-gray-100 hover:text-pink-400 transition-colors"
                     >
                       {song.title}
                     </Link>
@@ -84,7 +84,7 @@ const NumberOneHitsSection = () => {
                     <span className="text-gray-300">by</span>{" "}
                     <Link
                       to={`/artist/${song.artist_slug}`}
-                      className="text-pink-300 hover:text-pink-200 transition-colors font-medium"
+                      className="text-pink-400 hover:text-pink-200 transition-colors font-medium"
                     >
                       {song.artist}
                     </Link>
@@ -102,9 +102,9 @@ const NumberOneHitsSection = () => {
                 </div>
                 
                 <div className="mt-4 pt-3 border-t border-gray-600 flex items-center justify-center gap-2">
-                  <Clock className="w-4 h-4 text-green-400" />
+                  <Clock className="w-4 h-4 text-white" />
                   <p className="text-sm font-medium text-gray-200">
-                    <span className="text-green-400 font-bold">{song.weeks_on_chart}</span> weeks on chart
+                    <span className="text-gray-100 font-bold">{song.weeks_on_chart}</span> weeks on chart
                   </p>
                 </div>
                 

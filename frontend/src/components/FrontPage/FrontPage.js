@@ -148,7 +148,7 @@ const FrontPage = () => {
   return (
     <div className="px-0 py-8 sm:px-4 md:px-6 lg:px-8 mx-auto max-w-full">
       <Helmet>
-        <title>PopHits.org - 50 years of hit songs</title>
+        <title>PopHits.org - 70 years of hit songs</title>
         <meta
           name="description"
           content="Explore top-rated songs, random hits by decade, and number one hits on PopHits.org. Discover iconic singles from the 50s to today."
@@ -162,7 +162,7 @@ const FrontPage = () => {
       {/* Enhanced Hero Section with animation */}
       <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm animate-fadeIn">
         <div className="flex-1 mb-6 md:mb-0">
-          <h1 className="text-3xl md:text-5xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent pb-2 animate-pulse">
+          <h1 className="text-3xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-blue-500 via-pink-400 to-purple-900 bg-clip-text text-transparent pb-2">
             THE HIT SONG DATABASE
           </h1>
 
@@ -171,70 +171,61 @@ const FrontPage = () => {
           </p>
           <p className="mb-6 text-center md:text-left text-sm md:text-lg">
             Browse over{" "}
-            <span className="text-purple-900 font-bold text-xl animate-pulse">30,000</span> tracks
+            <span className="text-purple-900 font-bold">30,000</span> tracks
             spanning decades of pop history — from massive hits to forgotten
             gems. Start exploring your favorites today.
           </p>
 
           <div className="mb-6 text-center md:text-left">
-            <div className="space-y-5 text-md md:text-lg text-center md:text-left">
-              <div className="flex items-center gap-3 group p-2 hover:bg-gray-100 rounded-lg transition-all duration-300">
-                <Search className="w-6 h-6 text-purple-800 group-hover:scale-110 transition-transform" />
-                <a
-                  href="/songs"
-                  className="font-medium group-hover:text-purple-900 transition-colors hover:underline"
-                >
-                  Explore and find unheard gems
-                </a>
-              </div>
+            <div className="space-y-3 text-sm md:text-md text-center md:text-left">
+  {[
+    {
+      href: "/songs",
+      icon: <Search className="w-5 h-5 text-purple-800 group-hover:scale-110 transition-transform" />,
+      text: "Explore and find unheard gems",
+      hoverColor: "group-hover:text-purple-900",
+    },
+    {
+      href: "/songs",
+      icon: <Heart className="w-5 h-5 text-red-600 group-hover:scale-110 transition-transform" />,
+      text: "Rediscover old favourites",
+      hoverColor: "group-hover:text-red-700",
+    },
+    {
+      href: "/playlist-generator",
+      icon: <Headphones className="w-5 h-5 text-blue-700 group-hover:scale-110 transition-transform" />,
+      text: (
+        <>
+          Create playlists from your favorites{" "}
+          <span className="ml-1 text-blue-600 hover:text-blue-800 underline">
+            (<a href="https://www.youtube.com/watch?v=818njtSUKd8&t=1s">demo</a>)
+          </span>
+        </>
+      ),
+      hoverColor: "group-hover:text-blue-800",
+    },
+    {
+      href: "/quiz-generator",
+      icon: <Zap className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />,
+      text: "Test your knowledge with our quiz generator",
+      hoverColor: "group-hover:text-green-800",
+    },
+  ].map(({ href, icon, text, hoverColor }, idx) => (
+    <div key={idx} className="flex items-center gap-2 group p-1 hover:bg-gray-100 rounded-lg transition-all duration-300 flex-wrap justify-center md:justify-start">
+      {icon}
+      <a href={href} className={`font-medium transition-colors hover:underline ${hoverColor}`}>
+        {text}
+      </a>
+    </div>
+  ))}
+</div>
 
-              <div className="flex items-center gap-3 group p-2 hover:bg-gray-100 rounded-lg transition-all duration-300">
-                <Heart className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform" />
-                <a
-                  href="/songs"
-                  className="font-medium group-hover:text-red-700 transition-colors hover:underline"
-                >
-                  Rediscover old favourites
-                </a>
-              </div>
-
-              <div className="flex items-center gap-3 group p-2 hover:bg-gray-100 rounded-lg transition-all duration-300">
-                <Headphones className="w-6 h-6 text-blue-700 group-hover:scale-110 transition-transform" />
-                <a
-                  href="/playlist-generator"
-                  className="font-medium group-hover:text-blue-800 transition-colors hover:underline"
-                >
-                  Create playlists from your favorites
-                </a>
-                <span className="font-medium group-hover:text-blue-800 transition-colors">
-                  {" "}
-                  (
-                  <a
-                    href="https://www.youtube.com/watch?v=818njtSUKd8&t=1s"
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >
-                    instructions
-                  </a>
-                  )
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3 group p-2 hover:bg-gray-100 rounded-lg transition-all duration-300">
-                <Zap className="w-6 h-6 text-green-600 group-hover:scale-110 transition-transform" />
-                <a
-                  href="/quiz-generator"
-                  className="font-medium group-hover:text-green-800 transition-colors hover:underline"
-                >
-                  Test your knowledge with our quiz generator
-                </a>
-              </div>
-            </div>
           </div>
         </div>
 
         {songWithImage && (
           <div className="flex-1 mb-0 md:mb-0 w-full">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 w-full relative lg:rounded-xl shadow-lg transform transition-transform hover:scale-[1.01]">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 w-full relative lg:rounded-xl shadow-lg transform transition-transform">
               <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 text-center flex items-center justify-center gap-2">
                 <Disc className="w-8 h-8 text-pink-400 animate-spin-slow" />
                 Featured hit
@@ -314,7 +305,7 @@ const FrontPage = () => {
           </h2>
           <button
             onClick={refreshRandomHitsByDecade}
-            className="ml-3 px-4 py-2 rounded-md bg-pink-600 hover:bg-pink-500 hover:text-white transition-all duration-300 text-white font-semibold text-sm md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-md transform hover:scale-105"
+            className="ml-3 px-4 py-2 rounded-md bg-pink-600 hover:bg-pink-500 hover:text-white transition-all duration-300 text-white font-semibold text-sm md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-md transform"
           >
             Refresh
           </button>
@@ -515,9 +506,9 @@ const FrontPage = () => {
         <div className="text-center mt-6">
           <Link 
             to="/songs?sort=rating" 
-            className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
+            className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:from-pink-600 hover:to-pink-700 transition-all hover:text-white duration-300 transform"
           >
-            View all rated songs
+            All rated songs
           </Link>
         </div>
       </section>
