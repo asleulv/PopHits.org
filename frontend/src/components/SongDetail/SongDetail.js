@@ -295,7 +295,7 @@ const SongDetail = () => {
           
           {/* Enhanced Song Title Section */}
           <div className="flex flex-col items-center justify-center mb-6 bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm">
-            <h1 className="text-3xl md:text-5xl font-cherry font-bold mb-2 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-5xl px-1 py-1 font-cherry font-bold mb-2 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
               {song.title}
             </h1>
             <div className="text-xl md:text-2xl font-medium text-gray-700 mb-4">
@@ -330,28 +330,28 @@ const SongDetail = () => {
           {/* Song Information Box with Lucide icons */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 rounded-xl shadow-lg mb-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gray-700 p-4 rounded-lg text-center transform transition-transform hover:scale-105">
+              <div className="bg-gray-700 p-4 rounded-lg text-center">
                 <Calendar className="w-6 h-6 text-white mx-auto mb-1" />
                 <div className="text-white text-sm">Year</div>
-                <div className="text-white font-bold text-lg">{song.year}</div>
+                <div className="text-white font-bold text-pink-400  text-2xl">{song.year}</div>
               </div>
               
-              <div className="bg-gray-700 p-4 rounded-lg text-center transform transition-transform hover:scale-105">
+              <div className="bg-gray-700 p-4 rounded-lg text-center">
                 <TrendingUp className="w-6 h-6 text-white mx-auto mb-1" />
                 <div className="text-white text-sm">Peak Position</div>
-                <div className="text-white font-bold text-lg">#{song.peak_rank}</div>
+                <div className="text-white font-bold text-pink-400  text-2xl">#{song.peak_rank}</div>
               </div>
               
-              <div className="bg-gray-700 p-4 rounded-lg text-center transform transition-transform hover:scale-105">
+              <div className="bg-gray-700 p-4 rounded-lg text-center">
                 <Clock className="w-6 h-6 text-white mx-auto mb-1" />
                 <div className="text-white text-sm">Weeks on Chart</div>
-                <div className="text-white font-bold text-lg">{song.weeks_on_chart}</div>
+                <div className="text-white font-bold text-pink-400  text-2xl">{song.weeks_on_chart}</div>
               </div>
               
-              <div className="bg-gray-700 p-4 rounded-lg text-center transform transition-transform hover:scale-105">
+              <div className="bg-gray-700 p-4 rounded-lg text-center">
                 <Star className="w-6 h-6 text-white mx-auto mb-1" />
                 <div className="text-white text-sm">Total Ratings</div>
-                <div className="text-white font-bold text-lg">{song.total_ratings}</div>
+                <div className="text-white font-bold text-pink-400 text-2xl">{song.total_ratings}</div>
               </div>
             </div>
           </div>
