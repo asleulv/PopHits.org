@@ -16,6 +16,8 @@ const QuizGenerator = () => {
     "1980",
     "1990",
     "2000",
+    "2010",
+    "2020",
   ]);
   const [errorMessage, setErrorMessage] = useState("");
   const [revealedAnswers, setRevealedAnswers] = useState([]); // State to track which answers are revealed
@@ -62,6 +64,8 @@ const QuizGenerator = () => {
     { label: "1980s", value: "1980" },
     { label: "1990s", value: "1990" },
     { label: "2000s", value: "2000" },
+    { label: "2010s", value: "2010" },
+    { label: "2020s", value: "2020" },
   ];
 
   return (

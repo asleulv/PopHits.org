@@ -1,6 +1,23 @@
-import React, { useEffect, useState, Suspense, lazy, useMemo, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  Suspense,
+  lazy,
+  useMemo,
+  useCallback,
+} from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import {
+  Search,
+  Heart,
+  Headphones,
+  Zap,
+  Disc,
+  CalendarDays,
+  Shuffle,
+  Flame,
+} from "lucide-react";
 import { Grid } from "react-loader-spinner";
 import {
   getTopRatedSongs,
@@ -8,7 +25,7 @@ import {
   getSongsWithImages,
 } from "../../services/api";
 
-const NumberOneHitsSection = lazy(() => import('./NumberOneHitsSection'));
+const NumberOneHitsSection = lazy(() => import("./NumberOneHitsSection"));
 
 const FrontPage = () => {
   const [topRatedSongs, setTopRatedSongs] = useState([]);
@@ -36,7 +53,6 @@ const FrontPage = () => {
         console.error("Error fetching random hits by decade:", error);
       }
     };
-
 
     const fetchAllData = async () => {
       await fetchTopRatedSongs();
@@ -97,7 +113,6 @@ const FrontPage = () => {
     return shuffled.slice(0, num);
   };
 
-
   const refreshRandomHitsByDecade = async () => {
     try {
       const response = await getRandomHitsByDecade();
@@ -123,8 +138,12 @@ const FrontPage = () => {
     );
   }
 
-  // Generate year buttons from 1958 to 2008
-  const years = Array.from({ length: 51 }, (_, i) => 1958 + i);
+  // Generate year buttons from 1958 to today
+  const currentYear = new Date().getFullYear();
+  const years = Array.from(
+    { length: currentYear - 1958 + 1 },
+    (_, i) => 1958 + i
+  );
 
   return (
     <div className="px-0 py-8 sm:px-4 md:px-6 lg:px-8 mx-auto max-w-full">
@@ -138,43 +157,85 @@ const FrontPage = () => {
 
       <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full">
         <div className="flex-1 mb-6 md:mb-0">
-        <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-400 to-pink-800 bg-clip-text text-transparent">
-  50 Years of Hits
-</h1>
-
+          <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 to-purple-900 bg-clip-text text-transparent pb-1">
+            THE HIT SONG DATABASE
+          </h1>
 
           <p className="mb-6 text-center md:text-left text-sm md:text-lg">
             <strong>
-              PopHits.org is a database of every Hot 100 hit from the golden era
-              of physical media (1958-2008).
+              Listen, rate, and revisit the most iconic songs in pop music
+              history.
             </strong>
           </p>
           <p className="mb-6 text-center md:text-left text-sm md:text-lg">
-            Here, you can listen to half a century of pop music hits and rate
-            them as you go. There are about <span className="text-pink-700 font-bold">20,000</span> of them so you better get
-            started!
+            Browse over{" "}
+            <span className="text-purple-900 font-bold">30,000</span> tracks
+            spanning decades of pop history — from massive hits to forgotten
+            gems. Start exploring your favorites today.
           </p>
+
           <div className="mb-6 text-center md:text-left text-sm md:text-lg">
-            <p>🔍 Explore and find unheard gems</p>
-            <p>❤️ Rediscover old favourites</p>
-            <p>
-            🎧 Create playlists from your favorites (
-              <a
-                href="https://www.youtube.com/watch?v=818njtSUKd8&t=1s"
-                className="text-blue-500 hover:underline"
-              >
-                instructions
-              </a>
-              )
-            </p>
+            <div className="space-y-4 text-md md:text-lg text-center md:text-left">
+              <div className="flex items-center gap-3 group">
+                <Search className="w-5 h-5 text-purple-800 group-hover:scale-110 transition-transform" />
+                <a
+                  href="/songs"
+                  className="font-medium group-hover:text-purple-900 transition-colors hover:underline"
+                >
+                  Explore and find unheard gems
+                </a>
+              </div>
+
+              <div className="flex items-center gap-3 group">
+                <Heart className="w-5 h-5 text-red-600 group-hover:scale-110 transition-transform" />
+                <a
+                  href="/songs"
+                  className="font-medium group-hover:text-red-700 transition-colors hover:underline"
+                >
+                  Rediscover old favourites
+                </a>
+              </div>
+
+              <div className="flex items-center gap-3 group">
+                <Headphones className="w-5 h-5 text-blue-700 group-hover:scale-110 transition-transform" />
+                <a
+                  href="/playlist-generator"
+                  className="font-medium group-hover:text-blue-800 transition-colors hover:underline"
+                >
+                  Create playlists from your favorites
+                </a>
+                <span className="font-medium group-hover:text-blue-800 transition-colors">
+                  {" "}
+                  (
+                  <a
+                    href="https://www.youtube.com/watch?v=818njtSUKd8&t=1s"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    instructions
+                  </a>
+                  )
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 group">
+                <Zap className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />
+                <a
+                  href="/quiz-generator"
+                  className="font-medium group-hover:text-green-800 transition-colors hover:underline"
+                >
+                  Test your knowledge with our quiz generator
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
         {songWithImage && (
           <div className="flex-1 mb-0 md:mb-0 w-full">
-            <div className="bg-gray-800 text-white p-6 w-full relative">
-              <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
-                📀 Featured hit
+            <div className="bg-gray-800 text-white p-6 w-full relative lg:rounded-xl">
+              <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 text-center flex items-center justify-center gap-2">
+                <Disc className="w-8 h-8 text-white" />
+                Featured hit
               </h2>
               <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden">
                 <img
@@ -226,8 +287,9 @@ const FrontPage = () => {
       </div>
 
       <section className="mb-0 text-black p-6 w-full">
-        <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
-          📅 Hits by year
+        <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 text-center flex items-center justify-center gap-2">
+          <CalendarDays className="w-8 h-8 text-pink-600" />
+          Hits by year
         </h2>
         <div className="flex flex-wrap justify-center gap-2">
           {years.map((year) => (
@@ -242,16 +304,20 @@ const FrontPage = () => {
         </div>
       </section>
 
-      <section className="mb-0 bg-gray-800 text-white p-6 w-full">
-        <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
-          🔀 Random hits by decade{" "}
+      <section className="mb-0 bg-gray-800 text-white p-6 w-full lg:rounded-xl">
+        <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-4">
+          <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-2 text-white">
+            <Shuffle className="w-8 h-8 text-white" />
+            Random hits by decade
+          </h2>
           <button
             onClick={refreshRandomHitsByDecade}
-            className="text-blue-200 hover:underline"
+            className="ml-3 px-3 py-1 rounded-md bg-pink-600 hover:bg-pink-700 hover:text-pink-100 transition-colors duration-300 text-white font-semibold text-sm md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
           >
-            (refresh)
+            Refresh
           </button>
-        </h2>
+        </div>
+
         <div className="flex flex-col items-center">
           <div className="w-full overflow-x-auto mb-4">
             <div className="flex flex-wrap justify-center gap-2">
@@ -316,8 +382,9 @@ const FrontPage = () => {
       </section>
 
       <section className="mb-0 text-black p-6 w-full">
-        <h2 className="text-xl md:text-2xl font-cherry font-semibold mb-4 text-center">
-          ❤️‍🔥 Top 10 user ranked hits
+        <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 flex items-center justify-center gap-2 text-center">
+          <Flame className="w-8 h-8 text-pink-500" />
+          Top 10 user ranked hits
         </h2>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -418,8 +485,6 @@ const FrontPage = () => {
       <Suspense fallback={<div>Loading Number One Hits...</div>}>
         <NumberOneHitsSection />
       </Suspense>
-
-      
     </div>
   );
 };

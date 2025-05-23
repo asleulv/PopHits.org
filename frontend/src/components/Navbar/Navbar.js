@@ -9,7 +9,7 @@ import { BsMusicPlayerFill, BsListOl } from "react-icons/bs";
 import { FaCircleInfo } from "react-icons/fa6";
 import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
 import { GiBullseye } from "react-icons/gi";
-import { Input } from "antd";
+import { Input, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
@@ -93,7 +93,7 @@ const Navbar = ({ isAuthenticated }) => {
                   Database
                 </Link>
               </li>
-              
+
               <li className="navbar-menu-item">
                 <Link
                   to="/playlist-generator"
@@ -119,7 +119,7 @@ const Navbar = ({ isAuthenticated }) => {
                   Create Quiz
                 </Link>
               </li>
-              
+
               <li className="navbar-menu-item">
                 <Link
                   to="/random"
@@ -204,16 +204,23 @@ const Navbar = ({ isAuthenticated }) => {
         </div>
       </nav>
 
-      {/* Search Bar below the Navbar */}
       <div className="bg-gray-800 p-2">
         <div className="container mx-auto flex justify-end">
           <div style={{ width: "60%", marginTop: 0, marginBottom: 0 }}>
-            <Search
+            <Input.Search
               placeholder="ARTIST / SONG"
               onSearch={handleSearch}
-              enterButton={<SearchOutlined />}
               allowClear
-              style={{ width: "100%", borderRadius: 0 }} // Remove rounded corners
+              enterButton={
+                <Button
+                  type="primary"
+                  style={{ backgroundColor: "#d74d82" }} // purple background
+                  icon={<SearchOutlined />}
+                ></Button>
+              }
+              className="rounded-full overflow-hidden shadow-lg"
+              inputClassName="rounded-none bg-gray-900 text-gray-100 placeholder-pink-400"
+              style={{ borderRadius: "0.375rem" }} // example of rounded corners on input
             />
           </div>
         </div>
