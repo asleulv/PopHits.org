@@ -151,33 +151,35 @@ const FrontPage = () => {
         <title>PopHits.org - 50 years of hit songs</title>
         <meta
           name="description"
-          content="Explore top-rated songs, random hits by decade, and number one hits on PopHits.org"
+          content="Explore top-rated songs, random hits by decade, and number one hits on PopHits.org. Discover iconic singles from the 50s to today."
+        />
+        <meta
+          name="keywords"
+          content="pop hits, greatest pop songs, chart-topping hits, music history, Billboard Hot 100"
         />
       </Helmet>
 
-      <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full">
+      {/* Enhanced Hero Section with animation */}
+      <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm animate-fadeIn">
         <div className="flex-1 mb-6 md:mb-0">
-          <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 to-purple-900 bg-clip-text text-transparent pb-1">
+          <h1 className="text-3xl md:text-5xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent pb-2 animate-pulse">
             THE HIT SONG DATABASE
           </h1>
 
-          <p className="mb-6 text-center md:text-left text-sm md:text-lg">
-            <strong>
-              Listen, rate, and revisit the most iconic songs in pop music
-              history.
-            </strong>
+          <p className="mb-6 text-center md:text-left text-md md:text-xl font-semibold">
+            Listen, rate, and revisit the most iconic songs in pop music history.
           </p>
           <p className="mb-6 text-center md:text-left text-sm md:text-lg">
             Browse over{" "}
-            <span className="text-purple-900 font-bold">30,000</span> tracks
+            <span className="text-purple-900 font-bold text-xl animate-pulse">30,000</span> tracks
             spanning decades of pop history — from massive hits to forgotten
             gems. Start exploring your favorites today.
           </p>
 
-          <div className="mb-6 text-center md:text-left text-sm md:text-lg">
-            <div className="space-y-4 text-md md:text-lg text-center md:text-left">
-              <div className="flex items-center gap-3 group">
-                <Search className="w-5 h-5 text-purple-800 group-hover:scale-110 transition-transform" />
+          <div className="mb-6 text-center md:text-left">
+            <div className="space-y-5 text-md md:text-lg text-center md:text-left">
+              <div className="flex items-center gap-3 group p-2 hover:bg-gray-100 rounded-lg transition-all duration-300">
+                <Search className="w-6 h-6 text-purple-800 group-hover:scale-110 transition-transform" />
                 <a
                   href="/songs"
                   className="font-medium group-hover:text-purple-900 transition-colors hover:underline"
@@ -186,8 +188,8 @@ const FrontPage = () => {
                 </a>
               </div>
 
-              <div className="flex items-center gap-3 group">
-                <Heart className="w-5 h-5 text-red-600 group-hover:scale-110 transition-transform" />
+              <div className="flex items-center gap-3 group p-2 hover:bg-gray-100 rounded-lg transition-all duration-300">
+                <Heart className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform" />
                 <a
                   href="/songs"
                   className="font-medium group-hover:text-red-700 transition-colors hover:underline"
@@ -196,8 +198,8 @@ const FrontPage = () => {
                 </a>
               </div>
 
-              <div className="flex items-center gap-3 group">
-                <Headphones className="w-5 h-5 text-blue-700 group-hover:scale-110 transition-transform" />
+              <div className="flex items-center gap-3 group p-2 hover:bg-gray-100 rounded-lg transition-all duration-300">
+                <Headphones className="w-6 h-6 text-blue-700 group-hover:scale-110 transition-transform" />
                 <a
                   href="/playlist-generator"
                   className="font-medium group-hover:text-blue-800 transition-colors hover:underline"
@@ -217,8 +219,8 @@ const FrontPage = () => {
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 group">
-                <Zap className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />
+              <div className="flex items-center gap-3 group p-2 hover:bg-gray-100 rounded-lg transition-all duration-300">
+                <Zap className="w-6 h-6 text-green-600 group-hover:scale-110 transition-transform" />
                 <a
                   href="/quiz-generator"
                   className="font-medium group-hover:text-green-800 transition-colors hover:underline"
@@ -232,36 +234,36 @@ const FrontPage = () => {
 
         {songWithImage && (
           <div className="flex-1 mb-0 md:mb-0 w-full">
-            <div className="bg-gray-800 text-white p-6 w-full relative lg:rounded-xl">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 w-full relative lg:rounded-xl shadow-lg transform transition-transform hover:scale-[1.01]">
               <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 text-center flex items-center justify-center gap-2">
-                <Disc className="w-8 h-8 text-white" />
+                <Disc className="w-8 h-8 text-pink-400 animate-spin-slow" />
                 Featured hit
               </h2>
-              <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden">
+              <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden shadow-md">
                 <img
                   src={songWithImage.image_upload}
-                  alt={songWithImage.title}
-                  className="w-full h-full object-cover"
+                  alt={`${songWithImage.title} by ${songWithImage.artist} - Album cover from ${songWithImage.year}`}
+                  className="w-full h-full object-cover transition-all duration-500 hover:brightness-110"
                 />
-                <div className="absolute inset-0 flex flex-col justify-end p-4 bg-black bg-opacity-50 text-white">
+                <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black via-black/70 to-transparent text-white">
                   <div className="text-center text-xl md:text-2xl">
                     <Link
                       to={`/artist/${songWithImage.artist_slug}`}
-                      className="text-blue-200 hover:underline"
+                      className="text-blue-200 hover:text-pink-300 transition-colors hover:underline"
                     >
                       {songWithImage.artist}
                     </Link>
                     {" - "}
                     <Link
                       to={`/songs/${songWithImage.slug}`}
-                      className="text-blue-200 hover:underline"
+                      className="text-blue-200 hover:text-pink-300 transition-colors hover:underline"
                     >
                       {songWithImage.title}
                     </Link>
                     {" ("}
                     <Link
                       to={`/year/${songWithImage.year}`}
-                      className="text-blue-200 hover:underline"
+                      className="text-blue-200 hover:text-pink-300 transition-colors hover:underline"
                     >
                       {songWithImage.year}
                     </Link>
@@ -271,7 +273,7 @@ const FrontPage = () => {
                     {songWithImage.average_user_score > 0 ? (
                       <>
                         Average User Rating:{" "}
-                        <span className="font-bold">
+                        <span className="font-bold bg-pink-600 text-white px-2 py-1 rounded-full">
                           {songWithImage.average_user_score.toFixed(1)}
                         </span>
                       </>
@@ -286,17 +288,17 @@ const FrontPage = () => {
         )}
       </div>
 
-      <section className="mb-0 text-black p-6 w-full">
-        <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 text-center flex items-center justify-center gap-2">
+      <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
+        <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
           <CalendarDays className="w-8 h-8 text-pink-600" />
-          Hits by year
+          <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">Hits by year</span>
         </h2>
         <div className="flex flex-wrap justify-center gap-2">
           {years.map((year) => (
             <Link
               key={year}
               to={`/year/${year}`}
-              className="px-4 py-2 rounded-lg text-md bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-gray-100"
+              className="px-4 py-2 rounded-lg text-md bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-white transition-all duration-300 transform hover:scale-105 shadow-sm"
             >
               {year}
             </Link>
@@ -304,29 +306,31 @@ const FrontPage = () => {
         </div>
       </section>
 
-      <section className="mb-0 bg-gray-800 text-white p-6 w-full lg:rounded-xl">
-        <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-4">
-          <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-2 text-white">
-            <Shuffle className="w-8 h-8 text-white" />
-            Random hits by decade
+      <section className="mb-8 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white p-8 w-full lg:rounded-xl shadow-lg">
+        <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-6">
+          <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-white">
+            <Shuffle className="w-8 h-8 text-pink-400" />
+            <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">Random hits by decade</span>
           </h2>
           <button
             onClick={refreshRandomHitsByDecade}
-            className="ml-3 px-3 py-1 rounded-md bg-pink-600 hover:bg-pink-700 hover:text-pink-100 transition-colors duration-300 text-white font-semibold text-sm md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+            className="ml-3 px-4 py-2 rounded-md bg-pink-600 hover:bg-pink-500 hover:text-white transition-all duration-300 text-white font-semibold text-sm md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-md transform hover:scale-105"
           >
             Refresh
           </button>
         </div>
 
         <div className="flex flex-col items-center">
-          <div className="w-full overflow-x-auto mb-4">
-            <div className="flex flex-wrap justify-center gap-2">
+          <div className="w-full mb-6">
+            <div className="flex flex-wrap justify-center gap-3 px-2">
               {Object.keys(groupedByDecade).map((decade) => (
                 <button
                   key={decade}
                   onClick={() => setActiveDecade(decade)}
-                  className={`px-4 py-2 rounded-lg text-md bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-gray-100 ${
-                    activeDecade === decade ? "bg-pink-400 text-gray-100" : ""
+                  className={`px-5 py-2 rounded-lg text-md transition-all duration-300 transform hover:scale-105 shadow-md ${
+                    activeDecade === decade 
+                      ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold" 
+                      : "bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-white"
                   }`}
                 >
                   {decade}
@@ -337,7 +341,7 @@ const FrontPage = () => {
           <div className="w-full">
             {activeDecade && groupedByDecade[activeDecade].length > 0 ? (
               groupedByDecade[activeDecade].map((song) => (
-                <div key={song.id} className="mb-4 w-full">
+                <div key={song.id} className="mb-8 w-full bg-gray-700 rounded-lg p-4 shadow-lg transform transition-all duration-300 hover:shadow-xl">
                   <iframe
                     src={`https://open.spotify.com/embed/track/${song.spotify_url
                       .split("/")
@@ -347,90 +351,110 @@ const FrontPage = () => {
                     frameBorder="0"
                     allowtransparency="true"
                     allow="encrypted-media"
-                    className="w-full"
+                    className="w-full rounded-md shadow-md"
+                    title={`${song.title} by ${song.artist}`}
                   ></iframe>
-                  <p className="mt-2 text-center text-sm">
+                  <p className="mt-4 text-center text-sm bg-gray-800 p-3 rounded-lg shadow-inner">
                     <Link
                       to={`/songs/${song.slug}`}
-                      className="text-blue-200 hover:underline"
+                      className="text-pink-300 hover:text-pink-200 transition-colors hover:underline font-bold"
                     >
-                      <b>{song.title}</b>
+                      {song.title}
                     </Link>{" "}
                     by{" "}
                     <Link
                       to={`/artist/${song.artist_slug}`}
-                      className="text-blue-200 hover:underline"
+                      className="text-blue-300 hover:text-blue-200 transition-colors hover:underline font-bold"
                     >
-                      <b>{song.artist}</b>
+                      {song.artist}
                     </Link>{" "}
                     entered the charts in{" "}
                     <Link
                       to={`/year/${song.year}`}
-                      className="text-blue-200 hover:underline"
+                      className="text-green-300 hover:text-green-200 transition-colors hover:underline font-bold"
                     >
-                      <b>{song.year}</b>
+                      {song.year}
                     </Link>{" "}
-                    peaking at #{song.peak_rank}
+                    peaking at{" "}
+                    <span className="bg-pink-700 text-white px-2 py-1 rounded-full font-bold">
+                      #{song.peak_rank}
+                    </span>
                   </p>
                 </div>
               ))
             ) : (
-              <p>No songs available for this decade.</p>
+              <p className="text-center p-6 bg-gray-700 rounded-lg">No songs available for this decade.</p>
             )}
           </div>
         </div>
       </section>
 
-      <section className="mb-0 text-black p-6 w-full">
-        <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 flex items-center justify-center gap-2 text-center">
+      <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
+        <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
           <Flame className="w-8 h-8 text-pink-500" />
-          Top 10 user ranked hits
+          <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">Top 10 user ranked hits</span>
         </h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <div className="overflow-x-auto rounded-lg shadow-md">
+          <table className="min-w-full divide-y divide-gray-200 border-collapse">
+            <thead className="bg-gradient-to-r from-gray-800 to-gray-900 text-white">
+              <tr className="hidden md:table-row">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">#</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Title</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Artist</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Year</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Rating</th>
+              </tr>
+            </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {topRatedSongs && topRatedSongs.length > 0 ? (
                 topRatedSongs.map((song, index) => (
                   <tr
                     key={song.id}
-                    className="flex flex-col md:table-row md:w-full text-center md:text-left"
+                    className="flex flex-col md:table-row md:w-full text-center md:text-left hover:bg-gray-50 transition-colors duration-200"
                   >
                     {/* Ranking Cell */}
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-black text-xl md:text-base items-center justify-center md:justify-start">
+                    <td className="flex md:table-cell px-4 py-3 whitespace-nowrap text-black text-xl md:text-base items-center justify-center md:justify-start">
                       <span className="block md:hidden font-medium text-gray-500">
                         #{index + 1}
                       </span>
-                      <span className="hidden md:block">{index + 1}</span>
+                      <span className="hidden md:block font-semibold">
+                        {index === 0 ? (
+                          <span className="text-yellow-500 text-xl">1</span>
+                        ) : index === 1 ? (
+                          <span className="text-gray-400 text-lg">2</span>
+                        ) : index === 2 ? (
+                          <span className="text-amber-600 text-lg">3</span>
+                        ) : (
+                          index + 1
+                        )}
+                      </span>
                     </td>
 
                     {/* Info Cell with Title, Artist, Year, and Score */}
-                    <td className="flex flex-col md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base">
-                      <span className="block md:hidden text-gray-700">
+                    <td className="flex flex-col md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
+                      <span className="block md:hidden text-gray-700 bg-gray-50 p-3 rounded-lg shadow-sm">
                         <Link
                           to={`/songs/${song.slug}`}
-                          className="text-blue-800 font-bold"
+                          className="text-blue-800 font-bold text-lg hover:text-pink-600 transition-colors"
                         >
                           {song.title}
                         </Link>
                         <br className="block md:hidden" />{" "}
-                        {/* Line break on mobile */}
                         <Link
                           to={`/artist/${song.artist_slug}`}
-                          className="text-blue-800 hover:underline"
+                          className="text-blue-800 hover:underline hover:text-pink-600 transition-colors"
                         >
                           {song.artist}
                         </Link>
                         <br className="block md:hidden" />{" "}
-                        {/* Line break on mobile */}
                         <Link
                           to={`/year/${song.year}`}
-                          className="text-blue-800 hover:underline"
+                          className="text-blue-800 hover:underline hover:text-pink-600 transition-colors"
                         >
                           {song.year}
                         </Link>
                         <br className="block md:hidden" />{" "}
-                        {/* Line break on mobile */}
-                        <span className="block md:hidden bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded mt-1">
+                        <span className="block md:hidden bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold px-3 py-1 rounded-full mt-2 inline-block">
                           Rating: {song.average_user_score}/10
                         </span>
                       </span>
@@ -438,7 +462,7 @@ const FrontPage = () => {
                       <span className="hidden md:block">
                         <Link
                           to={`/songs/${song.slug}`}
-                          className="text-blue-800 font-bold"
+                          className="text-blue-800 font-bold hover:text-pink-600 transition-colors"
                         >
                           {song.title}
                         </Link>
@@ -446,24 +470,24 @@ const FrontPage = () => {
                     </td>
 
                     {/* Separate cells for Artist, Year, and Score */}
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
+                    <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
                       <Link
                         to={`/artist/${song.artist_slug}`}
-                        className="text-blue-800 hover:underline"
+                        className="text-blue-700 hover:text-pink-600 transition-colors hover:underline"
                       >
                         {song.artist}
                       </Link>
                     </td>
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
+                    <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
                       <Link
                         to={`/year/${song.year}`}
-                        className="text-blue-800 hover:underline"
+                        className="text-blue-700 hover:text-pink-600 transition-colors hover:underline"
                       >
                         {song.year}
                       </Link>
                     </td>
-                    <td className="flex md:table-cell px-4 py-2 whitespace-nowrap text-sm md:text-base hidden md:block">
-                      <span className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
+                    <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
+                      <span className="bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold px-3 py-1 rounded-full">
                         {song.average_user_score}
                       </span>
                     </td>
@@ -471,15 +495,31 @@ const FrontPage = () => {
                 ))
               ) : (
                 <tr className="flex flex-col md:table-row md:w-full">
-                  <td colSpan="5" className="px-4 py-2 text-center">
-                    Loading top-rated songs...
+                  <td colSpan="5" className="px-4 py-3 text-center">
+                    <div className="flex items-center justify-center">
+                      <Grid
+                        visible={true}
+                        height="40"
+                        width="40"
+                        ariaLabel="grid-loading"
+                        color="#f472b6"
+                      />
+                      <span className="ml-2">Loading top-rated songs...</span>
+                    </div>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="text-center mt-4"></div>
+        <div className="text-center mt-6">
+          <Link 
+            to="/songs?sort=rating" 
+            className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
+          >
+            View all rated songs
+          </Link>
+        </div>
       </section>
 
       <Suspense fallback={<div>Loading Number One Hits...</div>}>

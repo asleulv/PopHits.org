@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Select, Table, Spin, message } from "antd";
 import { generatePlaylist } from "../../services/api";
+import { Music, RefreshCw, Copy, Filter, Calendar, BarChart2 } from "lucide-react";
 
 const { Option } = Select;
 
@@ -89,30 +90,36 @@ const PlaylistGenerator = () => {
 
   return (
     <div className="p-4 min-h-screen">
-      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">
-        🤖 Hit Song Playlist Generator
+      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent flex items-center justify-center gap-3">
+        <Music className="w-8 h-8 text-pink-500" />
+        <span>Hit Song Playlist Generator</span>
       </h1>
 
       {/* Introduction */}
-      <div className="mb-4">
-        <p className="mb-6 text-center md:text-left text-sm md:text-lg">
-          Generate your random hit playlists and filter on decades and how
-          big/obscure hits you want to include.
+      <div className="mb-8">
+        <p className="text-center text-gray-700 text-lg max-w-3xl mx-auto">
+          Generate custom playlists of hit songs by selecting decades and popularity levels.
+          Perfect for discovering both chart-toppers and hidden gems from your favorite eras.
         </p>
       </div>
 
       {/* Container to match the width */}
       <div className="w-full">
         {/* Decades filter - Full-width frame */}
-        <div className="mb-4 border border-gray-300 p-4 bg-gray-50 w-full">
-          <span className="block mb-2 text-lg font-semibold">
-            Select Decades:
-          </span>
+        <div className="mb-6 bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <Calendar className="w-6 h-6 text-pink-500" />
+            <span className="text-lg font-semibold text-gray-700">
+              Select Decades:
+            </span>
+          </div>
           <Select
             mode="multiple"
             value={selectedDecades}
             onChange={(values) => setSelectedDecades(values)}
             className="w-full"
+            placeholder="Select one or more decades"
+            maxTagCount={6}
           >
             {decadesOptions.map(({ label, value }) => (
               <Option key={value} value={value}>
@@ -123,38 +130,47 @@ const PlaylistGenerator = () => {
         </div>
 
         {/* Three columns layout */}
-        <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
+        <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
           {/* First column: Select Number of Songs */}
-          <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
-            <span className="mb-2 text-lg font-semibold">
-              Select Number of Songs:
-            </span>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
+            <div className="flex items-center gap-3 mb-3">
+              <Music className="w-6 h-6 text-pink-500" />
+              <span className="text-lg font-semibold text-gray-700">
+                Number of Songs:
+              </span>
+            </div>
             <Select
               value={numSongs}
               onChange={(value) => setNumSongs(value)}
-              className="w-full text-lg"
+              className="w-full"
+              size="large"
             >
               {[10, 20, 25, 50, 100].map((num) => (
                 <Option key={num} value={num}>
-                  {num}
+                  {num} songs
                 </Option>
               ))}
             </Select>
           </div>
 
           {/* Second column: Hit Size */}
-          <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
-            <span className="mb-2 text-lg font-semibold">
-              Hit Level (1 = #1 hits, 10 = obscure):
-            </span>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
+            <div className="flex items-center gap-3 mb-3">
+              <BarChart2 className="w-6 h-6 text-pink-500" />
+              <span className="text-lg font-semibold text-gray-700">
+                Hit Level:
+              </span>
+            </div>
+            <p className="text-sm text-gray-500 mb-2">1 = #1 hits, 10 = obscure hits</p>
             <Select
               value={hitLevel}
               onChange={(value) => setHitLevel(value)}
-              className="w-full text-lg"
+              className="w-full"
+              size="large"
             >
               {[...Array(10).keys()].map((level) => (
                 <Option key={level + 1} value={level + 1}>
-                  {level + 1}
+                  Level {level + 1}
                 </Option>
               ))}
             </Select>
@@ -164,22 +180,10 @@ const PlaylistGenerator = () => {
           <div className="flex flex-col justify-end gap-4 w-full md:w-1/3">
             <Button
               onClick={handleGeneratePlaylist}
-              className="w-full px-6 py-3 text-lg text-white border border-pink-300 flex items-center justify-center hover:bg-blue-600 bg-pink-400"
+              className="w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl shadow-md flex items-center justify-center hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-[1.02]"
+              size="large"
             >
-              <svg
-                className="w-5 h-5 mr-2"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 12l5 5L20 7"
-                />
-              </svg>
+              <RefreshCw className="w-5 h-5 mr-2" />
               Generate Playlist
             </Button>
 
@@ -187,8 +191,10 @@ const PlaylistGenerator = () => {
             {playlist.length > 0 && (
               <Button
                 onClick={handleCopyAllUrls}
-                className="mt-4 px-6 py-3 text-lg text-white border border-pink-300 flex items-center justify-center hover:bg-green-600 bg-green-400"
+                className="w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-md flex items-center justify-center hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-[1.02]"
+                size="large"
               >
+                <Copy className="w-5 h-5 mr-2" />
                 Copy All URLs
               </Button>
             )}
@@ -197,22 +203,56 @@ const PlaylistGenerator = () => {
       </div>
 
       {loading ? (
-        <div className="text-center">
-          <Spin tip="Generating playlist..." />
+        <div className="flex justify-center items-center py-12">
+          <div className="text-center">
+            <Spin size="large" tip={<span className="mt-3 text-gray-600">Generating your custom playlist...</span>} />
+          </div>
         </div>
       ) : (
         <>
           {errorMessage ? (
-            <div className="text-center text-red-500 mt-4">{errorMessage}</div>
+            <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mt-6 text-center">
+              <p className="font-medium">{errorMessage}</p>
+              <p className="text-sm mt-2">Try adjusting your filters to find more songs.</p>
+            </div>
           ) : (
             playlist.length > 0 && (
-              <Table
-                dataSource={playlist}
-                columns={columns}
-                rowKey="id"
-                pagination={false}
-                className="mt-4"
-              />
+              <div className="bg-white rounded-xl shadow-md overflow-hidden mt-6">
+                <style>
+                  {`
+                    .ant-table-thead > tr > th {
+                      background-color: #f9f9f9 !important;
+                      color: #333 !important;
+                      font-weight: bold !important;
+                      padding: 12px 16px !important;
+                      border-bottom: 2px solid #eaeaea !important;
+                    }
+                    .ant-table-tbody > tr > td {
+                      padding: 10px 16px !important;
+                      transition: background-color 0.3s ease !important;
+                    }
+                    .ant-table-tbody > tr:hover > td {
+                      background-color: #f5f5f5 !important;
+                    }
+                    .ant-table-tbody > tr:nth-child(even) {
+                      background-color: #fafafa;
+                    }
+                  `}
+                </style>
+                <Table
+                  dataSource={playlist}
+                  columns={columns}
+                  rowKey="id"
+                  pagination={false}
+                  rowClassName="hover:bg-gray-50 transition-colors"
+                />
+                
+                <div className="p-4 bg-gray-50 border-t border-gray-200 text-center">
+                  <p className="text-gray-600">
+                    <span className="font-medium">{playlist.length}</span> songs generated based on your criteria
+                  </p>
+                </div>
+              </div>
             )
           )}
         </>

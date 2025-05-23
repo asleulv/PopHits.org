@@ -21,11 +21,12 @@ import {
   TwitterShareButton,
   WhatsappShareButton,
   FacebookMessengerShareButton,
-  FacebookIcon, // Importing FacebookIcon
-  XIcon, // Importing TwitterIcon
-  WhatsappIcon, // Importing WhatsappIcon
-  FacebookMessengerIcon, // Importing FacebookMessengerIcon
+  FacebookIcon,
+  XIcon,
+  WhatsappIcon,
+  FacebookMessengerIcon,
 } from "react-share";
+import { Calendar, TrendingUp, Clock, Star, Music, Share2, Heart } from "lucide-react";
 
 const SongDetail = () => {
   const { slug } = useParams();
@@ -264,7 +265,7 @@ const SongDetail = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 animate-fadeIn">
       {song && (
         <>
           <Helmet>
@@ -291,295 +292,331 @@ const SongDetail = () => {
             />
             <link rel="canonical" href={`https://pophits.org/songs/${song.slug}`} />
           </Helmet>
-          <div className="flex flex-col items-center justify-center">
-            <h1 className="song-title">
-              <span>{song.title}</span>
-              <br />
-              <span className="text-md">
-                by <Link to={`/artist/${song.artist_slug}`}>{song.artist}</Link>
-              </span>
+          
+          {/* Enhanced Song Title Section */}
+          <div className="flex flex-col items-center justify-center mb-6 bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm">
+            <h1 className="text-3xl md:text-5xl font-cherry font-bold mb-2 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+              {song.title}
             </h1>
+            <div className="text-xl md:text-2xl font-medium text-gray-700 mb-4">
+              by <Link to={`/artist/${song.artist_slug}`} className="text-blue-600 hover:text-pink-600 transition-colors">{song.artist}</Link>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {isAuthenticated && (
+                <button
+                  className={`transform transition-transform hover:scale-110 p-3 rounded-full shadow-md ${
+                    isBookmarked 
+                      ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white" 
+                      : "bg-white text-gray-400 hover:bg-gray-100"
+                  }`}
+                  onClick={handleBookmarkToggle}
+                >
+                  <Heart className={`w-5 h-5 ${isBookmarked ? "text-white" : "text-gray-400"}`} fill={isBookmarked ? "currentColor" : "none"} />
+                </button>
+              )}
+              {song.average_user_score !== null && (
+                <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold px-4 py-2 rounded-full shadow-md">
+                  <span className="text-lg">
+                    {song.average_user_score === 0
+                      ? "-"
+                      : song.average_user_score}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="flex items-center">
-            {isAuthenticated && (
-              <button
-                className={`circle-button bookmark-button ${
-                  isBookmarked ? "bookmarked" : ""
-                }`}
-                onClick={handleBookmarkToggle}
-              >
-                <span>{isBookmarked ? "❤️" : "🤍"}</span>
-              </button>
-            )}
-            {song.average_user_score !== null && (
-              <div className="bg-pink-200 text-pink-700 font-bold px-2 py-1 rounded">
-                <span>
-                  {song.average_user_score === 0
-                    ? "-"
-                    : song.average_user_score}
-                </span>
+
+          {/* Song Information Box with Lucide icons */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 rounded-xl shadow-lg mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-gray-700 p-4 rounded-lg text-center transform transition-transform hover:scale-105">
+                <Calendar className="w-6 h-6 text-white mx-auto mb-1" />
+                <div className="text-white text-sm">Year</div>
+                <div className="text-white font-bold text-lg">{song.year}</div>
               </div>
-            )}
-          </div>
-
-          <h2 className="sr-only">Song Information</h2>
-          <div className="song-info-container bg-gray-50 text-black p-2 mt-2 mb-4 text-center border border-gray-300 rounded-lg">
-            <div className="song-info-box">
-              <p>
-                <span className="info-item">📅 Year: {song.year}</span>
-                <span className="info-item">
-                  📈 Peak Position: {song.peak_rank}
-                </span>
-                <span className="info-item">
-                  ⏱ Weeks on chart: {song.weeks_on_chart}
-                </span>
-                <span className="info-item">
-                  🖐🏾 # of ratings: {song.total_ratings}
-                </span>
-              </p>
+              
+              <div className="bg-gray-700 p-4 rounded-lg text-center transform transition-transform hover:scale-105">
+                <TrendingUp className="w-6 h-6 text-white mx-auto mb-1" />
+                <div className="text-white text-sm">Peak Position</div>
+                <div className="text-white font-bold text-lg">#{song.peak_rank}</div>
+              </div>
+              
+              <div className="bg-gray-700 p-4 rounded-lg text-center transform transition-transform hover:scale-105">
+                <Clock className="w-6 h-6 text-white mx-auto mb-1" />
+                <div className="text-white text-sm">Weeks on Chart</div>
+                <div className="text-white font-bold text-lg">{song.weeks_on_chart}</div>
+              </div>
+              
+              <div className="bg-gray-700 p-4 rounded-lg text-center transform transition-transform hover:scale-105">
+                <Star className="w-6 h-6 text-white mx-auto mb-1" />
+                <div className="text-white text-sm">Total Ratings</div>
+                <div className="text-white font-bold text-lg">{song.total_ratings}</div>
+              </div>
             </div>
           </div>
 
-          <h2 className="sr-only">Share Options</h2>
-          <div
-            className="social-share-buttons"
-            style={{ display: "flex", justifyContent: "center" }}
-          >
-            <div style={{ textAlign: "center", marginRight: "10px" }}>
-              <FacebookShareButton
-                url={window.location.href}
-                quote={`${song.title} by ${song.artist}`}
-                hashtag="#popmusic"
-                image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
-              >
-                <FacebookIcon size={32} round />
-              </FacebookShareButton>
-            </div>
-            <div style={{ textAlign: "center", marginRight: "10px" }}>
-              <TwitterShareButton
-                url={window.location.href}
-                title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at ${song.peak_rank}`}
-                via="PopHitsOrg"
-                hashtags={[
-                  "popmusic",
-                  "favoritesong",
-                  artistHashtag,
-                  "pophitsdotorg",
-                ]}
-                image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
-              >
-                <XIcon size={32} round />
-              </TwitterShareButton>
-            </div>
-            <div style={{ textAlign: "center", marginRight: "10px" }}>
-              <WhatsappShareButton
-                url={window.location.href}
-                title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at #${song.peak_rank}`}
-                separator=" - "
-              >
-                <WhatsappIcon size={32} round />
-              </WhatsappShareButton>
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <FacebookMessengerShareButton
-                url={window.location.href}
-                appId="your-facebook-app-id" // Replace with your Facebook App ID
-                image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
-              >
-                <FacebookMessengerIcon size={32} round />
-              </FacebookMessengerShareButton>
+          {/* Share Options */}
+          <div className="p-1 mb-4">
+            <div className="flex justify-center gap-4">
+              <div className="transform transition-transform hover:scale-110">
+                <FacebookShareButton
+                  url={window.location.href}
+                  quote={`${song.title} by ${song.artist}`}
+                  hashtag="#popmusic"
+                  image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+                >
+                  <FacebookIcon size={40} round className="" />
+                </FacebookShareButton>
+              </div>
+              <div className="transform transition-transform hover:scale-110">
+                <TwitterShareButton
+                  url={window.location.href}
+                  title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at ${song.peak_rank}`}
+                  via="PopHitsOrg"
+                  hashtags={[
+                    "popmusic",
+                    "favoritesong",
+                    artistHashtag,
+                    "pophitsdotorg",
+                  ]}
+                  image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+                >
+                  <XIcon size={40} round className="" />
+                </TwitterShareButton>
+              </div>
+              <div className="transform transition-transform hover:scale-110">
+                <WhatsappShareButton
+                  url={window.location.href}
+                  title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at #${song.peak_rank}`}
+                  separator=" - "
+                >
+                  <WhatsappIcon size={40} round className="" />
+                </WhatsappShareButton>
+              </div>
+              <div className="transform transition-transform hover:scale-110">
+                <FacebookMessengerShareButton
+                  url={window.location.href}
+                  appId="your-facebook-app-id" // Replace with your Facebook App ID
+                  image="https://pophits.org/static/media/oldhits_logo.b80a2dacf31854b558ac.png"
+                >
+                  <FacebookMessengerIcon size={40} round className="" />
+                </FacebookMessengerShareButton>
+              </div>
             </div>
           </div>
 
-          <h2 className="sr-only">Audio Player</h2>
-          <div className="spotify-embed">
+          {/* Audio Player */}
+          <div className="mb-8">
             {song.spotify_url ? (
-              <iframe
-                src={`https://open.spotify.com/embed/track/${getTrackIdFromUrl(
-                  song.spotify_url
-                )}?utm_source=generator`}
-                width="100%"
-                height="252"
-                frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                style={{ borderRadius: "12px" }}
-              ></iframe>
+              <div className="shadow-lg rounded-xl overflow-hidden transform transition-all duration-300 hover:shadow-xl">
+                <iframe
+                  src={`https://open.spotify.com/embed/track/${getTrackIdFromUrl(
+                    song.spotify_url
+                  )}?utm_source=generator`}
+                  width="100%"
+                  height="252"
+                  frameBorder="0"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                  style={{ borderRadius: "12px" }}
+                  title={`${song.title} by ${song.artist} on Spotify`}
+                ></iframe>
+              </div>
             ) : (
-              <div className="audio-link-not-available-box">
-                <p>No audio link available atm</p>
-                <div className="search-buttons">
+              <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white p-6 rounded-xl shadow-lg">
+                <p className="text-center text-lg font-semibold mb-4">No audio link available</p>
+                <div className="flex flex-wrap justify-center gap-4">
                   <a
                     href={`https://open.spotify.com/search/${encodeURIComponent(
                       `${song.artist} ${song.title}`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="search-spotify-button"
+                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2"
                   >
-                    Search Spotify
+                    <Music className="w-4 h-4" /> Search Spotify
                   </a>
-                  <br />
                   <a
                     href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
                       `${song.artist} ${song.title}`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="search-youtube-button"
+                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2"
                   >
-                    Search YouTube
+                    <Share2 className="w-4 h-4" /> Search YouTube
                   </a>
                 </div>
               </div>
             )}
           </div>
-          {!isAuthenticated && (
-            <div
-              className="flex items-center p-4 mt-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50"
-              role="alert"
-            >
-              <svg
-                className="flex-shrink-0 w-4 h-4 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L8.707 7.293z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-              <div>
-                <span className="font-medium">
-                  Please <a href="/login">login</a> to rate this song. This will
-                  also allow you to create playlist, bookmark songs and filter
-                  your rating history.
-                </span>
+          {/* Enhanced Rating Section */}
+          <div className="mb-8">
+            {!isAuthenticated ? (
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm">
+                <div className="flex items-center p-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 mr-3 text-red-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L8.707 7.293z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <div>
+                    <span className="font-medium">
+                      Please <a href="/login" className="text-blue-600 hover:text-pink-600 transition-colors font-bold">login</a> to rate this song. This will
+                      also allow you to create playlists, bookmark songs and filter
+                      your rating history.
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
-          <div className="flex flex-col">
-            {isAuthenticated && (
-              <div className="scoring-container">
-                <div className="flex flex-wrap">
-                  <p className="scoring-label">Your score:</p>
-                  <div className="flex flex-wrap">
+            ) : (
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm mb-8">
+                <div className="flex items-center justify-center mb-2">
+                  <p className="text-lg font-medium text-gray-700 mr-4">Your Score:</p>
+                  <div className="flex flex-wrap gap-1">
                     {[...Array(10)].map((_, index) => (
                       <div
                         key={index}
-                        className={`score-box ${
-                          userScore === index + 1 ? "selected" : ""
+                        className={`w-10 h-10 flex items-center justify-center rounded-full shadow-md transition-all duration-300 cursor-pointer transform hover:scale-110 ${
+                          userScore === index + 1 
+                            ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold" 
+                            : "bg-white text-gray-700 hover:bg-gray-100"
                         }`}
                         onClick={() => handleScoreChange(index + 1)}
-                        style={{ fontSize: "0.8rem" }}
                       >
                         {index + 1}
                       </div>
                     ))}
                   </div>
                 </div>
+                <p className="text-sm text-gray-500 italic text-center">Click a number to rate, click again to remove your rating</p>
               </div>
             )}
-            <h2 className="sr-only">Song Review</h2>
-            <div className="review-text bg-gray-50 text-black p-2 mt-2 mb-4 border border-gray-300 rounded-lg">
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(song.review),
-                }}
-              />
+            
+            {/* Review Section */}
+            <div className="mb-8">
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <div
+                  className="prose max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(song.review),
+                  }}
+                />
+              </div>
             </div>
-            {isAuthenticated && (
-              <div className="flex flex-wrap">
-                <h2 className="sr-only">User Comments</h2>
-                <form style={{ display: "block", width: "100%" }}>
-                  <label className="block mb-2">
-                    <p className="mr-2 font-bold">Your Comment:</p>
-                    <textarea
-                      value={commentText}
-                      onChange={handleCommentChange}
-                      className="block w-full mt-1 border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleCommentSubmit}
-                    className="submit-comment-button"
-                  >
-                    📢
-                  </button>
-                  {commentError && (
-                    <p className="text-red-500 mt-2">{commentError}</p>
-                  )}
-                  {commentSuccess && (
-                    <p className="text-green-500">
-                      Comment submitted successfully!
-                    </p>
-                  )}
-                </form>
-              </div>
-            )}
-          </div>
-
-          <div className="comments-section">
-            {song.comments &&
-              song.comments.length > 0 &&
-              song.comments
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-                .map((comment) => (
-                  <div key={comment.id} className="comment-container">
-                    {editCommentId === comment.id ? (
-                      <>
-                        <textarea
-                          value={editCommentText}
-                          onChange={(e) => setEditCommentText(e.target.value)}
-                          className="block w-full mt-1 border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        />
-                        <button
-                          onClick={handleSaveEditComment}
-                          className="submit-comment-button"
-                        >
-                          Save
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <p className="comment-text">{comment.text}</p>
-                        <p className="comment-meta">
-                          Posted by:{" "}
-                          {comment.username ? comment.username : "Unknown User"}
-                          <span className="ml-2">
-                            Posted {formatDateTime(comment.created_at)}
-                          </span>
-                        </p>
-                        {comment.user_id === userId && (
-                          <div className="mt-2">
-                            <button
-                              onClick={() => handleDeleteComment(comment.id)}
-                              className="text-red-500 mr-2"
-                            >
-                              Delete
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleEditComment(comment.id, comment.text)
-                              }
-                              className="text-indigo-500"
-                            >
-                              Edit
-                            </button>
-                          </div>
+            
+            {/* Comments Section */}
+            <div className="mb-8">
+              {isAuthenticated && (
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
+                  <form className="w-full">
+                    <label className="block mb-2">
+                      <p className="font-bold text-gray-700 mb-2">Add Your Comment:</p>
+                      <textarea
+                        value={commentText}
+                        onChange={handleCommentChange}
+                        className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                        rows="3"
+                        placeholder="Share your thoughts about this song..."
+                      />
+                    </label>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        {commentError && (
+                          <p className="text-red-500 text-sm">{commentError}</p>
                         )}
-                      </>
-                    )}
-                  </div>
-                ))}
-            {(!song.comments || song.comments.length === 0) && (
-              <div className="mt-6">
-                <p className="text-black font-bold">Comments:</p>
-                <p className="text-xs">No comments available.</p>
-              </div>
-            )}
+                        {commentSuccess && (
+                          <p className="text-green-500 text-sm">Comment submitted successfully!</p>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCommentSubmit}
+                        className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-lg shadow-md hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
+                      >
+                        Post Comment
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+              
+              {song.comments && song.comments.length > 0 ? (
+                <div className="space-y-4">
+                  {song.comments
+                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .map((comment) => (
+                      <div key={comment.id} className="bg-white p-4 rounded-xl shadow-md border border-gray-200 transition-all duration-300 hover:shadow-lg">
+                        {editCommentId === comment.id ? (
+                          <div className="space-y-3">
+                            <textarea
+                              value={editCommentText}
+                              onChange={(e) => setEditCommentText(e.target.value)}
+                              className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                              rows="3"
+                            />
+                            <div className="flex justify-end">
+                              <button
+                                onClick={() => setEditCommentId(null)}
+                                className="bg-gray-300 text-gray-700 px-3 py-1 rounded-lg mr-2 hover:bg-gray-400 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={handleSaveEditComment}
+                                className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
+                              >
+                                Save Changes
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-gray-800 mb-2">{comment.text}</p>
+                            <div className="flex justify-between items-center text-sm">
+                              <p className="text-gray-500">
+                                <span className="font-medium text-gray-700">
+                                  {comment.username ? comment.username : "Unknown User"}
+                                </span>
+                                <span className="ml-2">
+                                  {formatDateTime(comment.created_at)}
+                                </span>
+                              </p>
+                              {comment.user_id === userId && (
+                                <div className="flex space-x-2">
+                                  <button
+                                    onClick={() => handleEditComment(comment.id, comment.text)}
+                                    className="text-blue-500 hover:text-blue-700 transition-colors"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteComment(comment.id)}
+                                    className="text-red-500 hover:text-red-700 transition-colors"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 text-center">
+                  <p className="text-gray-500">No comments yet. Be the first to share your thoughts!</p>
+                </div>
+              )}
+            </div>
           </div>
         </>
       )}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Table, Button, Switch, Select } from "antd";
 import { getSongs } from "../../services/api";
+import { Search, Music, Calendar, Filter, RefreshCw, Award } from "lucide-react";
 
 const { Option } = Select;
 
@@ -247,33 +248,61 @@ const SongList = () => {
 
   const getHeading = () => {
     if (yearFilter) {
-      return `📅
- All ${yearFilter} hits`;
+      return (
+        <div className="flex items-center justify-center gap-2">
+          <Calendar className="w-8 h-8 text-pink-500" />
+          <span>All {yearFilter} hits</span>
+        </div>
+      );
     }
     if (artistName) {
-      return `🎤 All hits by ${capitalizeWords(artistName)}`;
+      return (
+        <div className="flex items-center justify-center gap-2">
+          <Music className="w-8 h-8 text-pink-500" />
+          <span>All hits by {capitalizeWords(artistName)}</span>
+        </div>
+      );
     }
     if (searchQuery) {
-      return `🔍 Displaying results for "${searchQuery}"`;
+      return (
+        <div className="flex items-center justify-center gap-2">
+          <Search className="w-8 h-8 text-pink-500" />
+          <span>Displaying results for "{searchQuery}"</span>
+        </div>
+      );
     }
-    return "🧾 All hits";
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <Filter className="w-8 h-8 text-pink-500" />
+        <span>All hits</span>
+      </div>
+    );
   };
 
   return (
     <>
-      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">{getHeading()}</h1>
-      <div className="flex flex-col md:flex-row justify-between gap-4 mb-4 p-4 rounded-lg">
-        <div className="flex items-center border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
-          <span className="text-lg font-semibold mr-4">#1 hits filter</span>
+      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+        {getHeading()}
+      </h1>
+      
+      <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 rounded-lg">
+        <div className="flex items-center bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
+          <div className="flex items-center gap-3">
+            <Award className="w-6 h-6 text-pink-500" />
+            <span className="text-lg font-semibold mr-4">#1 hits only</span>
+          </div>
           <Switch
             onChange={handleSwitchChange}
             checked={onlyNumberOneHits}
-            className="transform scale-125 bg-gray-300 checked:bg-blue-600"
+            className="transform scale-125 bg-gray-300 checked:bg-pink-500"
           />
         </div>
 
-        <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
-          <span className="mb-2 text-lg font-semibold">Jump to year:</span>
+        <div className="flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
+          <div className="flex items-center gap-3 mb-2">
+            <Calendar className="w-6 h-6 text-pink-500" />
+            <span className="text-lg font-semibold">Jump to year:</span>
+          </div>
           <Select
             placeholder="Select Year"
             className="w-full text-lg"
@@ -291,25 +320,13 @@ const SongList = () => {
             ))}
           </Select>
         </div>
+        
         <div className="w-full md:w-1/3 flex items-center">
           <Button
             onClick={handleReset}
-            className="w-full px-6 py-3 text-lg text-white border border-pink-300 rounded flex items-center justify-center hover:bg-blue-600 bg-pink-400"
+            className="w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl shadow-md flex items-center justify-center hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-[1.02]"
           >
-            <svg
-              className="w-5 h-5 mr-2"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <RefreshCw className="w-5 h-5 mr-2" />
             Reset filters
           </Button>
         </div>
@@ -317,18 +334,42 @@ const SongList = () => {
       <div className="block md:hidden text-center mb-2 text-gray-500">
         <span>Swipe left/right to view more columns</span>
       </div>
-      <div className="table-container overflow-x-auto">
-      <style>
-  {`
-    .ant-table-tbody > tr > td {
-      padding: 6px 10px !important;
-    }
-  `}
-</style>
+      <div className="table-container overflow-x-auto bg-white rounded-xl shadow-md">
+        <style>
+          {`
+            .ant-table-thead > tr > th {
+              background-color: #f9f9f9 !important;
+              color: #333 !important;
+              font-weight: bold !important;
+              padding: 12px 16px !important;
+              border-bottom: 2px solid #eaeaea !important;
+            }
+            .ant-table-tbody > tr > td {
+              padding: 10px 16px !important;
+              transition: background-color 0.3s ease !important;
+            }
+            .ant-table-tbody > tr:hover > td {
+              background-color: #f5f5f5 !important;
+            }
+            .ant-table-tbody > tr:nth-child(even) {
+              background-color: #fafafa;
+            }
+            .ant-pagination-item-active {
+              border-color: #ec4899 !important;
+            }
+            .ant-pagination-item-active a {
+              color: #ec4899 !important;
+            }
+            .ant-table-column-sorter-up.active, .ant-table-column-sorter-down.active {
+              color: #ec4899 !important;
+            }
+          `}
+        </style>
         <Table
           dataSource={songs}
           columns={columns}
           loading={loading}
+          rowClassName="hover:bg-gray-50 transition-colors"
           pagination={{
             current: page,
             pageSize: perPage,
@@ -338,15 +379,23 @@ const SongList = () => {
               setPage(1);
               setPerPage(newSize);
             },
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '25', '50', '100'],
+            className: "custom-pagination"
           }}
           onChange={handleTableChange}
           locale={{
-            emptyText: "🤔 No hits found", // Customize the "No Data" text here
+            emptyText: (
+              <div className="flex flex-col items-center justify-center py-8">
+                <Search className="w-10 h-10 text-gray-400 mb-2" />
+                <span className="text-gray-500">No hits found</span>
+              </div>
+            ),
           }}
         />
       </div>
-      <div className="mt-4 text-center">
-        Showing {songs.length} of {totalSongs} hit songs
+      <div className="mt-6 text-center text-gray-600 bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg shadow-sm inline-block mx-auto">
+        Showing <span className="font-bold text-pink-600">{songs.length}</span> of <span className="font-bold text-pink-600">{totalSongs}</span> hit songs
       </div>
     </>
   );

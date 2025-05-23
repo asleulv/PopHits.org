@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Select, Spin, message } from "antd";
 import { generateQuiz } from "../../services/api";
+import { HelpCircle, RefreshCw, Calendar, BarChart2, Eye, EyeOff } from "lucide-react";
 
 const { Option } = Select;
 
@@ -70,27 +71,33 @@ const QuizGenerator = () => {
 
   return (
     <div className="p-4 min-h-screen">
-      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">
-      🤷‍♂️ Hit Song Quiz Generator
+      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent flex items-center justify-center gap-3">
+        <HelpCircle className="w-8 h-8 text-pink-500" />
+        <span>Hit Song Quiz Generator</span>
       </h1>
 
-      <div className="mb-4">
-        <p className="mb-6 text-center md:text-left text-sm md:text-lg">
-          Generate your random hit song quiz questions and filter by decades and
-          how big or obscure hits you want to include.
+      <div className="mb-8">
+        <p className="text-center text-gray-700 text-lg max-w-3xl mx-auto">
+          Test your music knowledge with custom quizzes about hit songs from your favorite decades.
+          Choose how many questions and adjust the difficulty level from famous #1 hits to obscure gems.
         </p>
       </div>
 
       <div className="w-full">
-        <div className="mb-4 border border-gray-300 p-4 bg-gray-50 w-full">
-          <span className="block mb-2 text-lg font-semibold">
-            Select Decades:
-          </span>
+        <div className="mb-6 bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <Calendar className="w-6 h-6 text-pink-500" />
+            <span className="text-lg font-semibold text-gray-700">
+              Select Decades:
+            </span>
+          </div>
           <Select
             mode="multiple"
             value={selectedDecades}
             onChange={(values) => setSelectedDecades(values)}
             className="w-full"
+            placeholder="Select one or more decades"
+            maxTagCount={6}
           >
             {decadesOptions.map(({ label, value }) => (
               <Option key={value} value={value}>
@@ -100,36 +107,45 @@ const QuizGenerator = () => {
           </Select>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
-          <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
-            <span className="mb-2 text-lg font-semibold">
-              Select Number of Questions:
-            </span>
+        <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
+            <div className="flex items-center gap-3 mb-3">
+              <HelpCircle className="w-6 h-6 text-pink-500" />
+              <span className="text-lg font-semibold text-gray-700">
+                Number of Questions:
+              </span>
+            </div>
             <Select
               value={numSongs}
               onChange={(value) => setNumSongs(value)}
-              className="w-full text-lg"
+              className="w-full"
+              size="large"
             >
               {[10, 20, 25, 50, 100].map((num) => (
                 <Option key={num} value={num}>
-                  {num}
+                  {num} questions
                 </Option>
               ))}
             </Select>
           </div>
 
-          <div className="flex flex-col border border-gray-300 p-4 bg-gray-50 w-full md:w-1/3">
-            <span className="mb-2 text-lg font-semibold">
-              Hit Level (1 = #1 hits, 10 = obscure):
-            </span>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
+            <div className="flex items-center gap-3 mb-3">
+              <BarChart2 className="w-6 h-6 text-pink-500" />
+              <span className="text-lg font-semibold text-gray-700">
+                Hit Level:
+              </span>
+            </div>
+            <p className="text-sm text-gray-500 mb-2">1 = #1 hits, 10 = obscure hits</p>
             <Select
               value={hitLevel}
               onChange={(value) => setHitLevel(value)}
-              className="w-full text-lg"
+              className="w-full"
+              size="large"
             >
               {[...Array(10).keys()].map((level) => (
                 <Option key={level + 1} value={level + 1}>
-                  {level + 1}
+                  Level {level + 1}
                 </Option>
               ))}
             </Select>
@@ -138,22 +154,10 @@ const QuizGenerator = () => {
           <div className="flex flex-col justify-end gap-4 w-full md:w-1/3">
             <Button
               onClick={handleGenerateQuiz}
-              className="w-full px-6 py-3 text-lg text-white border border-pink-300 flex items-center justify-center hover:bg-blue-600 bg-pink-400"
+              className="w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl shadow-md flex items-center justify-center hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-[1.02]"
+              size="large"
             >
-              <svg
-                className="w-5 h-5 mr-2"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 12l5 5L20 7"
-                />
-              </svg>
+              <RefreshCw className="w-5 h-5 mr-2" />
               Generate Quiz
             </Button>
           </div>
@@ -161,44 +165,67 @@ const QuizGenerator = () => {
       </div>
 
       {loading ? (
-        <div className="text-center">
-          <Spin tip="Generating quiz..." />
+        <div className="flex justify-center items-center py-12">
+          <div className="text-center">
+            <Spin size="large" tip={<span className="mt-3 text-gray-600">Creating your quiz questions...</span>} />
+          </div>
         </div>
       ) : (
         <>
           {errorMessage ? (
-            <div className="text-center text-red-500 mt-4">{errorMessage}</div>
+            <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mt-6 text-center">
+              <p className="font-medium">{errorMessage}</p>
+              <p className="text-sm mt-2">Try adjusting your filters to find more songs.</p>
+            </div>
           ) : (
             quizQuestions.length > 0 && (
-              <div className="mt-4">
-                <ul>
-                  {quizQuestions.map((question, index) => (
-                    <li key={index} className="mb-4">
-                      <strong className="mr-2">
-  {index + 1}:
-</strong>
-<span>{question.question}</span>
-                      <br />
-                      {!revealedAnswers[index] && (
-                        <Button
-                          type="primary"
-                          onClick={() => toggleAnswerVisibility(index)}
-                          className="bg-pink-400 text-white hover:bg-blue-600 hover:text-white px-2 py-1 text-sm"
-                        >
-                          Show Answer
-                        </Button>
-                      )}
-                      {revealedAnswers[index] && (
-                        <>
-                          {/* Add a line between question and answer */}
-                          <strong>Answer: </strong>
-                          {question.answer}
-                        </>
-                      )}
-                      <div className="border-t my-2" />{" "}
-                    </li>
-                  ))}
-                </ul>
+              <div className="mt-6">
+                <div className="bg-white rounded-xl shadow-md overflow-hidden">
+                  <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-center text-gray-700">
+                      Your Custom Quiz ({quizQuestions.length} Questions)
+                    </h2>
+                  </div>
+                  
+                  <ul className="divide-y divide-gray-200">
+                    {quizQuestions.map((question, index) => (
+                      <li key={index} className="p-5 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-start">
+                          <div className="bg-pink-100 text-pink-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-lg font-medium text-gray-800 mb-3">{question.question}</p>
+                            
+                            {!revealedAnswers[index] ? (
+                              <Button
+                                onClick={() => toggleAnswerVisibility(index)}
+                                className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-lg shadow-sm hover:from-pink-600 hover:to-pink-700 transition-all duration-300"
+                              >
+                                <Eye className="w-4 h-4" />
+                                Show Answer
+                              </Button>
+                            ) : (
+                              <div className="bg-green-50 border border-green-100 rounded-lg p-4 animate-fadeIn">
+                                <div className="flex  gap-2 mb-1">
+                                  <EyeOff className="w-4 h-4 text-green-600" />
+                                  <span className="font-semibold text-green-800">Answer:</span>
+                                </div>
+                                <p className="text-green-900">{question.answer}</p>
+                                <Button
+                                  onClick={() => toggleAnswerVisibility(index)}
+                                  className="mt-2 text-xs text-green-700 hover:text-green-900 bg-green-100 border-none shadow-none"
+                                >
+                                  Hide Answer
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             )
           )}

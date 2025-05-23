@@ -5,6 +5,7 @@ import {
   getBookmarkedSongs,
   deleteAllBookmarks,
 } from "../../services/api";
+import { Heart, BarChart2, Clipboard, Trash2, User } from "lucide-react";
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState(null);
@@ -111,124 +112,143 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center">User Profile</h2>
+      <h2 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">User Profile</h2>
+      
       {userProfile ? (
-        <div className="profile-user-container">
-          <div className="profile-user-box">
-            <p>Username: {userProfile.username}</p>
-            <p>Email: {userProfile.email}</p>
-            <Link to="/profile/update" className="profile-update-link">
-              Update Info
-            </Link>{" "}
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <User className="w-8 h-8 text-pink-500 mr-2" />
+            <h3 className="text-xl font-semibold text-gray-700">Account Information</h3>
+          </div>
+          <div className="flex flex-col space-y-2 items-center">
+            <p className="text-gray-700"><span className="font-semibold">Username:</span> {userProfile.username}</p>
+            <p className="text-gray-700"><span className="font-semibold">Email:</span> {userProfile.email}</p>
+            <Link 
+              to="/profile/update" 
+              className="mt-2 text-pink-600 hover:text-pink-700 transition-colors font-medium"
+            >
+              Update Account Info
+            </Link>
           </div>
         </div>
       ) : (
-        <p>Loading...</p>
+        <div className="flex justify-center items-center h-24">
+          <p className="text-gray-500">Loading profile information...</p>
+        </div>
       )}
-      <div style={{ borderTop: "1px solid #ccc" }}></div>
-      <div className="tab-container">
-        <button
-          className={tab === "rating" ? "active-tab" : "inactive-tab"}
-          onClick={() => setTab("rating")}
-        >
-          📊Rating History
-        </button>
-        <button
-          className={tab === "bookmarks" ? "active-tab" : "inactive-tab"}
-          onClick={() => setTab("bookmarks")}
-        >
-          ❤️Bookmarked Songs
-        </button>
+      
+      <div className="flex justify-center mb-6">
+        <div className="bg-white rounded-full shadow-md p-1 inline-flex">
+          <button
+            className={`px-4 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ${
+              tab === "rating" 
+                ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium" 
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+            onClick={() => setTab("rating")}
+          >
+            <BarChart2 className="w-5 h-5" />
+            Rating History
+          </button>
+          <button
+            className={`px-4 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ${
+              tab === "bookmarks" 
+                ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium" 
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+            onClick={() => setTab("bookmarks")}
+          >
+            <Heart className="w-5 h-5" />
+            Bookmarked Songs
+          </button>
+        </div>
       </div>
 
       {tab === "rating" && (
         <>
-          <div className="relative mb-6">
-            <div className="text-rating-filter">
-              Display songs from minimum rating
+          <div className="mb-8 bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm">
+            <div className="text-center mb-4">
+              <p className="text-lg font-medium text-gray-700">Display songs with minimum rating of: <span className="font-bold text-pink-600">{filterScore}</span></p>
             </div>
-            <label htmlFor="labels-range-input" className="sr-only">
-              Labels range
-            </label>
-            <div className="slider-box">
-              <input
-                id="labels-range-input"
-                type="range"
-                value={filterScore}
-                min="1"
-                max="10"
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-                onChange={(e) => setFilterScore(e.target.value)}
-              />
+            
+            <div className="flex flex-wrap justify-center gap-2 mb-2">
+              {[...Array(10)].map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setFilterScore(index + 1)}
+                  className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full shadow-md transition-all duration-300 ${
+                    filterScore === index + 1 
+                      ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold" 
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                  aria-label={`Filter by minimum rating of ${index + 1}`}
+                >
+                  {index + 1}
+                </button>
+              ))}
             </div>
-            {[...Array(10)].map((_, index) => (
-              <span
-                key={index}
-                className="text-sm text-gray-500 absolute"
-                style={{
-                  left: `${(index / 9) * 100}%`,
-                  transform: "translateX(-50%)",
-                  bottom: "20px",
-                }}
-              >
-                {index + 1}
-              </span>
-            ))}
+            
+            <p className="text-sm text-center text-gray-500 italic">Click a number to set the minimum rating filter</p>
           </div>
 
           {currentSongsRating && currentSongsRating.length > 0 ? (
-            <table className="table-auto w-full">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2">Artist</th>
-                  <th className="px-4 py-2">Song</th>
-                  <th className="px-4 py-2">Your rating</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentSongsRating.map((rating) => (
-                  <tr key={rating.id}>
-                    <td className="border px-4 py-2">{rating.song_artist}</td>
-                    <td className="border px-4 py-2">
-                      <Link
-                        to={`/songs/${rating.song_slug}`}
-                        className="song-link"
-                      >
-                        {rating.song_title}
-                      </Link>
-                    </td>
-                    <td
-                      className="border px-4 py-2"
-                      style={{ textAlign: "right" }}
-                    >
-                      {rating.score}
-                    </td>
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Artist</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Song</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Your Rating</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {currentSongsRating.map((rating) => (
+                    <tr key={rating.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{rating.song_artist}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <Link
+                          to={`/songs/${rating.song_slug}`}
+                          className="text-blue-600 hover:text-pink-600 transition-colors"
+                        >
+                          {rating.song_title}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                        <span className="bg-pink-100 text-pink-800 font-medium px-2.5 py-0.5 rounded-full">
+                          {rating.score}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
-            <div className="flex justify-center items-center h-48">
-              <p>😶No rating history yet</p>
+            <div className="flex justify-center items-center h-48 bg-white rounded-xl shadow-md">
+              <div className="flex flex-col items-center text-gray-500">
+                <BarChart2 className="w-10 h-10 text-gray-400 mb-2" />
+                <p>No rating history yet</p>
+              </div>
             </div>
           )}
 
           {filteredRatingHistory.length > songsPerPageRating && (
-            <nav className="mt-4">
-              <ul className="history-pagination">
+            <nav className="mt-6 flex justify-center">
+              <ul className="flex space-x-2">
                 {[
                   ...Array(
                     Math.ceil(filteredRatingHistory.length / songsPerPageRating)
                   ),
                 ].map((_, index) => (
-                  <li key={index} className="page-item">
+                  <li key={index}>
                     <button
                       onClick={() => paginateRating(index + 1)}
-                      className={
+                      className={`px-3 py-1 rounded-md transition-colors ${
                         currentPageRating === index + 1
-                          ? "page-link active"
-                          : "page-link"
-                      }
+                          ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium"
+                          : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
+                      }`}
+                      aria-label={`Go to page ${index + 1}`}
                     >
                       {index + 1}
                     </button>
@@ -243,55 +263,63 @@ const Profile = () => {
       {tab === "bookmarks" && (
         <>
           {currentSongsBookmarks && currentSongsBookmarks.length > 0 ? (
-            <table className="table-auto w-full">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2">Artist</th>
-                  <th className="px-4 py-2">Title</th>
-                  <th className="px-4 py-2">Year</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentSongsBookmarks.map((song) => (
-                  <tr key={song.id}>
-                    <td className="border px-4 py-2">{song.artist}</td>
-                    <td className="border px-4 py-2">
-                      <Link to={`/songs/${song.slug}`} className="song-link">
-                        {song.title}
-                      </Link>
-                    </td>
-                    <td
-                      className="border px-4 py-2"
-                      style={{ textAlign: "right" }}
-                    >
-                      {song.year}
-                    </td>
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Artist</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {currentSongsBookmarks.map((song) => (
+                    <tr key={song.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{song.artist}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <Link
+                          to={`/songs/${song.slug}`}
+                          className="text-blue-600 hover:text-pink-600 transition-colors"
+                        >
+                          {song.title}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                        <span className="text-gray-700 font-medium">
+                          {song.year}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
-            <div className="flex justify-center items-center h-48">
-              <p>😶No bookmarked songs yet</p>
+            <div className="flex justify-center items-center h-48 bg-white rounded-xl shadow-md">
+              <div className="flex flex-col items-center text-gray-500">
+                <Heart className="w-10 h-10 text-gray-400 mb-2" />
+                <p>No bookmarked songs yet</p>
+              </div>
             </div>
           )}
 
           {bookmarkedSongs.length > songsPerPageBookmarks && (
-            <nav className="mt-4">
-              <ul className="history-pagination">
+            <nav className="mt-6 flex justify-center">
+              <ul className="flex space-x-2">
                 {[
                   ...Array(
                     Math.ceil(bookmarkedSongs.length / songsPerPageBookmarks)
                   ),
                 ].map((_, index) => (
-                  <li key={index} className="page-item">
+                  <li key={index}>
                     <button
                       onClick={() => paginateBookmarks(index + 1)}
-                      className={
+                      className={`px-3 py-1 rounded-md transition-colors ${
                         currentPageBookmarks === index + 1
-                          ? "page-link active"
-                          : "page-link"
-                      }
+                          ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium"
+                          : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
+                      }`}
+                      aria-label={`Go to page ${index + 1}`}
                     >
                       {index + 1}
                     </button>
@@ -303,31 +331,46 @@ const Profile = () => {
 
           {/* Render "Delete All Bookmarks" button only when there are bookmarked songs */}
           {currentSongsBookmarks.length > 0 && (
-            <div className="delete-bookmarks-button-container">
+            <div className="flex justify-center mt-6">
               <button
                 onClick={handleDeleteAllBookmarks}
-                className="delete-bookmarks-button"
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-md transition-colors flex items-center gap-2"
               >
-                ☢️ Delete All Bookmarks
+                <Trash2 className="w-5 h-5" />
+                Delete All Bookmarks
               </button>
             </div>
           )}
         </>
       )}
 
-      <div className="spotify-clipboard-box">
-        <button onClick={copySpotifyUrls} className="copy-spotify-urls-button">
-          📋 Copy Spotify URLs to clipboard
-        </button>
-        <div className="spotify-clipboard-text">
-          Once clicked, you can easily paste the songs into a new Spotify
-          playlist using ctrl+v/command+v.
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm mt-8 mb-6">
+        <div className="flex items-center justify-center mb-4">
+          <Clipboard className="w-6 h-6 text-pink-500 mr-2" />
+          <h3 className="text-xl font-semibold text-gray-700">Spotify Playlist Creation</h3>
         </div>
+        <p className="text-gray-600 text-center mb-4">
+          Copy Spotify URLs to create a playlist with your songs
+        </p>
+        <div className="flex justify-center">
+          <button 
+            onClick={copySpotifyUrls} 
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors flex items-center gap-2"
+          >
+            <Clipboard className="w-5 h-5" />
+            Copy Spotify URLs to clipboard
+          </button>
+        </div>
+        <p className="text-gray-500 text-sm text-center mt-3">
+          Once copied, paste the URLs into a new Spotify playlist using Ctrl+V/Command+V
+        </p>
       </div>
 
       {/* Dropdown menu for selecting songs per page */}
-      <div className="songs-per-page-dropdown">
-        <label htmlFor="songs-per-page">Songs per page:</label>
+      <div className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-center gap-3 mb-8">
+        <label htmlFor="songs-per-page" className="text-gray-700 font-medium">
+          Songs per page:
+        </label>
         <select
           id="songs-per-page"
           value={tab === "rating" ? songsPerPageRating : songsPerPageBookmarks}
@@ -337,6 +380,7 @@ const Profile = () => {
               ? setSongsPerPageRating(value)
               : setSongsPerPageBookmarks(value);
           }}
+          className="bg-gray-50 border border-gray-300 text-gray-700 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
         >
           {availableSongsPerPage.map((option) => (
             <option key={option} value={option}>
