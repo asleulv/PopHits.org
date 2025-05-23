@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Table, Button, Switch, Select } from "antd";
 import { getSongs } from "../../services/api";
-import { Search, Music, Calendar, Filter, RefreshCw, Award } from "lucide-react";
+import {
+  Search,
+  Music,
+  Calendar,
+  Filter,
+  RefreshCw,
+  Award,
+} from "lucide-react";
 
 const { Option } = Select;
 
@@ -244,36 +251,42 @@ const SongList = () => {
     },
   ];
 
-  const years = Array.from({ length: 51 }, (_, i) => (1958 + i).toString());
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1958 + 1 }, (_, i) =>
+    (1958 + i).toString()
+  );
 
   const getHeading = () => {
+    const baseClass =
+      "flex items-center justify-center gap-2 text-pink-500 px-1 py-1";
+
     if (yearFilter) {
       return (
-        <div className="flex items-center justify-center gap-2">
-          <Calendar className="w-8 h-8 text-pink-500" />
+        <div className={baseClass}>
+          <Calendar className="w-8 h-8" />
           <span>All {yearFilter} hits</span>
         </div>
       );
     }
     if (artistName) {
       return (
-        <div className="flex items-center justify-center gap-2">
-          <Music className="w-8 h-8 text-pink-500" />
+        <div className={baseClass}>
+          <Music className="w-8 h-8" />
           <span>All hits by {capitalizeWords(artistName)}</span>
         </div>
       );
     }
     if (searchQuery) {
       return (
-        <div className="flex items-center justify-center gap-2">
-          <Search className="w-8 h-8 text-pink-500" />
+        <div className={baseClass}>
+          <Search className="w-8 h-8" />
           <span>Displaying results for "{searchQuery}"</span>
         </div>
       );
     }
     return (
-      <div className="flex items-center justify-center gap-2">
-        <Filter className="w-8 h-8 text-pink-500" />
+      <div className={baseClass}>
+        <Filter className="w-8 h-8" />
         <span>All hits</span>
       </div>
     );
@@ -284,7 +297,7 @@ const SongList = () => {
       <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
         {getHeading()}
       </h1>
-      
+
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 rounded-lg">
         <div className="flex items-center bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
           <div className="flex items-center gap-3">
@@ -320,17 +333,15 @@ const SongList = () => {
             ))}
           </Select>
         </div>
-        
+
         <div className="w-full md:w-1/3 flex items-center">
           <Button
-  onClick={handleReset}
-  className="w-full px-6 py-3 text-lg text-pink-400 hover:text-pink-500 rounded-xl shadow-md flex items-center justify-center transition-all duration-200 ease-in-out"
->
-  <RefreshCw className="w-5 h-5 mr-2" />
-  Reset filters
-</Button>
-
-
+            onClick={handleReset}
+            className="w-full px-6 py-3 text-lg text-pink-400 hover:text-pink-500 rounded-xl shadow-md flex items-center justify-center transition-all duration-200 ease-in-out"
+          >
+            <RefreshCw className="w-5 h-5 mr-2" />
+            Reset filters
+          </Button>
         </div>
       </div>
       <div className="block md:hidden text-center mb-2 text-gray-500">
@@ -382,8 +393,8 @@ const SongList = () => {
               setPerPage(newSize);
             },
             showSizeChanger: true,
-            pageSizeOptions: ['10', '25', '50', '100'],
-            className: "custom-pagination"
+            pageSizeOptions: ["10", "25", "50", "100"],
+            className: "custom-pagination",
           }}
           onChange={handleTableChange}
           locale={{
@@ -397,7 +408,9 @@ const SongList = () => {
         />
       </div>
       <div className="mt-6 text-center text-gray-600 bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg shadow-sm inline-block mx-auto">
-        Showing <span className="font-bold text-pink-600">{songs.length}</span> of <span className="font-bold text-pink-600">{totalSongs}</span> hit songs
+        Showing <span className="font-bold text-pink-600">{songs.length}</span>{" "}
+        of <span className="font-bold text-pink-600">{totalSongs}</span> hit
+        songs
       </div>
     </>
   );

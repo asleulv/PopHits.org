@@ -196,7 +196,7 @@ const FrontPage = () => {
       icon: <Headphones className="w-5 h-5 text-blue-700 group-hover:scale-110 transition-transform" />,
       text: (
         <>
-          Create playlists from your favorites{" "}
+          Create playlists{" "}
           <span className="ml-1 text-blue-600 hover:text-blue-800 underline">
             (<a href="https://www.youtube.com/watch?v=818njtSUKd8&t=1s">demo</a>)
           </span>
@@ -207,7 +207,7 @@ const FrontPage = () => {
     {
       href: "/quiz-generator",
       icon: <Zap className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />,
-      text: "Test your knowledge with our quiz generator",
+      text: "Test your hit knowledge",
       hoverColor: "group-hover:text-green-800",
     },
   ].map(({ href, icon, text, hoverColor }, idx) => (

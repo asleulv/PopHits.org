@@ -90,10 +90,12 @@ const PlaylistGenerator = () => {
 
   return (
     <div className="p-4 min-h-screen">
-      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent flex items-center justify-center gap-3">
-        <Music className="w-8 h-8 text-pink-500" />
-        <span>Hit Song Playlist Generator</span>
-      </h1>
+      <h1 className="text-2xl md:text-4xl px-1 py-1 font-cherry font-bold mb-6 text-center text-pink-500 flex items-center justify-center gap-3">
+  <Music className="w-8 h-8" />
+  <span>Hit Song Playlist Generator</span>
+</h1>
+
+
 
       {/* Introduction */}
       <div className="mb-8">

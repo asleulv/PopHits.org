@@ -608,6 +608,21 @@ textarea {
   top: 24px;
 }
 
+/* Create a pseudo-element for the background */
+.scrolled .bm-burger-button::before {
+  content: "";
+  position: absolute;
+  width: 52px; /* Make background larger than the icon */
+  height: 52px; /* Make background larger than the icon */
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+  border-radius: 10%; /* Make it circular */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center it perfectly */
+  z-index: -1; /* Place it behind the burger icon */
+}
+
 .bm-burger-bars {
   background: #ffffff;
 }

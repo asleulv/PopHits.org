@@ -2,7 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import rickyNelson from "./ricky_nelson.jpg";
 import { useAuth } from "../../services/auth";
-import { Music, Calendar, Info, Mail, ArrowRight, ShieldQuestion } from "lucide-react";
+import {
+  Music,
+  Calendar,
+  Info,
+  Mail,
+  ArrowRight,
+  ShieldQuestion,
+} from "lucide-react";
 
 const About = () => {
   const { isAuthenticated } = useAuth();
@@ -10,10 +17,11 @@ const About = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent flex items-center justify-center gap-3">
-          <Info className="w-8 h-8 text-pink-500" />
+        <h1 className="text-2xl md:text-4xl px-1 py-1 font-cherry font-bold mb-6 text-center text-pink-500 flex items-center justify-center gap-3">
+          <Info className="w-8 h-8" />
           <span>About PopHits.org</span>
         </h1>
+
         <div className="text-center text-lg text-gray-700 mb-6 flex items-center justify-center gap-2">
           <Music className="w-5 h-5 text-pink-500" />
           <span>From Ricky Nelson to Taylor Swift...</span>
@@ -35,20 +43,25 @@ const About = () => {
               <ShieldQuestion className="w-5 h-5 text-pink-500 mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-semibold text-gray-800 mb-1">
-  Why was this website created?
-</h3>
-<p className="text-gray-700">
-  This site was created to celebrate the songs that once ruled the charts — not just as musical moments, 
-  but as cultural snapshots. A hit song often tells us something about the time it came from: 
-  how a jingly, psychedelic anthem could top the charts in 1967, or how a polished, larger-than-life 
-  pop ballad could dominate in 2011. Trends change, tastes evolve, and yet music remains one of the 
-  most meaningful unimportant things in life — soundtracking our highs, heartbreaks, and everything 
-  in between.
-</p>
-<p className="text-gray-700 mt-3">
-  Whether you're here to dig up forgotten gems, relive musical milestones, or simply build a 
-  killer playlist, this site invites you to explore how pop music reflects who we were, and who we are.
-</p>
+                  Why was this website created?
+                </h3>
+                <p className="text-gray-700">
+                  This site was created to celebrate the songs that once ruled
+                  the charts — not just as musical moments, but as cultural
+                  snapshots. A hit song often tells us something about the time
+                  it came from: how a jingly, psychedelic anthem could top the
+                  charts in 1967, or how a polished, larger-than-life pop ballad
+                  could dominate in 2011. Trends change, tastes evolve, and yet
+                  music remains one of the most meaningful unimportant things in
+                  life — soundtracking our highs, heartbreaks, and everything in
+                  between.
+                </p>
+                <p className="text-gray-700 mt-3">
+                  Whether you're here to dig up forgotten gems, relive musical
+                  milestones, or simply build a killer playlist, this site
+                  invites you to explore how pop music reflects who we were, and
+                  who we are.
+                </p>
               </div>
             </div>
           </div>
