@@ -29,6 +29,7 @@ const SongList = () => {
   const [onlyNumberOneHits, setOnlyNumberOneHits] = useState(false);
   const [onlyUnratedSongs, setOnlyUnratedSongs] = useState(false);
   const [yearFilter, setYearFilter] = useState(null);
+  const [decadeFilter, setDecadeFilter] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [artistName, setArtistName] = useState("");
   const { isAuthenticated } = useAuth();
@@ -40,10 +41,12 @@ const SongList = () => {
     const query = queryParams.get("query");
     const filter = queryParams.get("filter");
     const unratedFilter = queryParams.get("unrated");
-    
+    const decadeParam = queryParams.get("decade");
+
     setSearchQuery(query || "");
     setOnlyNumberOneHits(filter === "number-one");
     setOnlyUnratedSongs(unratedFilter === "true");
+    setDecadeFilter(decadeParam || null);
 
     const pathname = location.pathname;
     const artistSlug = pathname.includes("/artist/")
@@ -55,11 +58,12 @@ const SongList = () => {
 
     setYearFilter(yearPath || null);
     fetchData(
-      query || "", 
-      artistSlug, 
-      yearPath, 
-      filter === "number-one", 
-      unratedFilter === "true"
+      query || "",
+      artistSlug,
+      yearPath,
+      filter === "number-one",
+      unratedFilter === "true",
+      decadeParam
     );
   }, [
     location.pathname,
@@ -73,14 +77,24 @@ const SongList = () => {
     yearFilter,
   ]);
 
-  const fetchData = async (query, artistSlug, year, numberOneFilter, unratedOnly = false) => {
+  const fetchData = async (
+    query,
+    artistSlug,
+    year,
+    numberOneFilter,
+    unratedOnly = false,
+    decade = null
+  ) => {
     try {
       setLoading(true);
 
       let peakRankFilter = numberOneFilter ? "1" : null;
-      
+
       // Log the unratedOnly parameter to verify it's being passed correctly
       console.log("Fetching data with unratedOnly:", unratedOnly);
+
+      // Log decade filter
+      console.log("Decade filter:", decade);
 
       let data;
       if (artistSlug) {
@@ -93,7 +107,8 @@ const SongList = () => {
           sortOrder,
           query,
           peakRankFilter,
-          unratedOnly
+          unratedOnly,
+          decade
         );
         setArtistName(artistSlug.replace(/-/g, " "));
       } else if (year) {
@@ -106,7 +121,8 @@ const SongList = () => {
           sortOrder,
           query,
           peakRankFilter,
-          unratedOnly
+          unratedOnly,
+          decade
         );
         setArtistName("");
       } else {
@@ -119,24 +135,27 @@ const SongList = () => {
           sortOrder,
           query,
           peakRankFilter,
-          unratedOnly
+          unratedOnly,
+          decade
         );
         setArtistName("");
       }
-      
+
       // Log the response to see if the backend is returning filtered results
       console.log("API response:", data);
 
       const songsData = Array.isArray(data) ? data[0] : data;
-      
+
       // Log detailed information about the response
       console.log("Songs data:", songsData);
       console.log("Total songs count:", songsData.count);
       console.log("Unrated filter active:", unratedOnly);
-      
+
       // Check if the backend is actually filtering
       if (unratedOnly) {
-        console.log("Expected: Total count should be less than 24271 if filtering is working");
+        console.log(
+          "Expected: Total count should be less than 24271 if filtering is working"
+        );
       }
 
       setSongs(songsData.results);
@@ -182,7 +201,7 @@ const SongList = () => {
 
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get("query");
-    const unratedParam = onlyUnratedSongs ? "&unrated=true" : "";
+    const decade = queryParams.get("decade");
     const artistSlug = location.pathname.includes("/artist/")
       ? location.pathname.split("/artist/")[1].split("/")[0]
       : null;
@@ -192,21 +211,40 @@ const SongList = () => {
       ? `/year/${yearFilter}`
       : "/songs";
 
-    navigate(
-      `${path}${
-        query
-          ? `?query=${query}&filter=${checked ? "number-one" : ""}${unratedParam}`
-          : `?filter=${checked ? "number-one" : ""}${unratedParam}`
-      }`
-    );
+    // Create a new URLSearchParams object to build the query properly
+    const newParams = new URLSearchParams();
+    
+    // Add existing query if present
+    if (query) {
+      newParams.append("query", query);
+    }
+    
+    // Add decade parameter if present
+    if (decade) {
+      newParams.append("decade", decade);
+    }
+    
+    // Add number one filter if checked
+    if (checked) {
+      newParams.append("filter", "number-one");
+    }
+    
+    // Add unrated filter if active
+    if (onlyUnratedSongs) {
+      newParams.append("unrated", "true");
+    }
+    
+    // Convert params to string and navigate
+    const paramString = newParams.toString();
+    navigate(`${path}${paramString ? `?${paramString}` : ''}`);
   };
-  
+
   const handleUnratedSwitchChange = (checked) => {
     setOnlyUnratedSongs(checked);
-    
+
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get("query");
-    const numberOneParam = onlyNumberOneHits ? "&filter=number-one" : "";
+    const decade = queryParams.get("decade");
     const artistSlug = location.pathname.includes("/artist/")
       ? location.pathname.split("/artist/")[1].split("/")[0]
       : null;
@@ -215,14 +253,33 @@ const SongList = () => {
       : yearFilter
       ? `/year/${yearFilter}`
       : "/songs";
-      
-    navigate(
-      `${path}${
-        query
-          ? `?query=${query}${numberOneParam}&unrated=${checked ? "true" : ""}`
-          : `?unrated=${checked ? "true" : ""}${numberOneParam}`
-      }`
-    );
+
+    // Create a new URLSearchParams object to build the query properly
+    const newParams = new URLSearchParams();
+    
+    // Add existing query if present
+    if (query) {
+      newParams.append("query", query);
+    }
+    
+    // Add decade parameter if present
+    if (decade) {
+      newParams.append("decade", decade);
+    }
+    
+    // Add number one filter if active
+    if (onlyNumberOneHits) {
+      newParams.append("filter", "number-one");
+    }
+    
+    // Add unrated filter if checked
+    if (checked) {
+      newParams.append("unrated", "true");
+    }
+    
+    // Convert params to string and navigate
+    const paramString = newParams.toString();
+    navigate(`${path}${paramString ? `?${paramString}` : ''}`);
   };
 
   const handleYearChange = (value) => {
@@ -230,8 +287,6 @@ const SongList = () => {
 
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get("query");
-    const filter = onlyNumberOneHits ? "&filter=number-one" : "";
-    const unratedParam = onlyUnratedSongs ? "&unrated=true" : "";
     const artistSlug = location.pathname.includes("/artist/")
       ? location.pathname.split("/artist/")[1].split("/")[0]
       : null;
@@ -242,7 +297,27 @@ const SongList = () => {
           : "/songs"
         : `/year/${value}`;
 
-    navigate(`${path}${query ? `?query=${query}${filter}${unratedParam}` : `?${filter.substring(1)}${unratedParam}`}`);
+    // Create a new URLSearchParams object to build the query properly
+    const newParams = new URLSearchParams();
+    
+    // Add existing query if present
+    if (query) {
+      newParams.append("query", query);
+    }
+    
+    // Add number one filter if active
+    if (onlyNumberOneHits) {
+      newParams.append("filter", "number-one");
+    }
+    
+    // Add unrated filter if active
+    if (onlyUnratedSongs) {
+      newParams.append("unrated", "true");
+    }
+    
+    // Convert params to string and navigate
+    const paramString = newParams.toString();
+    navigate(`${path}${paramString ? `?${paramString}` : ''}`);
   };
 
   const capitalizeWords = (str) => {
@@ -316,11 +391,22 @@ const SongList = () => {
     (1958 + i).toString()
   );
 
+  // Generate decades from 1950s to current decade
+  const currentDecade = Math.floor(currentYear / 10) * 10;
+  const decades = Array.from(
+    { length: (currentDecade - 1950) / 10 + 1 },
+    (_, i) => {
+      const decade = 1950 + i * 10;
+      return { value: decade.toString(), label: `${decade}s` };
+    }
+  );
+
   const getHeading = () => {
     const containerClass = "flex items-center justify-center gap-2 px-1 py-1";
-    const textClass = "bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent";
+    const textClass =
+      "bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent";
     const iconClass = "w-8 h-8 text-pink-500"; // Give icons a visible color
-    
+
     // Add "Unrated" prefix if unrated filter is active
     const unratedPrefix = onlyUnratedSongs ? "Unrated " : "";
     // Add "#1" prefix if number one filter is active
@@ -330,7 +416,25 @@ const SongList = () => {
       return (
         <div className={containerClass}>
           <Calendar className={iconClass} />
-          <span className={textClass}>{unratedPrefix}{numberOnePrefix}{yearFilter} hits</span>
+          <span className={textClass}>
+            {unratedPrefix}
+            {numberOnePrefix}
+            {yearFilter} hits
+          </span>
+        </div>
+      );
+    }
+    if (decadeFilter) {
+      // Format decade as "1950s", "1960s", etc.
+      const decadeLabel = `${decadeFilter}s`;
+      return (
+        <div className={containerClass}>
+          <Calendar className={iconClass} style={{ color: "#3b82f6" }} />
+          <span className={textClass}>
+            {unratedPrefix}
+            {numberOnePrefix}
+            {decadeLabel} hits
+          </span>
         </div>
       );
     }
@@ -338,7 +442,10 @@ const SongList = () => {
       return (
         <div className={containerClass}>
           <Music className={iconClass} />
-          <span className={textClass}>{unratedPrefix}{numberOnePrefix}hits by {capitalizeWords(artistName)}</span>
+          <span className={textClass}>
+            {unratedPrefix}
+            {numberOnePrefix}hits by {capitalizeWords(artistName)}
+          </span>
         </div>
       );
     }
@@ -346,11 +453,14 @@ const SongList = () => {
       return (
         <div className={containerClass}>
           <Search className={iconClass} />
-          <span className={textClass}>Displaying {unratedPrefix}{numberOnePrefix}results for "{searchQuery}"</span>
+          <span className={textClass}>
+            Displaying {unratedPrefix}
+            {numberOnePrefix}results for "{searchQuery}"
+          </span>
         </div>
       );
     }
-    
+
     // Default heading
     let headingText = "All hits";
     if (onlyUnratedSongs && onlyNumberOneHits) {
@@ -360,10 +470,14 @@ const SongList = () => {
     } else if (onlyNumberOneHits) {
       headingText = "#1 hits only";
     }
-    
+
     return (
       <div className={containerClass}>
-        {onlyUnratedSongs ? <Star className={iconClass} /> : <Filter className={iconClass} />}
+        {onlyUnratedSongs ? (
+          <Star className={iconClass} />
+        ) : (
+          <Filter className={iconClass} />
+        )}
         <span className={textClass}>{headingText}</span>
       </div>
     );
@@ -375,13 +489,14 @@ const SongList = () => {
         {getHeading()}
       </h1>
 
-      <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 rounded-lg">
-        <div className="flex flex-col gap-4 w-full md:w-1/3">
+      <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+        {/* Left Column - Toggle Switches */}
+        <div className="w-full md:w-1/3">
           {/* #1 Hits Only Toggle */}
-          <div className="flex items-center bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
-            <div className="flex items-center gap-3">
-              <Award className="w-6 h-6 text-pink-500" />
-              <span className="text-lg font-semibold mr-4">#1 hits only</span>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm mb-4 flex flex-col items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Award className="w-6 h-6 text-orange-300" />
+              <span className="text-lg font-medium">#1 hits only</span>
             </div>
             <Switch
               onChange={handleSwitchChange}
@@ -389,13 +504,13 @@ const SongList = () => {
               className="transform scale-125 bg-gray-300 checked:bg-pink-500"
             />
           </div>
-          
+
           {/* Unrated Songs Toggle - Only visible when logged in */}
           {isAuthenticated && (
-            <div className="flex items-center bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
-              <div className="flex items-center gap-3">
-                <Star className="w-6 h-6 text-pink-500" />
-                <span className="text-lg font-semibold mr-4">Unrated songs only</span>
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center gap-2">
+              <div className="flex items-center gap-2">
+                <Star className="w-6 h-6 text-gray-500" />
+                <span className="text-lg font-medium">Unrated songs only</span>
               </div>
               <Switch
                 onChange={handleUnratedSwitchChange}
@@ -406,37 +521,95 @@ const SongList = () => {
           )}
         </div>
 
-        <div className="flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
-          <div className="flex items-center gap-3 mb-2">
-            <Calendar className="w-6 h-6 text-pink-500" />
-            <span className="text-lg font-semibold">Jump to year:</span>
+        {/* Middle Column - Dropdowns */}
+        <div className="w-full md:w-1/3">
+          {/* Year Filter */}
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Calendar className="w-6 h-6 text-pink-500" />
+              <span className="text-lg font-medium">Jump to year:</span>
+            </div>
+            <Select
+              placeholder="Select Year"
+              className="w-full"
+              onChange={handleYearChange}
+              value={yearFilter || "all"}
+            >
+              <Option value="all">All Years</Option>
+              {years.map((year) => (
+                <Option key={year} value={year}>
+                  {year}
+                </Option>
+              ))}
+            </Select>
           </div>
-          <Select
-            placeholder="Select Year"
-            className="w-full text-lg"
-            onChange={handleYearChange}
-            value={yearFilter || "all"}
-            dropdownRender={(menu) => (
-              <div className="text-lg md:text-xl">{menu}</div>
-            )}
-          >
-            <Option value="all">All Years</Option>
-            {years.map((year) => (
-              <Option key={year} value={year}>
-                {year}
-              </Option>
-            ))}
-          </Select>
+
+          {/* Decade Filter */}
+          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Calendar className="w-6 h-6 text-blue-500" />
+              <span className="text-lg font-medium">Filter by decade:</span>
+            </div>
+            <Select
+              placeholder="Select Decade"
+              className="w-full"
+              onChange={(value) => {
+                // Reset year filter when decade is selected
+                setYearFilter(null);
+                setDecadeFilter(value === "all" ? null : value);
+
+                // Build the URL for decade filtering
+                const queryParams = new URLSearchParams(location.search);
+                const query = queryParams.get("query");
+                
+                // Create a new URLSearchParams object to build the query properly
+                const newParams = new URLSearchParams();
+                
+                // Add existing query if present
+                if (query) {
+                  newParams.append("query", query);
+                }
+                
+                // Add decade parameter if not "all"
+                if (value !== "all") {
+                  newParams.append("decade", value);
+                }
+                
+                // Add number one filter if active
+                if (onlyNumberOneHits) {
+                  newParams.append("filter", "number-one");
+                }
+                
+                // Add unrated filter if active
+                if (onlyUnratedSongs) {
+                  newParams.append("unrated", "true");
+                }
+                
+                // Convert params to string and navigate
+                const paramString = newParams.toString();
+                navigate(`/songs${paramString ? `?${paramString}` : ''}`);
+              }}
+              value={decadeFilter || "all"}
+            >
+              <Option value="all">All Decades</Option>
+              {decades.map((decade) => (
+                <Option key={decade.value} value={decade.value}>
+                  {decade.label}
+                </Option>
+              ))}
+            </Select>
+          </div>
         </div>
 
+        {/* Right Column - Reset Button */}
         <div className="w-full md:w-1/3 flex items-center">
-          <Button
+          <button
             onClick={handleReset}
-            className="w-full px-6 py-3 text-lg text-pink-400 hover:text-pink-500 rounded-xl shadow-md flex items-center justify-center transition-all duration-200 ease-in-out"
+            className="w-full bg-gray-50 p-4 rounded-lg shadow-sm text-pink-500 hover:text-pink-600 flex items-center justify-center gap-2 text-lg font-medium transition-colors"
           >
-            <RefreshCw className="w-5 h-5 mr-2" />
+            <RefreshCw className="w-5 h-5" />
             Reset filters
-          </Button>
+          </button>
         </div>
       </div>
       <div className="block md:hidden text-center mb-2 text-gray-500">

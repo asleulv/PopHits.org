@@ -71,6 +71,17 @@ class SongListCreateView(generics.ListCreateAPIView):
             
             # Exclude those songs from the queryset
             queryset = queryset.exclude(id__in=rated_song_ids)
+        
+        # Apply decade filter
+        decade = self.request.GET.get('decade')
+        if decade:
+            try:
+                decade_start = int(decade)
+                decade_end = decade_start + 9
+                queryset = queryset.filter(year__gte=decade_start, year__lte=decade_end)
+            except ValueError:
+                # Invalid decade value
+                pass
 
         return queryset
 

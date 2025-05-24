@@ -92,7 +92,7 @@ export const getAllSongs = async (page, perPage, sortBy, sortOrder, searchQuery)
 };
 
 // Function to get all songs or songs by filter
-export const getSongs = async (page, perPage, filterType, filterValue, sortBy, sortOrder, searchQuery, peakRankFilter, unratedOnly = false) => {
+export const getSongs = async (page, perPage, filterType, filterValue, sortBy, sortOrder, searchQuery, peakRankFilter, unratedOnly = false, decade = null) => {
   try {
     // Initialize URL with pagination parameters
     let url = `?page=${page}&page_size=${perPage}`;
@@ -127,6 +127,11 @@ export const getSongs = async (page, perPage, filterType, filterValue, sortBy, s
     // Append unratedOnly filter if true
     if (unratedOnly) {
       url += '&unrated_only=true';
+    }
+    
+    // Append decade filter if provided
+    if (decade) {
+      url += `&decade=${decade}`;
     }
     
     // Add auth token for all requests when user is logged in
