@@ -92,7 +92,7 @@ export const getAllSongs = async (page, perPage, sortBy, sortOrder, searchQuery)
 };
 
 // Function to get all songs or songs by filter
-export const getSongs = async (page, perPage, filterType, filterValue, sortBy, sortOrder, searchQuery, peakRankFilter) => {
+export const getSongs = async (page, perPage, filterType, filterValue, sortBy, sortOrder, searchQuery, peakRankFilter, unratedOnly = false) => {
   try {
     // Initialize URL with pagination parameters
     let url = `?page=${page}&page_size=${perPage}`;
@@ -108,7 +108,7 @@ export const getSongs = async (page, perPage, filterType, filterValue, sortBy, s
     if (peakRankFilter) {
       url += `&peak_rank=${peakRankFilter}`;
     }
-
+    
     // Append sortBy if provided
     if (sortBy) {
       url += `&sort_by=${sortBy}`;
@@ -123,9 +123,22 @@ export const getSongs = async (page, perPage, filterType, filterValue, sortBy, s
     if (searchQuery) {
       url += `&search=${searchQuery}`;
     }
-
-    // Fetch data from API
-    const response = await songApi.get(url);
+    
+    // Append unratedOnly filter if true
+    if (unratedOnly) {
+      url += '&unrated_only=true';
+    }
+    
+    // Add auth token for all requests when user is logged in
+    const authToken = localStorage.getItem('authToken');
+    const headers = authToken ? { Authorization: `Token ${authToken}` } : {};
+    
+    // Log the final URL for debugging
+    console.log("API request URL:", url);
+    console.log("Using auth token:", !!authToken);
+    
+    // Fetch data from API with auth headers if available
+    const response = await songApi.get(url, { headers });
     return response.data;
   } catch (error) {
     console.error('Error fetching songs:', error);
@@ -370,6 +383,18 @@ export const getBookmarkStatusForSong = async (songId) => {
   }
 };
 
+// Function to get total number of songs in the database
+export const getTotalSongsCount = async () => {
+  try {
+    const response = await songApi.get('?page=1&page_size=1');
+    // The response should include the total count in the pagination info
+    return response.data.count;
+  } catch (error) {
+    console.error('Error fetching total songs count:', error);
+    throw error;
+  }
+};
+
 // Function to get top-rated songs
 export const getTopRatedSongs = async () => {
   try {
@@ -457,9 +482,3 @@ export const generateQuiz = async (numSongs, hitLevel, selectedDecades) => {
     throw error;
   }
 };
-
-
-
-
-
-

@@ -60,6 +60,17 @@ class SongListCreateView(generics.ListCreateAPIView):
             except ValueError:
                 # Invalid peak_rank_filter value
                 pass
+        
+        # Apply unrated filter - only show songs the user hasn't rated yet
+        unrated_only = self.request.GET.get('unrated_only', 'false').lower() == 'true'
+        if unrated_only and self.request.user.is_authenticated:
+            # Get the IDs of songs the user has already rated
+            rated_song_ids = UserSongRating.objects.filter(
+                user=self.request.user
+            ).values_list('song_id', flat=True)
+            
+            # Exclude those songs from the queryset
+            queryset = queryset.exclude(id__in=rated_song_ids)
 
         return queryset
 

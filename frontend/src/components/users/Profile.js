@@ -4,8 +4,9 @@ import {
   getUserProfile,
   getBookmarkedSongs,
   deleteAllBookmarks,
+  getTotalSongsCount,
 } from "../../services/api";
-import { Heart, BarChart2, Clipboard, Trash2, User } from "lucide-react";
+import { Heart, BarChart2, Clipboard, Trash2, User, PieChart, Award } from "lucide-react";
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState(null);
@@ -17,6 +18,7 @@ const Profile = () => {
   const [songsPerPageRating, setSongsPerPageRating] = useState(10); // Default songs per page for rating history
   const [songsPerPageBookmarks, setSongsPerPageBookmarks] = useState(10); // Default songs per page for bookmarks
   const [tab, setTab] = useState("rating"); // Default tab
+  const [totalSongsCount, setTotalSongsCount] = useState(0); // Total songs in database
 
   const availableSongsPerPage = [5, 10, 25, 50, 100]; // Options for songs per page
 
@@ -32,6 +34,10 @@ const Profile = () => {
 
         const bookmarkedResponse = await getBookmarkedSongs(authToken);
         setBookmarkedSongs(bookmarkedResponse);
+        
+        // Fetch total songs count
+        const totalCount = await getTotalSongsCount();
+        setTotalSongsCount(totalCount);
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
@@ -134,6 +140,51 @@ const Profile = () => {
       ) : (
         <div className="flex justify-center items-center h-24">
           <p className="text-gray-500">Loading profile information...</p>
+        </div>
+      )}
+      
+      {/* Rating Progress Indicator */}
+      {userProfile && totalSongsCount > 0 && (
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <Award className="w-8 h-8 text-pink-500 mr-2" />
+            <h3 className="text-xl font-semibold text-gray-700">Rating Progress</h3>
+          </div>
+          
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-4">
+
+            <div className="flex flex-col items-center mb-4 md:mb-0">
+              <p className="text-gray-500 text-sm">Songs Rated</p>
+              <p className="text-3xl font-bold text-pink-600 ml-1">{ratingHistory.length}</p>
+            </div>
+            
+            <div className="flex flex-col items-center mb-4 md:mb-0">
+              <p className="text-gray-500 text-sm">Total Songs</p>
+              <p className="text-3xl font-bold text-gray-700 ml-1">{totalSongsCount}</p>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <p className="text-gray-500 text-sm">Completion</p>
+              <p className="text-3xl font-bold text-blue-600 ml-1">
+                {((ratingHistory.length / totalSongsCount) * 100).toFixed(1)}%
+              </p>
+            </div>
+          </div>
+          
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
+  <div
+    className="bg-gradient-to-r from-pink-500 to-blue-500 h-4 transition-all duration-500"
+    style={{
+      width: `${Math.min(100, (ratingHistory.length / totalSongsCount) * 100)}%`,
+      minWidth: ratingHistory.length > 0 ? '4px' : '0',
+    }}
+  ></div>
+</div>
+          
+          <p className="text-center text-gray-500 text-sm">
+            You've rated {ratingHistory.length} out of {totalSongsCount} songs in our database
+          </p>
         </div>
       )}
       

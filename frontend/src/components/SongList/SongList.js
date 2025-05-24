@@ -9,7 +9,9 @@ import {
   Filter,
   RefreshCw,
   Award,
+  Star,
 } from "lucide-react";
+import { useAuth } from "../../services/auth";
 
 const { Option } = Select;
 
@@ -25,9 +27,11 @@ const SongList = () => {
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const [onlyNumberOneHits, setOnlyNumberOneHits] = useState(false);
+  const [onlyUnratedSongs, setOnlyUnratedSongs] = useState(false);
   const [yearFilter, setYearFilter] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [artistName, setArtistName] = useState("");
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,8 +39,11 @@ const SongList = () => {
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get("query");
     const filter = queryParams.get("filter");
+    const unratedFilter = queryParams.get("unrated");
+    
     setSearchQuery(query || "");
     setOnlyNumberOneHits(filter === "number-one");
+    setOnlyUnratedSongs(unratedFilter === "true");
 
     const pathname = location.pathname;
     const artistSlug = pathname.includes("/artist/")
@@ -47,7 +54,13 @@ const SongList = () => {
       : null;
 
     setYearFilter(yearPath || null);
-    fetchData(query || "", artistSlug, yearPath, filter === "number-one");
+    fetchData(
+      query || "", 
+      artistSlug, 
+      yearPath, 
+      filter === "number-one", 
+      unratedFilter === "true"
+    );
   }, [
     location.pathname,
     location.search,
@@ -56,14 +69,18 @@ const SongList = () => {
     sortField,
     sortOrder,
     onlyNumberOneHits,
+    onlyUnratedSongs,
     yearFilter,
   ]);
 
-  const fetchData = async (query, artistSlug, year, numberOneFilter) => {
+  const fetchData = async (query, artistSlug, year, numberOneFilter, unratedOnly = false) => {
     try {
       setLoading(true);
 
       let peakRankFilter = numberOneFilter ? "1" : null;
+      
+      // Log the unratedOnly parameter to verify it's being passed correctly
+      console.log("Fetching data with unratedOnly:", unratedOnly);
 
       let data;
       if (artistSlug) {
@@ -75,7 +92,8 @@ const SongList = () => {
           sortField,
           sortOrder,
           query,
-          peakRankFilter
+          peakRankFilter,
+          unratedOnly
         );
         setArtistName(artistSlug.replace(/-/g, " "));
       } else if (year) {
@@ -87,7 +105,8 @@ const SongList = () => {
           sortField,
           sortOrder,
           query,
-          peakRankFilter
+          peakRankFilter,
+          unratedOnly
         );
         setArtistName("");
       } else {
@@ -99,12 +118,26 @@ const SongList = () => {
           sortField,
           sortOrder,
           query,
-          peakRankFilter
+          peakRankFilter,
+          unratedOnly
         );
         setArtistName("");
       }
+      
+      // Log the response to see if the backend is returning filtered results
+      console.log("API response:", data);
 
       const songsData = Array.isArray(data) ? data[0] : data;
+      
+      // Log detailed information about the response
+      console.log("Songs data:", songsData);
+      console.log("Total songs count:", songsData.count);
+      console.log("Unrated filter active:", unratedOnly);
+      
+      // Check if the backend is actually filtering
+      if (unratedOnly) {
+        console.log("Expected: Total count should be less than 24271 if filtering is working");
+      }
 
       setSongs(songsData.results);
       setTotalSongs(songsData.count);
@@ -129,6 +162,7 @@ const SongList = () => {
     setSortField(null);
     setSortOrder(null);
     setOnlyNumberOneHits(false);
+    setOnlyUnratedSongs(false);
     setYearFilter(null);
     setSearchQuery("");
 
@@ -148,6 +182,7 @@ const SongList = () => {
 
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get("query");
+    const unratedParam = onlyUnratedSongs ? "&unrated=true" : "";
     const artistSlug = location.pathname.includes("/artist/")
       ? location.pathname.split("/artist/")[1].split("/")[0]
       : null;
@@ -160,8 +195,32 @@ const SongList = () => {
     navigate(
       `${path}${
         query
-          ? `?query=${query}&filter=${checked ? "number-one" : ""}`
-          : `?filter=${checked ? "number-one" : ""}`
+          ? `?query=${query}&filter=${checked ? "number-one" : ""}${unratedParam}`
+          : `?filter=${checked ? "number-one" : ""}${unratedParam}`
+      }`
+    );
+  };
+  
+  const handleUnratedSwitchChange = (checked) => {
+    setOnlyUnratedSongs(checked);
+    
+    const queryParams = new URLSearchParams(location.search);
+    const query = queryParams.get("query");
+    const numberOneParam = onlyNumberOneHits ? "&filter=number-one" : "";
+    const artistSlug = location.pathname.includes("/artist/")
+      ? location.pathname.split("/artist/")[1].split("/")[0]
+      : null;
+    const path = artistSlug
+      ? `/artist/${artistSlug}`
+      : yearFilter
+      ? `/year/${yearFilter}`
+      : "/songs";
+      
+    navigate(
+      `${path}${
+        query
+          ? `?query=${query}${numberOneParam}&unrated=${checked ? "true" : ""}`
+          : `?unrated=${checked ? "true" : ""}${numberOneParam}`
       }`
     );
   };
@@ -172,6 +231,7 @@ const SongList = () => {
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get("query");
     const filter = onlyNumberOneHits ? "&filter=number-one" : "";
+    const unratedParam = onlyUnratedSongs ? "&unrated=true" : "";
     const artistSlug = location.pathname.includes("/artist/")
       ? location.pathname.split("/artist/")[1].split("/")[0]
       : null;
@@ -182,7 +242,7 @@ const SongList = () => {
           : "/songs"
         : `/year/${value}`;
 
-    navigate(`${path}${query ? `?query=${query}${filter}` : filter}`);
+    navigate(`${path}${query ? `?query=${query}${filter}${unratedParam}` : `?${filter.substring(1)}${unratedParam}`}`);
   };
 
   const capitalizeWords = (str) => {
@@ -260,12 +320,17 @@ const SongList = () => {
     const containerClass = "flex items-center justify-center gap-2 px-1 py-1";
     const textClass = "bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent";
     const iconClass = "w-8 h-8 text-pink-500"; // Give icons a visible color
+    
+    // Add "Unrated" prefix if unrated filter is active
+    const unratedPrefix = onlyUnratedSongs ? "Unrated " : "";
+    // Add "#1" prefix if number one filter is active
+    const numberOnePrefix = onlyNumberOneHits ? "#1 " : "";
 
     if (yearFilter) {
       return (
         <div className={containerClass}>
           <Calendar className={iconClass} />
-          <span className={textClass}>All {yearFilter} hits</span>
+          <span className={textClass}>{unratedPrefix}{numberOnePrefix}{yearFilter} hits</span>
         </div>
       );
     }
@@ -273,7 +338,7 @@ const SongList = () => {
       return (
         <div className={containerClass}>
           <Music className={iconClass} />
-          <span className={textClass}>All hits by {capitalizeWords(artistName)}</span>
+          <span className={textClass}>{unratedPrefix}{numberOnePrefix}hits by {capitalizeWords(artistName)}</span>
         </div>
       );
     }
@@ -281,14 +346,25 @@ const SongList = () => {
       return (
         <div className={containerClass}>
           <Search className={iconClass} />
-          <span className={textClass}>Displaying results for "{searchQuery}"</span>
+          <span className={textClass}>Displaying {unratedPrefix}{numberOnePrefix}results for "{searchQuery}"</span>
         </div>
       );
     }
+    
+    // Default heading
+    let headingText = "All hits";
+    if (onlyUnratedSongs && onlyNumberOneHits) {
+      headingText = "Unrated #1 hits";
+    } else if (onlyUnratedSongs) {
+      headingText = "Unrated hits";
+    } else if (onlyNumberOneHits) {
+      headingText = "#1 hits only";
+    }
+    
     return (
       <div className={containerClass}>
-        <Filter className={iconClass} />
-        <span className={textClass}>All hits</span>
+        {onlyUnratedSongs ? <Star className={iconClass} /> : <Filter className={iconClass} />}
+        <span className={textClass}>{headingText}</span>
       </div>
     );
   };
@@ -300,16 +376,34 @@ const SongList = () => {
       </h1>
 
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 rounded-lg">
-        <div className="flex items-center bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
-          <div className="flex items-center gap-3">
-            <Award className="w-6 h-6 text-pink-500" />
-            <span className="text-lg font-semibold mr-4">#1 hits only</span>
+        <div className="flex flex-col gap-4 w-full md:w-1/3">
+          {/* #1 Hits Only Toggle */}
+          <div className="flex items-center bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
+            <div className="flex items-center gap-3">
+              <Award className="w-6 h-6 text-pink-500" />
+              <span className="text-lg font-semibold mr-4">#1 hits only</span>
+            </div>
+            <Switch
+              onChange={handleSwitchChange}
+              checked={onlyNumberOneHits}
+              className="transform scale-125 bg-gray-300 checked:bg-pink-500"
+            />
           </div>
-          <Switch
-            onChange={handleSwitchChange}
-            checked={onlyNumberOneHits}
-            className="transform scale-125 bg-gray-300 checked:bg-pink-500"
-          />
+          
+          {/* Unrated Songs Toggle - Only visible when logged in */}
+          {isAuthenticated && (
+            <div className="flex items-center bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
+              <div className="flex items-center gap-3">
+                <Star className="w-6 h-6 text-pink-500" />
+                <span className="text-lg font-semibold mr-4">Unrated songs only</span>
+              </div>
+              <Switch
+                onChange={handleUnratedSwitchChange}
+                checked={onlyUnratedSongs}
+                className="transform scale-125 bg-gray-300 checked:bg-blue-500"
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md">
