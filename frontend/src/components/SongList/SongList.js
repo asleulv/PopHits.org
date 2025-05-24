@@ -257,37 +257,38 @@ const SongList = () => {
   );
 
   const getHeading = () => {
-    const baseClass =
-      "flex items-center justify-center gap-2 text-pink-500 px-1 py-1";
+    const containerClass = "flex items-center justify-center gap-2 px-1 py-1";
+    const textClass = "bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent";
+    const iconClass = "w-8 h-8 text-pink-500"; // Give icons a visible color
 
     if (yearFilter) {
       return (
-        <div className={baseClass}>
-          <Calendar className="w-8 h-8" />
-          <span>All {yearFilter} hits</span>
+        <div className={containerClass}>
+          <Calendar className={iconClass} />
+          <span className={textClass}>All {yearFilter} hits</span>
         </div>
       );
     }
     if (artistName) {
       return (
-        <div className={baseClass}>
-          <Music className="w-8 h-8" />
-          <span>All hits by {capitalizeWords(artistName)}</span>
+        <div className={containerClass}>
+          <Music className={iconClass} />
+          <span className={textClass}>All hits by {capitalizeWords(artistName)}</span>
         </div>
       );
     }
     if (searchQuery) {
       return (
-        <div className={baseClass}>
-          <Search className="w-8 h-8" />
-          <span>Displaying results for "{searchQuery}"</span>
+        <div className={containerClass}>
+          <Search className={iconClass} />
+          <span className={textClass}>Displaying results for "{searchQuery}"</span>
         </div>
       );
     }
     return (
-      <div className={baseClass}>
-        <Filter className="w-8 h-8" />
-        <span>All hits</span>
+      <div className={containerClass}>
+        <Filter className={iconClass} />
+        <span className={textClass}>All hits</span>
       </div>
     );
   };

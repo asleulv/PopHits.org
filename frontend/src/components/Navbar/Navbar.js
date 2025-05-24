@@ -204,7 +204,7 @@ const Navbar = ({ isAuthenticated }) => {
         </div>
       </nav>
 
-      <div className="bg-gray-800 p-2">
+      <div className="bg-gradient-to-r from-gray-700 to-black p-2">
         <div className="container mx-auto flex justify-end">
           <div style={{ width: "60%", marginTop: 0, marginBottom: 0 }}>
             <Input.Search

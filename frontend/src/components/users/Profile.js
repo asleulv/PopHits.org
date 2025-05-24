@@ -193,35 +193,40 @@ const Profile = () => {
 
           {currentSongsRating && currentSongsRating.length > 0 ? (
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Artist</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Song</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Your Rating</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {currentSongsRating.map((rating) => (
-                    <tr key={rating.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{rating.song_artist}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <Link
-                          to={`/songs/${rating.song_slug}`}
-                          className="text-blue-600 hover:text-pink-600 transition-colors"
-                        >
-                          {rating.song_title}
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                        <span className="bg-pink-100 text-pink-800 font-medium px-2.5 py-0.5 rounded-full">
-                          {rating.score}
-                        </span>
-                      </td>
+              {/* Add responsive container with horizontal scrolling */}
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      {/* Adjust column widths for better mobile display */}
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3 md:w-auto">Artist</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3 md:w-auto">Song</th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3 md:w-auto">Rating</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {currentSongsRating.map((rating) => (
+                      <tr key={rating.id} className="hover:bg-gray-50 transition-colors">
+                        {/* Remove whitespace-nowrap to allow text wrapping on mobile */}
+                        <td className="px-4 py-3 text-sm text-gray-700 break-words">{rating.song_artist}</td>
+                        <td className="px-4 py-3 text-sm break-words">
+                          <Link
+                            to={`/songs/${rating.song_slug}`}
+                            className="text-blue-600 hover:text-pink-600 transition-colors"
+                          >
+                            {rating.song_title}
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3 text-right text-sm">
+                          <span className="bg-pink-100 text-pink-800 font-medium px-2.5 py-0.5 rounded-full">
+                            {rating.score}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ) : (
             <div className="flex justify-center items-center h-48 bg-white rounded-xl shadow-md">
@@ -264,35 +269,40 @@ const Profile = () => {
         <>
           {currentSongsBookmarks && currentSongsBookmarks.length > 0 ? (
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Artist</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {currentSongsBookmarks.map((song) => (
-                    <tr key={song.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{song.artist}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <Link
-                          to={`/songs/${song.slug}`}
-                          className="text-blue-600 hover:text-pink-600 transition-colors"
-                        >
-                          {song.title}
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                        <span className="text-gray-700 font-medium">
-                          {song.year}
-                        </span>
-                      </td>
+              {/* Add responsive container with horizontal scrolling */}
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      {/* Adjust column widths for better mobile display */}
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3 md:w-auto">Artist</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3 md:w-auto">Title</th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3 md:w-auto">Year</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {currentSongsBookmarks.map((song) => (
+                      <tr key={song.id} className="hover:bg-gray-50 transition-colors">
+                        {/* Remove whitespace-nowrap to allow text wrapping on mobile */}
+                        <td className="px-4 py-3 text-sm text-gray-700 break-words">{song.artist}</td>
+                        <td className="px-4 py-3 text-sm break-words">
+                          <Link
+                            to={`/songs/${song.slug}`}
+                            className="text-blue-600 hover:text-pink-600 transition-colors"
+                          >
+                            {song.title}
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3 text-right text-sm">
+                          <span className="text-gray-700 font-medium">
+                            {song.year}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ) : (
             <div className="flex justify-center items-center h-48 bg-white rounded-xl shadow-md">

@@ -163,7 +163,7 @@ const FrontPage = () => {
       <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm animate-fadeIn">
         <div className="flex-1 mb-6 md:mb-0">
           <h1 className="text-3xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-blue-500 via-pink-400 to-purple-900 bg-clip-text text-transparent pb-2">
-            THE HIT SONG DATABASE
+            The hit song database
           </h1>
 
           <p className="mb-6 text-center md:text-left text-md md:text-xl font-semibold">
@@ -348,26 +348,26 @@ const FrontPage = () => {
                   <p className="mt-4 text-center text-sm bg-gray-800 p-3 rounded-lg shadow-inner">
                     <Link
                       to={`/songs/${song.slug}`}
-                      className="text-pink-300 hover:text-pink-200 transition-colors hover:underline font-bold"
+                      className="text-pink-300 hover:text-pink-200 transition-colors  font-bold"
                     >
                       {song.title}
                     </Link>{" "}
                     by{" "}
                     <Link
                       to={`/artist/${song.artist_slug}`}
-                      className="text-blue-300 hover:text-blue-200 transition-colors hover:underline font-bold"
+                      className="text-blue-300 hover:text-blue-200 transition-colors font-bold"
                     >
                       {song.artist}
                     </Link>{" "}
                     entered the charts in{" "}
                     <Link
                       to={`/year/${song.year}`}
-                      className="text-green-300 hover:text-green-200 transition-colors hover:underline font-bold"
+                      className="text-gray-300 hover:text-gray-400 transition-colors font-bold"
                     >
                       {song.year}
                     </Link>{" "}
-                    peaking at{" "}
-                    <span className="bg-pink-700 text-white px-2 py-1 rounded-full font-bold">
+                    peaking at{""}
+                    <span className=" text-pink-300 px-2 py-1 rounded-full font-bold">
                       #{song.peak_rank}
                     </span>
                   </p>
