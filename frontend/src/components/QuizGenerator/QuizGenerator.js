@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Select, Spin, message } from "antd";
+import { useState } from "react";
+import { Button, Select, Spin } from "antd";
 import { generateQuiz } from "../../services/api";
 import { HelpCircle, RefreshCw, Calendar, BarChart2, Eye, EyeOff } from "lucide-react";
 

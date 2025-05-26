@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth } from "../../services/auth";
 import { Link } from "react-router-dom";
 import oldhitsLogo from "../Navbar/oldhits_logo.png";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getRandomSongWithSpotifyURL } from "../../services/api";
 import { MagnifyingGlass } from "react-loader-spinner";

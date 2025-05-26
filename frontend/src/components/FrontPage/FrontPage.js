@@ -1,10 +1,8 @@
-import React, {
+import {
   useEffect,
   useState,
   Suspense,
   lazy,
-  useMemo,
-  useCallback,
 } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";

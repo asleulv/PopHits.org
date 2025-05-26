@@ -1,7 +1,8 @@
 // src/containers/App.js
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import ScrollToTop from './ScrollToTop';
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import About from "../components/About/About";
@@ -74,10 +75,9 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-
+        <ScrollToTop />
         <Navbar isAuthenticated={isAuthenticated} />
         <div className="app-container">
-          {/* Cookie Consent Banner */}
           <CookieConsent
             location="bottom"
             buttonText="I accept"
@@ -89,7 +89,6 @@ const App = () => {
             This website uses cookies to enhance the user experience.{" "}
             <a href="/privacy-policy" style={{ color: "#FFD700" }}>Learn more</a>
           </CookieConsent>
-
           <Routes>
             <Route path="/" element={<FrontPage />} />
             <Route path="/search" element={<SongList />} />
@@ -115,7 +114,6 @@ const App = () => {
           </Routes>
         </div>
         <Footer />
-
     </QueryClientProvider>
   );
 };

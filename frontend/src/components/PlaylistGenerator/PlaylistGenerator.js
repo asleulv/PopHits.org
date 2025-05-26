@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Select, Table, Spin, message } from "antd";
 import { generatePlaylist } from "../../services/api";
-import { Music, RefreshCw, Copy, Filter, Calendar, BarChart2 } from "lucide-react";
+import { Music, RefreshCw, Copy, Calendar, BarChart2 } from "lucide-react";
 
 const { Option } = Select;
 

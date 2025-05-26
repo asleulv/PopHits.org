@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getNumberOneHits } from "../../services/api";
-import { Trophy, Music, Calendar, Clock } from "lucide-react";
+import { Trophy, Calendar, Clock } from "lucide-react";
 import { Grid } from "react-loader-spinner";
 
 const NumberOneHitsSection = () => {

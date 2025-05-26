@@ -1,10 +1,8 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import rickyNelson from "./ricky_nelson.jpg";
 import { useAuth } from "../../services/auth";
 import {
   Music,
-  Calendar,
   Info,
   Mail,
   ArrowRight,
@@ -24,7 +22,7 @@ const About = () => {
 
         <div className="text-center text-lg text-gray-700 mb-6 flex items-center justify-center gap-2">
           <Music className="w-5 h-5 text-pink-500" />
-          <span>From Ricky Nelson to Taylor Swift...</span>
+          <span>From Ricky Nelson to Olivia Rodrigo...</span>
         </div>
       </div>
 
@@ -32,10 +30,10 @@ const About = () => {
         <div className="p-6">
           <p className="text-gray-700 mb-6 leading-relaxed">
             <span className="font-semibold text-gray-800">PopHits.org</span> is
-            a website dedicated to exploring 50 years of hit singles. Our
-            mission is to uncover unheard gems, curate the best playlists, and
-            provide ratings from a database of over 20,000 songs. You might want
-            to listen to them all!
+            a website dedicated to exploring every hit single from 1958 to
+            today. Our mission is to uncover hidden gems, curate unforgettable
+            playlists, and provide user ratings for a growing database of over
+            30,000 songs. Dive in—you might end up listening to them all!
           </p>
 
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl mb-6">

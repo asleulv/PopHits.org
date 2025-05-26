@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Table, Button, Switch, Select } from "antd";
+import { Table, Switch, Select } from "antd";
 import { getSongs } from "../../services/api";
 import {
   Search,

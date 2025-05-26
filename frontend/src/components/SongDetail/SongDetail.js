@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import {
@@ -34,7 +34,7 @@ import {
   Clock,
   Star,
   Music,
-  Share2,
+  SquarePlay,
   Heart,
 } from "lucide-react";
 
@@ -357,7 +357,7 @@ const SongDetail = () => {
               <div className="bg-gray-700 p-4 rounded-lg text-center">
                 <Calendar className="w-6 h-6 text-white mx-auto mb-1" />
                 <div className="text-white text-sm">Year</div>
-                <div className="text-white font-bold text-pink-400  text-2xl">
+                <div className="font-bold text-pink-400  text-2xl">
                   {song.year}
                 </div>
               </div>
@@ -365,7 +365,7 @@ const SongDetail = () => {
               <div className="bg-gray-700 p-4 rounded-lg text-center">
                 <TrendingUp className="w-6 h-6 text-white mx-auto mb-1" />
                 <div className="text-white text-sm">Peak Position</div>
-                <div className="text-white font-bold text-pink-400  text-2xl">
+                <div className="font-bold text-pink-400  text-2xl">
                   #{song.peak_rank}
                 </div>
               </div>
@@ -373,7 +373,7 @@ const SongDetail = () => {
               <div className="bg-gray-700 p-4 rounded-lg text-center">
                 <Clock className="w-6 h-6 text-white mx-auto mb-1" />
                 <div className="text-white text-sm">Weeks on Chart</div>
-                <div className="text-white font-bold text-pink-400  text-2xl">
+                <div className="font-bold text-pink-400  text-2xl">
                   {song.weeks_on_chart}
                 </div>
               </div>
@@ -381,7 +381,7 @@ const SongDetail = () => {
               <div className="bg-gray-700 p-4 rounded-lg text-center">
                 <Star className="w-6 h-6 text-white mx-auto mb-1" />
                 <div className="text-white text-sm">Total Ratings</div>
-                <div className="text-white font-bold text-pink-400 text-2xl">
+                <div className="font-bold text-pink-400 text-2xl">
                   {song.total_ratings}
                 </div>
               </div>
@@ -429,7 +429,7 @@ const SongDetail = () => {
                     rel="noopener noreferrer"
                     className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2"
                   >
-                    <Share2 className="w-4 h-4" /> Search YouTube
+                    <SquarePlay className="w-4 h-4" /> Search YouTube
                   </a>
                 </div>
               </div>
