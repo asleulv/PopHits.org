@@ -12,11 +12,11 @@ body {
 }
 
 a {
-  color: #173fa2; /* Change to the color you desire */
+  color: #000000; /* Change to the color you desire */
 }
 
 a:hover {
-  color: #1d72e1; /* Change to the hover color you desire */
+  color: #cb1c6e; /* Change to the hover color you desire */
 }
 
 .navbar, .footer {

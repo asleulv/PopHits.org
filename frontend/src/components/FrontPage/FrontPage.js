@@ -227,7 +227,7 @@ const FrontPage = () => {
           <div className="flex-1 mb-0 md:mb-0 w-full">
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 w-full relative lg:rounded-xl shadow-lg transform transition-transform">
               <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 text-center flex items-center justify-center gap-2">
-                <Disc className="w-8 h-8 text-pink-400 animate-spin-slow" />
+                <Disc className="w-8 h-8 text-pink-400 animate-spin drop-shadow-md" />
                 Featured hit
               </h2>
               <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden shadow-md">
@@ -423,24 +423,24 @@ const FrontPage = () => {
 
                     {/* Info Cell with Title, Artist, Year, and Score */}
                     <td className="flex flex-col md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
-                      <span className="block md:hidden text-gray-700 bg-gray-50 p-3 rounded-lg shadow-sm">
+                      <span className="block md:hidden text-gray-700 bg-blue-50 p-1 rounded-lg shadow-sm">
                         <Link
                           to={`/songs/${song.slug}`}
-                          className="text-blue-800 font-bold text-lg hover:text-pink-600 transition-colors"
+                          className="text-gray-700 font-bold text-lg hover:text-pink-600 transition-colors"
                         >
                           {song.title}
                         </Link>
                         <br className="block md:hidden" />{" "}
                         <Link
                           to={`/artist/${song.artist_slug}`}
-                          className="text-blue-800 hover:underline hover:text-pink-600 transition-colors"
+                          className="text-pink-600 text-lg hover:text-gray-800 transition-colors"
                         >
                           {song.artist}
                         </Link>
                         <br className="block md:hidden" />{" "}
                         <Link
                           to={`/year/${song.year}`}
-                          className="text-blue-800 hover:underline hover:text-pink-600 transition-colors"
+                          className="text-cyan-500 hover:text-pink-600 font-semibold transition-colors"
                         >
                           {song.year}
                         </Link>
@@ -453,7 +453,7 @@ const FrontPage = () => {
                       <span className="hidden md:block">
                         <Link
                           to={`/songs/${song.slug}`}
-                          className="text-blue-800 font-bold hover:text-pink-600 transition-colors"
+                          className="text-gray-800 font-bold hover:text-pink-600 transition-colors"
                         >
                           {song.title}
                         </Link>
@@ -464,7 +464,7 @@ const FrontPage = () => {
                     <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
                       <Link
                         to={`/artist/${song.artist_slug}`}
-                        className="text-blue-700 hover:text-pink-600 transition-colors hover:underline"
+                        className="text-pink-600 hover:text-gray-800 transition-colors"
                       >
                         {song.artist}
                       </Link>
@@ -472,7 +472,7 @@ const FrontPage = () => {
                     <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
                       <Link
                         to={`/year/${song.year}`}
-                        className="text-blue-700 hover:text-pink-600 transition-colors hover:underline"
+                        className="text-cyan-600 hover:text-pink-600 transition-colors"
                       >
                         {song.year}
                       </Link>

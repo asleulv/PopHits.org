@@ -467,16 +467,16 @@ const SongDetail = () => {
                 </div>
               </div>
             ) : (
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm mb-2">
+              <div className="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-xl shadow-sm mb-2">
                 {/* Improved mobile-friendly rating UI */}
                 <div className="flex flex-col items-center">
-                  <p className="text-lg font-medium text-gray-700 mb-3 text-center">
+                  <p className="text-lg font-medium text-white mb-3 text-center">
                     Your Score:
                   </p>
 
-                  {/* Structured grid layout for rating circles */}
-                  <div className="grid grid-cols-5 gap-2 mb-2 max-w-xs mx-auto">
-                    {[...Array(5)].map((_, index) => (
+                  {/* Responsive grid: 2 rows of 5 on mobile, 1 row of 10 on desktop */}
+                  <div className="grid grid-cols-5 md:grid-cols-10 gap-2 max-w-md mx-auto mb-2">
+                    {[...Array(10)].map((_, index) => (
                       <div
                         key={index}
                         className={`w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full shadow-md transition-all duration-300 cursor-pointer transform hover:scale-110 ${
@@ -491,23 +491,7 @@ const SongDetail = () => {
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-5 gap-2 max-w-xs mx-auto">
-                    {[...Array(5)].map((_, index) => (
-                      <div
-                        key={index + 5}
-                        className={`w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full shadow-md transition-all duration-300 cursor-pointer transform hover:scale-110 ${
-                          userScore === index + 6
-                            ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold"
-                            : "bg-white text-gray-700 hover:bg-gray-100"
-                        }`}
-                        onClick={() => handleScoreChange(index + 6)}
-                      >
-                        {index + 6}
-                      </div>
-                    ))}
-                  </div>
-
-                  <p className="text-sm text-gray-500 italic text-center mt-3">
+                  <p className="text-sm text-gray-400 italic text-center mt-3">
                     Click a number to rate, click again to remove your rating
                   </p>
                 </div>
@@ -528,13 +512,13 @@ const SongDetail = () => {
                   </FacebookShareButton>
                 </div>
                 <div className="transform transition-transform hover:scale-110">
-  <BlueskyShareButton
-    url={window.location.href}
-    title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at ${song.peak_rank}`}
-  >
-    <BlueskyIcon size={40} round />
-  </BlueskyShareButton>
-</div>
+                  <BlueskyShareButton
+                    url={window.location.href}
+                    title={`${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at ${song.peak_rank}`}
+                  >
+                    <BlueskyIcon size={40} round />
+                  </BlueskyShareButton>
+                </div>
                 <div className="transform transition-transform hover:scale-110">
                   <TwitterShareButton
                     url={window.location.href}

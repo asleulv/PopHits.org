@@ -644,6 +644,11 @@ const SongList = () => {
             .ant-table-column-sorter-up.active, .ant-table-column-sorter-down.active {
               color: #ec4899 !important;
             }
+            .custom-pagination {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 1rem;
+}
           `}
         </style>
         <Table
@@ -675,11 +680,11 @@ const SongList = () => {
           }}
         />
       </div>
-      <div className="mt-6 text-center text-gray-600 bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg shadow-sm inline-block mx-auto">
-        Showing <span className="font-bold text-pink-600">{songs.length}</span>{" "}
-        of <span className="font-bold text-pink-600">{totalSongs}</span> hit
-        songs
-      </div>
+      <div className="mt-6 w-full text-center text-gray-600 bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg shadow-sm">
+  Showing <span className="font-bold text-pink-600">{songs.length}</span>{" "}
+  of <span className="font-bold text-pink-600">{totalSongs}</span> hit songs
+</div>
+
     </>
   );
 };
