@@ -44,7 +44,7 @@ const NumberOneHitsSection = () => {
         </h2>
         <Link
           to="/songs?filter=number-one"
-          className="ml-3 px-4 py-2 rounded-md bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-semibold text-sm shadow-md transform transition-all duration-300 hover:text-white"
+          className="ml-3 px-4 py-2 rounded-full bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-semibold text-sm shadow-md transform transition-all duration-300 hover:text-white"
         >
           View Full List
         </Link>

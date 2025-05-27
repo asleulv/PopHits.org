@@ -303,7 +303,7 @@ const FrontPage = () => {
           </h2>
           <button
             onClick={refreshRandomHitsByDecade}
-            className="ml-3 px-4 py-2 rounded-md bg-pink-600 hover:bg-pink-500 hover:text-white transition-all duration-300 text-white font-semibold text-sm md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-md transform"
+            className="ml-3 px-4 py-2 rounded-full bg-pink-600 hover:bg-pink-500 hover:text-white transition-all duration-300 text-white font-semibold text-sm md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-md transform"
           >
             Refresh
           </button>
@@ -504,7 +504,7 @@ const FrontPage = () => {
         <div className="text-center mt-6">
           <Link 
             to="/songs?sort=rating" 
-            className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:from-pink-600 hover:to-pink-700 transition-all hover:text-white duration-300 transform"
+            className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-full shadow-md hover:from-pink-600 hover:to-pink-700 transition-all hover:text-white duration-300 transform"
           >
             All rated songs
           </Link>

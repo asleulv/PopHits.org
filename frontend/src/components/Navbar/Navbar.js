@@ -54,12 +54,12 @@ const Navbar = ({ isAuthenticated }) => {
 
   return (
     <>
-      <nav className={`navbar bg-gray-800 p-4 ${isScrolled ? "scrolled" : ""}`}>
+      <nav className={`navbar bg-gradient-to-r from-pink-400 via-pink-500 to-purple-500 p-4 ${isScrolled ? "scrolled" : ""}`}>
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
             {/* Site Logo */}
             <Link to="/">
-              <img src={oldhitsLogo} alt="old.hits" className="navbar-logo" />
+              <img src={oldhitsLogo} alt="PopHits.org" className="navbar-logo" />
             </Link>
           </div>
           {/* Hamburger Menu Icon */}
