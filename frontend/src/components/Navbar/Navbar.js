@@ -55,7 +55,7 @@ const Navbar = ({ isAuthenticated }) => {
 
   return (
     <>
-      <nav className={`navbar bg-gradient-to-r from-pink-400 via-pink-500 to-purple-500 p-4 ${isScrolled ? "scrolled" : ""}`}>
+      <nav className={`navbar bg-gradient-to-r from-pink-400 via-pink-500 to-purple-700 p-4 ${isScrolled ? "scrolled" : ""}`}>
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
             {/* Site Logo */}

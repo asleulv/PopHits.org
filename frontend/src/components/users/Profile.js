@@ -6,7 +6,131 @@ import {
   deleteAllBookmarks,
   getTotalSongsCount,
 } from "../../services/api";
-import { Heart, BarChart2, Clipboard, Trash2, User, PieChart, Award } from "lucide-react";
+import { Heart, BarChart2, Clipboard, Trash2, User, Award, ChevronLeft, ChevronRight } from "lucide-react";
+
+// Pagination component with limited page buttons
+const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChange }) => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  // Don't render pagination if there's only one page
+  if (totalPages <= 1) return null;
+  
+  // Calculate which page numbers to show (max 5)
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 5; // Maximum number of page buttons to show
+    
+    if (totalPages <= maxPagesToShow) {
+      // If we have fewer pages than the max, show all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(1);
+      
+      // Calculate start and end of page range around current page
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Adjust if we're near the beginning
+      if (currentPage <= 3) {
+        endPage = Math.min(totalPages - 1, 4);
+      }
+      
+      // Adjust if we're near the end
+      if (currentPage >= totalPages - 2) {
+        startPage = Math.max(2, totalPages - 3);
+      }
+      
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pageNumbers.push('...');
+      }
+      
+      // Add page numbers in the middle
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+      
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pageNumbers.push('...');
+      }
+      
+      // Always show last page
+      pageNumbers.push(totalPages);
+    }
+    
+    return pageNumbers;
+  };
+  
+  const pageNumbers = getPageNumbers();
+  
+  return (
+    <nav className="mt-6" aria-label="Pagination">
+      <div className="flex justify-center overflow-x-auto py-2 max-w-full">
+        <ul className="inline-flex items-center -space-x-px">
+          {/* Previous button */}
+          <li>
+            <button
+              onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-2 ml-0 leading-tight rounded-l-md border ${
+                currentPage === 1
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-gray-700 hover:bg-gray-100 hover:text-pink-600"
+              } border-gray-300`}
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          </li>
+          
+          {/* Page numbers */}
+          {pageNumbers.map((pageNumber, index) => (
+            <li key={index}>
+              {pageNumber === '...' ? (
+                <span className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300">
+                  ...
+                </span>
+              ) : (
+                <button
+                  onClick={() => onPageChange(pageNumber)}
+                  className={`px-3 py-2 leading-tight border ${
+                    currentPage === pageNumber
+                      ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium"
+                      : "bg-white text-gray-700 hover:bg-gray-100 hover:text-pink-600"
+                  } border-gray-300`}
+                  aria-label={`Go to page ${pageNumber}`}
+                  aria-current={currentPage === pageNumber ? "page" : undefined}
+                >
+                  {pageNumber}
+                </button>
+              )}
+            </li>
+          ))}
+          
+          {/* Next button */}
+          <li>
+            <button
+              onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-2 leading-tight rounded-r-md border ${
+                currentPage === totalPages
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-gray-700 hover:bg-gray-100 hover:text-pink-600"
+              } border-gray-300`}
+              aria-label="Next page"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
+};
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState(null);
@@ -45,6 +169,20 @@ const Profile = () => {
 
     fetchData();
   }, []);
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPageRating(1);
+  }, [filterScore]);
+
+  // Reset to page 1 when tab changes
+  useEffect(() => {
+    if (tab === "rating") {
+      setCurrentPageRating(1);
+    } else {
+      setCurrentPageBookmarks(1);
+    }
+  }, [tab]);
 
   const handleDeleteAllBookmarks = async () => {
     // Check if there are no bookmarks to delete
@@ -173,14 +311,14 @@ const Profile = () => {
           
           {/* Progress Bar */}
           <div className="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
-  <div
-    className="bg-gradient-to-r from-pink-500 to-blue-500 h-4 transition-all duration-500"
-    style={{
-      width: `${Math.min(100, (ratingHistory.length / totalSongsCount) * 100)}%`,
-      minWidth: ratingHistory.length > 0 ? '4px' : '0',
-    }}
-  ></div>
-</div>
+            <div
+              className="bg-gradient-to-r from-pink-500 to-blue-500 h-4 transition-all duration-500"
+              style={{
+                width: `${Math.min(100, (ratingHistory.length / totalSongsCount) * 100)}%`,
+                minWidth: ratingHistory.length > 0 ? '4px' : '0',
+              }}
+            ></div>
+          </div>
           
           <p className="text-center text-gray-500 text-sm">
             You've rated {ratingHistory.length} out of {totalSongsCount} songs in our database
@@ -288,31 +426,13 @@ const Profile = () => {
             </div>
           )}
 
-          {filteredRatingHistory.length > songsPerPageRating && (
-            <nav className="mt-6 flex justify-center">
-              <ul className="flex space-x-2">
-                {[
-                  ...Array(
-                    Math.ceil(filteredRatingHistory.length / songsPerPageRating)
-                  ),
-                ].map((_, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() => paginateRating(index + 1)}
-                      className={`px-3 py-1 rounded-md transition-colors ${
-                        currentPageRating === index + 1
-                          ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium"
-                          : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
-                      }`}
-                      aria-label={`Go to page ${index + 1}`}
-                    >
-                      {index + 1}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
+          {/* Improved pagination for rating history */}
+          <PaginationControls
+            currentPage={currentPageRating}
+            totalItems={filteredRatingHistory.length}
+            itemsPerPage={songsPerPageRating}
+            onPageChange={paginateRating}
+          />
         </>
       )}
 
@@ -364,31 +484,13 @@ const Profile = () => {
             </div>
           )}
 
-          {bookmarkedSongs.length > songsPerPageBookmarks && (
-            <nav className="mt-6 flex justify-center">
-              <ul className="flex space-x-2">
-                {[
-                  ...Array(
-                    Math.ceil(bookmarkedSongs.length / songsPerPageBookmarks)
-                  ),
-                ].map((_, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() => paginateBookmarks(index + 1)}
-                      className={`px-3 py-1 rounded-md transition-colors ${
-                        currentPageBookmarks === index + 1
-                          ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium"
-                          : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
-                      }`}
-                      aria-label={`Go to page ${index + 1}`}
-                    >
-                      {index + 1}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
+          {/* Improved pagination for bookmarks */}
+          <PaginationControls
+            currentPage={currentPageBookmarks}
+            totalItems={bookmarkedSongs.length}
+            itemsPerPage={songsPerPageBookmarks}
+            onPageChange={paginateBookmarks}
+          />
 
           {/* Render "Delete All Bookmarks" button only when there are bookmarked songs */}
           {currentSongsBookmarks.length > 0 && (

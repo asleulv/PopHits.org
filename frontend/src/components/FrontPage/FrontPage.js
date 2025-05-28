@@ -245,7 +245,7 @@ const FrontPage = () => {
           <div className="flex-1 mb-0 md:mb-0 w-full">
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 w-full relative lg:rounded-xl shadow-lg transform transition-transform">
               <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 text-center flex items-center justify-center gap-2">
-                <Disc className="w-8 h-8 text-pink-400 animate-spin drop-shadow-md" />
+                <Disc className="w-8 h-8 text-pink-400" />
                 Featured hit
               </h2>
               <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden shadow-md">
@@ -318,8 +318,8 @@ const FrontPage = () => {
       <section className="mb-8 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white p-8 w-full lg:rounded-xl shadow-lg">
         <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-6">
           <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-white">
-            <Shuffle className="w-8 h-8 text-pink-400" />
-            <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">Random hits by decade</span>
+            <Shuffle className="w-8 h-8 text-yellow-400" />
+            <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">Random hits by decade</span>
           </h2>
           <button
             onClick={refreshRandomHitsByDecade}
@@ -441,7 +441,7 @@ const FrontPage = () => {
 
                     {/* Info Cell with Title, Artist, Year, and Score */}
                     <td className="flex flex-col md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
-                      <span className="block md:hidden text-gray-700 bg-blue-50 p-1 rounded-lg shadow-sm">
+                      <span className="block md:hidden text-gray-700 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 p-1 rounded-lg shadow-sm">
                         <Link
                           to={`/songs/${song.slug}`}
                           className="text-gray-700 font-bold text-lg hover:text-pink-600 transition-colors"
@@ -463,8 +463,8 @@ const FrontPage = () => {
                           {song.year}
                         </Link>
                         <br className="block md:hidden" />{" "}
-                        <span className="block md:hidden bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold px-3 py-1 rounded-full mt-2 inline-block">
-                          Rating: {song.average_user_score}/10
+                        <span className="block md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full text-lg font-medium bg-pink-500 text-white">
+                          {song.average_user_score}
                         </span>
                       </span>
 
@@ -531,12 +531,19 @@ const FrontPage = () => {
         </div>
       </section>
 
+      
+
+      <Suspense fallback={<div>Loading Number One Hits...</div>}>
+        <NumberOneHitsSection />
+      </Suspense>
+
+
       {/* Current Hot 100 Preview Section */}
       {currentHot100 && currentHot100.songs && currentHot100.songs.length > 0 && (
         <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
           <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-            <ListMusic className="w-8 h-8 text-orange-500" />
-            <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">Current Billboard Hot 100</span>
+            <ListMusic className="w-8 h-8 text-pink-500" />
+            <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">Current Billboard Hot 100</span>
           </h2>
           
           <div className="overflow-x-auto rounded-lg shadow-md mb-6">
@@ -553,7 +560,7 @@ const FrontPage = () => {
                   <tr key={index} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3 whitespace-nowrap font-bold">{song.current_position || index + 1}</td>
                     <td className="px-4 py-3">
-                      <Link to={`/songs/${song.slug}`} className="text-gray-900 hover:text-pink-600 transition-colors">
+                      <Link to={`/songs/${song.slug}`} className="text-gray-900 font-bold hover:text-pink-600 transition-colors">
                         {song.title}
                       </Link>
                     </td>
@@ -571,17 +578,13 @@ const FrontPage = () => {
           <div className="text-center">
             <Link 
               to="/current-hot100" 
-              className="inline-block px-6 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold rounded-full shadow-md hover:from-orange-600 hover:to-red-700 transition-all hover:text-white duration-300 transform"
+              className="inline-block px-6 py-2 bg-pink-600 text-white font-semibold rounded-full shadow-md hover:bg-pink-700 hover:text-white transform"
             >
               View Full Hot 100 Chart
             </Link>
           </div>
         </section>
       )}
-
-      <Suspense fallback={<div>Loading Number One Hits...</div>}>
-        <NumberOneHitsSection />
-      </Suspense>
     </div>
   );
 };

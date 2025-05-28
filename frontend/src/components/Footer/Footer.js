@@ -15,7 +15,7 @@ const Footer = () => {
           <img
             src={oldhitsLogo}
             alt="PopHits.org Logo"
-            className="w-16 h-16 object-contain mb-4 animate-pulse"
+            className="w-16 h-16 object-contain mb-4 animate-pulse drop-shadow-[0_0_8px_white]"
           />
           <h3 className="text-xl font-cherry font-bold mb-2 bg-gradient-to-r from-white to-white bg-clip-text text-transparent">
             PopHits.org
