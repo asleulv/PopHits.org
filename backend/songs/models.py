@@ -104,4 +104,29 @@ class Bookmark(models.Model):
     def __str__(self):
         return f"Bookmarks for {self.user.username}"
     
+class CurrentHot100(models.Model):
+    title = models.CharField(max_length=100)
+    artist = models.CharField(max_length=100)
+    year = models.IntegerField()
+    peak_rank = models.IntegerField()
+    weeks_on_chart = models.IntegerField()
+    current_position = models.IntegerField()
+    last_week_position = models.IntegerField(null=True, blank=True)
+    position_change = models.IntegerField(null=True, blank=True)
+    average_user_score = models.FloatField(default=0.0)
+    total_ratings = models.IntegerField(default=0)
+    spotify_url = models.URLField(blank=True, null=True)
+    youtube_url = models.URLField(blank=True, null=True)
+    slug = models.SlugField(max_length=255)
+    artist_slug = models.SlugField(max_length=255, blank=True, null=True)
+    chart_date = models.DateField()  # Store the date of the chart
 
+    class Meta:
+        ordering = ['current_position']
+        indexes = [
+            models.Index(fields=['current_position']),
+            models.Index(fields=['artist']),
+        ]
+        
+    def __str__(self):
+        return f"#{self.current_position}: {self.title} by {self.artist}"

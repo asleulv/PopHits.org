@@ -8,7 +8,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-300 py-10 mt-16 shadow-lg">
+    <footer className="bg-gradient-to-br from-gray-800 via-gray-900 to-black text-gray-300 py-10 mt-16 shadow-lg">
       <div className="container mx-auto">
         {/* Top section with logo and description */}
         <div className="flex flex-col items-center mb-8">

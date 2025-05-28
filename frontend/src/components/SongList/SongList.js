@@ -42,11 +42,21 @@ const SongList = () => {
     const filter = queryParams.get("filter");
     const unratedFilter = queryParams.get("unrated");
     const decadeParam = queryParams.get("decade");
+    const sortByParam = queryParams.get("sort_by");
+    const orderParam = queryParams.get("order");
 
     setSearchQuery(query || "");
     setOnlyNumberOneHits(filter === "number-one");
     setOnlyUnratedSongs(unratedFilter === "true");
     setDecadeFilter(decadeParam || null);
+    
+    // Set sorting parameters from URL if present
+    if (sortByParam) {
+      setSortField(sortByParam);
+    }
+    if (orderParam) {
+      setSortOrder(orderParam === "desc" ? "-" : "");
+    }
 
     const pathname = location.pathname;
     const artistSlug = pathname.includes("/artist/")
@@ -234,9 +244,17 @@ const SongList = () => {
       newParams.append("unrated", "true");
     }
     
+    // Preserve sort parameters if they exist
+    if (sortField) {
+      newParams.append("sort_by", sortField);
+    }
+    if (sortOrder) {
+      newParams.append("order", sortOrder === "-" ? "desc" : "asc");
+    }
+
     // Convert params to string and navigate
     const paramString = newParams.toString();
-    navigate(`${path}${paramString ? `?${paramString}` : ''}`);
+    navigate(`${path}${paramString ? `?${paramString}` : ""}`);
   };
 
   const handleUnratedSwitchChange = (checked) => {
@@ -256,30 +274,38 @@ const SongList = () => {
 
     // Create a new URLSearchParams object to build the query properly
     const newParams = new URLSearchParams();
-    
+
     // Add existing query if present
     if (query) {
       newParams.append("query", query);
     }
-    
+
     // Add decade parameter if present
     if (decade) {
       newParams.append("decade", decade);
     }
-    
+
     // Add number one filter if active
     if (onlyNumberOneHits) {
       newParams.append("filter", "number-one");
     }
-    
+
     // Add unrated filter if checked
     if (checked) {
       newParams.append("unrated", "true");
     }
     
+    // Preserve sort parameters if they exist
+    if (sortField) {
+      newParams.append("sort_by", sortField);
+    }
+    if (sortOrder) {
+      newParams.append("order", sortOrder === "-" ? "desc" : "asc");
+    }
+
     // Convert params to string and navigate
     const paramString = newParams.toString();
-    navigate(`${path}${paramString ? `?${paramString}` : ''}`);
+    navigate(`${path}${paramString ? `?${paramString}` : ""}`);
   };
 
   const handleYearChange = (value) => {
@@ -299,25 +325,33 @@ const SongList = () => {
 
     // Create a new URLSearchParams object to build the query properly
     const newParams = new URLSearchParams();
-    
+
     // Add existing query if present
     if (query) {
       newParams.append("query", query);
     }
-    
+
     // Add number one filter if active
     if (onlyNumberOneHits) {
       newParams.append("filter", "number-one");
     }
-    
+
     // Add unrated filter if active
     if (onlyUnratedSongs) {
       newParams.append("unrated", "true");
     }
     
+    // Preserve sort parameters if they exist
+    if (sortField) {
+      newParams.append("sort_by", sortField);
+    }
+    if (sortOrder) {
+      newParams.append("order", sortOrder === "-" ? "desc" : "asc");
+    }
+
     // Convert params to string and navigate
     const paramString = newParams.toString();
-    navigate(`${path}${paramString ? `?${paramString}` : ''}`);
+    navigate(`${path}${paramString ? `?${paramString}` : ""}`);
   };
 
   const capitalizeWords = (str) => {
@@ -561,33 +595,41 @@ const SongList = () => {
                 // Build the URL for decade filtering
                 const queryParams = new URLSearchParams(location.search);
                 const query = queryParams.get("query");
-                
+
                 // Create a new URLSearchParams object to build the query properly
                 const newParams = new URLSearchParams();
-                
+
                 // Add existing query if present
                 if (query) {
                   newParams.append("query", query);
                 }
-                
+
                 // Add decade parameter if not "all"
                 if (value !== "all") {
                   newParams.append("decade", value);
                 }
-                
+
                 // Add number one filter if active
                 if (onlyNumberOneHits) {
                   newParams.append("filter", "number-one");
                 }
-                
+
                 // Add unrated filter if active
                 if (onlyUnratedSongs) {
                   newParams.append("unrated", "true");
                 }
                 
+                // Preserve sort parameters if they exist
+                if (sortField) {
+                  newParams.append("sort_by", sortField);
+                }
+                if (sortOrder) {
+                  newParams.append("order", sortOrder === "-" ? "desc" : "asc");
+                }
+
                 // Convert params to string and navigate
                 const paramString = newParams.toString();
-                navigate(`/songs${paramString ? `?${paramString}` : ''}`);
+                navigate(`/songs${paramString ? `?${paramString}` : ""}`);
               }}
               value={decadeFilter || "all"}
             >
@@ -681,10 +723,10 @@ const SongList = () => {
         />
       </div>
       <div className="mt-6 w-full text-center text-gray-600 bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg shadow-sm">
-  Showing <span className="font-bold text-pink-600">{songs.length}</span>{" "}
-  of <span className="font-bold text-pink-600">{totalSongs}</span> hit songs
-</div>
-
+        Showing <span className="font-bold text-pink-600">{songs.length}</span>{" "}
+        of <span className="font-bold text-pink-600">{totalSongs}</span> hit
+        songs
+      </div>
     </>
   );
 };

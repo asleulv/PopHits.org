@@ -8,8 +8,8 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.core.cache import cache
-from .models import Song, UserSongRating, UserSongComment, Bookmark, NumberOneSong
-from .serializers import SongSerializer, UserSongCommentSerializer
+from .models import Song, UserSongRating, UserSongComment, Bookmark, NumberOneSong, CurrentHot100
+from .serializers import SongSerializer, UserSongCommentSerializer, CurrentHot100Serializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -312,8 +312,14 @@ class CommentStatusView(APIView):
 
 class TopRatedSongsView(APIView):
     def get(self, request):
+        # Get the limit parameter from the request, default to 10
+        limit = int(request.GET.get('limit', 10))
+        
+        # Ensure limit is within a reasonable range (1-100)
+        limit = max(1, min(limit, 100))
+        
         # Fetch songs ordered by their average user score, in descending order
-        top_rated_songs = Song.objects.filter(average_user_score__gt=0).order_by('-average_user_score')[:10]
+        top_rated_songs = Song.objects.filter(average_user_score__gt=0).order_by('-average_user_score')[:limit]
         
         # Serialize the songs
         serializer = SongSerializer(top_rated_songs, many=True)
@@ -360,6 +366,28 @@ class SongsWithImagesView(generics.ListAPIView):
     def get_queryset(self):
         return Song.objects.exclude(image_upload='').exclude(image_upload__isnull=True)
     
+class CurrentHot100View(generics.ListAPIView):
+    serializer_class = CurrentHot100Serializer
+    
+    def get_queryset(self):
+        return CurrentHot100.objects.all().order_by('current_position')
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        # Get the most recent chart date
+        latest_chart = queryset.first()
+        chart_date = latest_chart.chart_date if latest_chart else None
+        
+        # Serialize the queryset
+        serializer = self.get_serializer(queryset, many=True)
+        
+        # Return the data with the chart date
+        return Response({
+            'chart_date': chart_date,
+            'songs': serializer.data
+        })
+
 class PlaylistGeneratorView(APIView):
     """
     API View to generate a playlist of random songs based on the number of songs,

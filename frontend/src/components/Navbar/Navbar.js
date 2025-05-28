@@ -6,6 +6,7 @@ import oldhitsLogo from "./oldhits_logo.png";
 import { FaHome, FaHouseUser, FaUser, FaDiceD6 } from "react-icons/fa";
 import { MdQuiz } from "react-icons/md";
 import { BsMusicPlayerFill, BsListOl } from "react-icons/bs";
+import { TrendingUp } from "lucide-react";
 import { FaCircleInfo } from "react-icons/fa6";
 import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
 import { GiBullseye } from "react-icons/gi";
@@ -117,6 +118,19 @@ const Navbar = ({ isAuthenticated }) => {
                     <MdQuiz />
                   </span>
                   Create Quiz
+                </Link>
+              </li>
+
+              <li className="navbar-menu-item">
+                <Link
+                  to="/current-hot100"
+                  className="navbar-menu-link hover:text-gray-300"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="navbar-menu-icon">
+                    <TrendingUp size={18} />
+                  </span>
+                  Current Hot 100
                 </Link>
               </li>
 

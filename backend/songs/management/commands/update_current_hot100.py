@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
 from django.core.management import call_command
-from songs.models import Song, NumberOneSong
+from songs.models import Song, NumberOneSong, CurrentHot100
 from fuzzywuzzy import fuzz
 
 class Command(BaseCommand):
@@ -19,12 +19,14 @@ class Command(BaseCommand):
         parser.add_argument('--force', action='store_true', help='Force update even if already up to date')
         parser.add_argument('--test-scrape', action='store_true', help='Test the scraping functionality only')
         parser.add_argument('--test-enhancement', action='store_true', help='Test the enhancement process by clearing and re-adding Spotify URLs and descriptions')
+        parser.add_argument('--test-current-hot100', action='store_true', help='Test the CurrentHot100 update process')
     
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         force_update = options['force']
         test_scrape = options['test_scrape']
         test_enhancement = options['test_enhancement']
+        test_current_hot100 = options['test_current_hot100']
         
         if test_scrape:
             self.stdout.write(self.style.SUCCESS("Starting Billboard Hot 100 scrape test"))
@@ -34,6 +36,13 @@ class Command(BaseCommand):
         if test_enhancement:
             self.stdout.write(self.style.SUCCESS("Starting Billboard Hot 100 enhancement test"))
             self.test_enhancement()
+            return
+            
+        if test_current_hot100:
+            self.stdout.write(self.style.SUCCESS("Starting CurrentHot100 update test"))
+            chart_data = self.fetch_hot100_chart()
+            if chart_data:
+                self.update_current_hot100_table(chart_data)
             return
         
         self.stdout.write(self.style.SUCCESS(f"Starting Billboard Hot 100 update - {'Preview' if dry_run else 'Import'} mode"))
@@ -334,13 +343,24 @@ class Command(BaseCommand):
                     stats_selectors = [
                         '.o-chart-results-list__item span',
                         '.chart-element__meta',
-                        '.chart-row__value'
+                        '.chart-row__value',
+                        '.c-label',  # Try more generic selectors
+                        'span'
                     ]
+                    
+                    # Print the HTML of the first few items for debugging
+                    if idx < 3:
+                        self.stdout.write(f"DEBUG: HTML for song {idx + 1}:\n{item.prettify()[:1000]}")
                     
                     stats_elements = []
                     for selector in stats_selectors:
                         elements = item.select(selector)
                         if elements:
+                            # Print all elements found with this selector for the first few songs
+                            if idx < 3:
+                                self.stdout.write(f"DEBUG: Found {len(elements)} elements with selector '{selector}' for song {idx + 1}")
+                                for i, elem in enumerate(elements):
+                                    self.stdout.write(f"DEBUG: Element {i}: {elem.text.strip()}")
                             stats_elements = elements
                             break
                     
@@ -348,24 +368,101 @@ class Command(BaseCommand):
                     peak_rank = None
                     weeks_on_chart = None
                     
+                    # Try to find elements with specific text like "Last Week" or "Weeks on Chart"
+                    if idx < 3:
+                        self.stdout.write(f"DEBUG: Looking for elements with specific text for song {idx + 1}")
+                    
+                    for elem in item.select('*'):
+                        text = elem.text.strip().lower()
+                        if 'last week' in text:
+                            if idx < 3:
+                                self.stdout.write(f"DEBUG: Found 'last week' in element: {elem.prettify()[:200]}")
+                        elif 'peak' in text:
+                            if idx < 3:
+                                self.stdout.write(f"DEBUG: Found 'peak' in element: {elem.prettify()[:200]}")
+                        elif 'weeks' in text:
+                            if idx < 3:
+                                self.stdout.write(f"DEBUG: Found 'weeks' in element: {elem.prettify()[:200]}")
+                    
                     # Try to extract stats based on position or labels
                     if stats_elements:
-                        # If we have at least 3 elements, assume they are last week, peak, and weeks
-                        if len(stats_elements) >= 3:
+                        # Print all stats elements for debugging
+                        if idx < 5:
+                            self.stdout.write(f"Song {idx + 1} stats elements: {[elem.text.strip() for elem in stats_elements]}")
+                        
+                        # Based on the screenshot and debug output, the elements are in a specific order
+                        # Element 0: Current position
+                        # Element 1: Artist name
+                        # Element 2: Last week's position (or current position again)
+                        # Element 3: Peak position
+                        # Element 4: Weeks on chart
+                        # Element 5: Current position (repeated)
+                        # Element 6: Peak position (repeated)
+                        # Element 7: Weeks on chart (repeated)
+                        if len(stats_elements) >= 8:
+                            # Last week's rank - use element 2
+                            last_week_text = stats_elements[2].text.strip()
+                            if last_week_text != '-' and last_week_text.isdigit():
+                                last_week_rank = int(last_week_text)
+                            
+                            # Peak rank - use element 3 or 6 (they should be the same)
+                            peak_text = stats_elements[3].text.strip()
+                            if peak_text.isdigit():
+                                peak_rank = int(peak_text)
+                            else:
+                                # Try element 6 as a fallback
+                                peak_text = stats_elements[6].text.strip()
+                                if peak_text.isdigit():
+                                    peak_rank = int(peak_text)
+                            
+                            # Weeks on chart - use element 4 or 7 (they should be the same)
+                            weeks_text = stats_elements[4].text.strip()
+                            if weeks_text.isdigit():
+                                weeks_on_chart = int(weeks_text)
+                            else:
+                                # Try element 7 as a fallback
+                                weeks_text = stats_elements[7].text.strip()
+                                if weeks_text.isdigit():
+                                    weeks_on_chart = int(weeks_text)
+                        elif len(stats_elements) >= 5:
+                            # Fallback to the original logic if we don't have 8 elements
                             # Last week's rank
-                            last_week_text = stats_elements[0].text.strip()
+                            last_week_text = stats_elements[2].text.strip()
                             if last_week_text != '-' and last_week_text.isdigit():
                                 last_week_rank = int(last_week_text)
                             
                             # Peak rank
-                            peak_text = stats_elements[1].text.strip()
+                            peak_text = stats_elements[3].text.strip()
                             if peak_text.isdigit():
                                 peak_rank = int(peak_text)
                             
                             # Weeks on chart
-                            weeks_text = stats_elements[2].text.strip()
+                            weeks_text = stats_elements[4].text.strip()
                             if weeks_text.isdigit():
                                 weeks_on_chart = int(weeks_text)
+                        
+                        # If we couldn't extract the data using position-based extraction, try looking for labeled elements
+                        if last_week_rank is None and peak_rank is None and weeks_on_chart is None:
+                            for i, elem in enumerate(stats_elements):
+                                text = elem.text.strip().lower()
+                                if 'last week' in text and i + 1 < len(stats_elements):
+                                    last_week_text = stats_elements[i + 1].text.strip()
+                                    if last_week_text != '-' and last_week_text.isdigit():
+                                        last_week_rank = int(last_week_text)
+                                elif 'peak' in text and i + 1 < len(stats_elements):
+                                    peak_text = stats_elements[i + 1].text.strip()
+                                    if peak_text.isdigit():
+                                        peak_rank = int(peak_text)
+                                elif 'weeks' in text and i + 1 < len(stats_elements):
+                                    weeks_text = stats_elements[i + 1].text.strip()
+                                    if weeks_text.isdigit():
+                                        weeks_on_chart = int(weeks_text)
+                        
+                        # Debug output for the first few songs
+                        if idx < 5:
+                            self.stdout.write(f"Song {idx + 1} stats: Last week: {last_week_rank}, Peak: {peak_rank}, Weeks: {weeks_on_chart}")
+                    
+                    # No manual overrides - rely on the data extraction logic
                     
                     # Extract image URL
                     image_url = None
@@ -382,6 +479,12 @@ class Command(BaseCommand):
                                 break
                     
                     # Add song to list
+                    # For new songs (those with no last_week_rank), the peak rank should be the same as the current position
+                    if last_week_rank is None and (peak_rank is None or peak_rank < rank):
+                        # This is a new song or the peak rank is incorrectly better than the current rank
+                        # Set peak rank to current rank
+                        peak_rank = rank
+                        
                     songs.append({
                         'title': title,
                         'artist': artist,
@@ -391,6 +494,10 @@ class Command(BaseCommand):
                         'weeks_on_chart': weeks_on_chart or 1,  # Default to 1 if not available
                         'image_url': image_url
                     })
+                    
+                    # Debug output for new songs
+                    if last_week_rank is None and idx < 10:
+                        self.stdout.write(f"DEBUG: New song: {title} by {artist} at position {rank}, peak set to {peak_rank}")
                     
                     # Print the first few songs for debugging
                     if idx < 5:
@@ -611,6 +718,10 @@ class Command(BaseCommand):
         if any(song['peak_rank'] == 1 for song in songs):
             self.stdout.write("Updating NumberOneSong model...")
             self.update_number_one_songs()
+            
+        # Update CurrentHot100 model with the latest chart data
+        self.stdout.write("Updating CurrentHot100 model...")
+        self.update_current_hot100_table(chart_data)
     
     def run_additional_scripts(self, chart_date, updated_song_ids=None):
         """Enhance newly added or updated songs with Spotify URLs and descriptions."""
@@ -870,5 +981,117 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 f'Successfully populated NumberOneSong table with {created_count} songs'
+            )
+        )
+        
+    def update_current_hot100_table(self, chart_data):
+        """Update the CurrentHot100 model with the latest chart data."""
+        self.stdout.write("\n=== UPDATING CURRENT HOT 100 TABLE ===\n")
+        
+        # Clear existing entries
+        self.stdout.write('Clearing existing CurrentHot100 entries...')
+        CurrentHot100.objects.all().delete()
+        
+        songs = chart_data['songs']
+        chart_date = chart_data['chart_date']
+        chart_year = int(chart_date.split('-')[0])
+        
+        self.stdout.write(f"Processing {len(songs)} songs from chart dated {chart_date}")
+        
+        created_count = 0
+        
+        for song_data in songs:
+            try:
+                # Generate the slug
+                slug = slugify(f"{song_data['artist']} {song_data['title']}")
+                artist_slug = slugify(song_data['artist'])
+                
+                # Find the corresponding Song object to get ratings, URLs, and accurate historical data
+                song = Song.objects.filter(slug=slug).first()
+                if not song:
+                    song = Song.objects.filter(title=song_data['title'], artist=song_data['artist']).first()
+                
+                # Debug output for specific songs
+                if song_data['title'] == 'Nokia' and song_data['artist'] == 'Drake':
+                    self.stdout.write(f"DEBUG: Processing Drake - Nokia")
+                    self.stdout.write(f"DEBUG: Slug: {slug}")
+                    self.stdout.write(f"DEBUG: Found in database: {song is not None}")
+                    if song:
+                        self.stdout.write(f"DEBUG: Database weeks_on_chart: {song.weeks_on_chart}")
+                        self.stdout.write(f"DEBUG: Database peak_rank: {song.peak_rank}")
+                    self.stdout.write(f"DEBUG: Scraped weeks_on_chart: {song_data['weeks_on_chart']}")
+                    self.stdout.write(f"DEBUG: Scraped peak_rank: {song_data['peak_rank']}")
+                    self.stdout.write(f"DEBUG: Last week rank: {song_data['last_week_rank']}")
+                    self.stdout.write(f"DEBUG: Current rank: {song_data['rank']}")
+                elif song_data['title'] == 'Caramel' and song_data['artist'] == 'Sleep Token':
+                    self.stdout.write(f"DEBUG: Processing Sleep Token - Caramel")
+                    self.stdout.write(f"DEBUG: Slug: {slug}")
+                    self.stdout.write(f"DEBUG: Found in database: {song is not None}")
+                    if song:
+                        self.stdout.write(f"DEBUG: Database weeks_on_chart: {song.weeks_on_chart}")
+                        self.stdout.write(f"DEBUG: Database peak_rank: {song.peak_rank}")
+                    self.stdout.write(f"DEBUG: Scraped weeks_on_chart: {song_data['weeks_on_chart']}")
+                    self.stdout.write(f"DEBUG: Scraped peak_rank: {song_data['peak_rank']}")
+                    self.stdout.write(f"DEBUG: Last week rank: {song_data['last_week_rank']}")
+                    self.stdout.write(f"DEBUG: Current rank: {song_data['rank']}")
+                elif song_data['title'] == 'Dangerous' and song_data['artist'] == 'Sleep Token':
+                    self.stdout.write(f"DEBUG: Processing Sleep Token - Dangerous")
+                    self.stdout.write(f"DEBUG: Slug: {slug}")
+                    self.stdout.write(f"DEBUG: Found in database: {song is not None}")
+                    if song:
+                        self.stdout.write(f"DEBUG: Database weeks_on_chart: {song.weeks_on_chart}")
+                        self.stdout.write(f"DEBUG: Database peak_rank: {song.peak_rank}")
+                    self.stdout.write(f"DEBUG: Scraped weeks_on_chart: {song_data['weeks_on_chart']}")
+                    self.stdout.write(f"DEBUG: Scraped peak_rank: {song_data['peak_rank']}")
+                    self.stdout.write(f"DEBUG: Last week rank: {song_data['last_week_rank']}")
+                    self.stdout.write(f"DEBUG: Current rank: {song_data['rank']}")
+                
+                # Calculate position change
+                position_change = None
+                if song_data['last_week_rank'] is not None:
+                    position_change = song_data['last_week_rank'] - song_data['rank']
+                
+                # Always use the scraped data from Billboard for peak rank and weeks on chart
+                peak_rank = song_data['peak_rank']
+                weeks_on_chart = song_data['weeks_on_chart']
+                
+                if song:
+                    # Always use the scraped data from Billboard for peak rank and weeks on chart
+                    # Only use the database for supplementary information like ratings and URLs
+                    
+                    # Debug output for all songs
+                    if song_data['rank'] <= 10:  # Only debug the top 10 songs to avoid too much output
+                        self.stdout.write(f"DEBUG: Song #{song_data['rank']}: {song_data['title']} by {song_data['artist']}")
+                        self.stdout.write(f"DEBUG: Billboard peak_rank: {peak_rank}")
+                        self.stdout.write(f"DEBUG: Billboard weeks_on_chart: {weeks_on_chart}")
+                
+                # Create CurrentHot100 entry
+                with transaction.atomic():
+                    CurrentHot100.objects.create(
+                        title=song_data['title'],
+                        artist=song_data['artist'],
+                        year=chart_year,
+                        peak_rank=peak_rank,
+                        weeks_on_chart=weeks_on_chart,
+                        current_position=song_data['rank'],
+                        last_week_position=song_data['last_week_rank'],
+                        position_change=position_change,
+                        average_user_score=song.average_user_score if song else 0.0,
+                        total_ratings=song.total_ratings if song else 0,
+                        spotify_url=song.spotify_url if song else None,
+                        youtube_url=song.youtube_url if song else None,
+                        slug=slug,
+                        artist_slug=artist_slug,
+                        chart_date=datetime.strptime(chart_date, '%Y-%m-%d').date()
+                    )
+                    created_count += 1
+                    if created_count <= 5:  # Only show first 5 to avoid flooding the output
+                        self.stdout.write(f"Added to CurrentHot100: #{song_data['rank']} '{song_data['title']}' by {song_data['artist']}")
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f"Error creating CurrentHot100 entry for '{song_data['title']}' by {song_data['artist']}: {e}"))
+        
+        self.stdout.write(
+            self.style.SUCCESS(
+                f'Successfully populated CurrentHot100 table with {created_count} songs'
             )
         )

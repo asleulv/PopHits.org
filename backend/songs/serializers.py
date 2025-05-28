@@ -1,6 +1,6 @@
 # songs/serializers.py
 from rest_framework import serializers
-from .models import Song, UserSongComment, UserSongRating
+from .models import Song, UserSongComment, UserSongRating, CurrentHot100
 
 
 class UserSongCommentSerializer(serializers.ModelSerializer):
@@ -32,4 +32,9 @@ class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
+        fields = '__all__'
+
+class CurrentHot100Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = CurrentHot100
         fields = '__all__'

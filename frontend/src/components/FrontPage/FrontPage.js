@@ -15,12 +15,15 @@ import {
   CalendarDays,
   Shuffle,
   Flame,
+  TrendingUp,
+  ListMusic,
 } from "lucide-react";
 import { Grid } from "react-loader-spinner";
 import {
   getTopRatedSongs,
   getRandomHitsByDecade,
   getSongsWithImages,
+  getCurrentHot100,
 } from "../../services/api";
 
 const NumberOneHitsSection = lazy(() => import("./NumberOneHitsSection"));
@@ -32,6 +35,7 @@ const FrontPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [activeDecade, setActiveDecade] = useState(null);
+  const [currentHot100, setCurrentHot100] = useState(null);
 
   useEffect(() => {
     const fetchTopRatedSongs = async () => {
@@ -52,9 +56,19 @@ const FrontPage = () => {
       }
     };
 
+    const fetchCurrentHot100 = async () => {
+      try {
+        const response = await getCurrentHot100();
+        setCurrentHot100(response);
+      } catch (error) {
+        console.error("Error fetching current Hot 100:", error);
+      }
+    };
+
     const fetchAllData = async () => {
       await fetchTopRatedSongs();
       await fetchRandomHitsByDecade();
+      await fetchCurrentHot100();
       setIsLoading(false); // Correct state variable
     };
 
@@ -160,7 +174,7 @@ const FrontPage = () => {
       {/* Enhanced Hero Section with animation */}
       <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm animate-fadeIn">
         <div className="flex-1 mb-6 md:mb-0">
-          <h1 className="text-3xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-blue-500 via-pink-400 to-purple-900 bg-clip-text text-transparent pb-2">
+          <h1 className="text-3xl md:text-4xl underline font-cherry font-bold mb-6 text-center bg-gradient-to-r from-blue-500 via-pink-400 to-purple-900 bg-clip-text text-transparent pb-2">
             The hit song database
           </h1>
 
@@ -207,6 +221,12 @@ const FrontPage = () => {
       icon: <Zap className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />,
       text: "Test your hit knowledge",
       hoverColor: "group-hover:text-green-800",
+    },
+    {
+      href: "/current-hot100",
+      icon: <TrendingUp className="w-5 h-5 text-orange-500 group-hover:scale-110 transition-transform" />,
+      text: "Current Billboard Hot 100",
+      hoverColor: "group-hover:text-orange-600",
     },
   ].map(({ href, icon, text, hoverColor }, idx) => (
     <div key={idx} className="flex items-center gap-2 group p-1 hover:bg-gray-100 rounded-lg transition-all duration-300 flex-wrap justify-center md:justify-start">
@@ -503,13 +523,61 @@ const FrontPage = () => {
         </div>
         <div className="text-center mt-6">
           <Link 
-            to="/songs?sort=rating" 
+            to="/songs?sort_by=average_user_score&order=desc" 
             className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-full shadow-md hover:from-pink-600 hover:to-pink-700 transition-all hover:text-white duration-300 transform"
           >
             All rated songs
           </Link>
         </div>
       </section>
+
+      {/* Current Hot 100 Preview Section */}
+      {currentHot100 && currentHot100.songs && currentHot100.songs.length > 0 && (
+        <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
+          <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
+            <ListMusic className="w-8 h-8 text-orange-500" />
+            <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">Current Billboard Hot 100</span>
+          </h2>
+          
+          <div className="overflow-x-auto rounded-lg shadow-md mb-6">
+            <table className="min-w-full divide-y divide-gray-200 border-collapse">
+              <thead className="bg-gradient-to-r from-gray-800 to-gray-900 text-white">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider w-16">Position</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Title</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Artist</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {currentHot100.songs.slice(0, 5).map((song, index) => (
+                  <tr key={index} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 whitespace-nowrap font-bold">{song.current_position || index + 1}</td>
+                    <td className="px-4 py-3">
+                      <Link to={`/songs/${song.slug}`} className="text-gray-900 hover:text-pink-600 transition-colors">
+                        {song.title}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Link to={`/artist/${song.artist_slug}`} className="text-pink-600 hover:text-gray-900 transition-colors">
+                        {song.artist}
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          <div className="text-center">
+            <Link 
+              to="/current-hot100" 
+              className="inline-block px-6 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold rounded-full shadow-md hover:from-orange-600 hover:to-red-700 transition-all hover:text-white duration-300 transform"
+            >
+              View Full Hot 100 Chart
+            </Link>
+          </div>
+        </section>
+      )}
 
       <Suspense fallback={<div>Loading Number One Hits...</div>}>
         <NumberOneHitsSection />

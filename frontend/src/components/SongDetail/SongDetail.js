@@ -35,7 +35,7 @@ import {
   Star,
   Music,
   SquarePlay,
-  Heart,
+  Bookmark
 } from "lucide-react";
 
 const SongDetail = () => {
@@ -331,7 +331,7 @@ const SongDetail = () => {
                   }`}
                   onClick={handleBookmarkToggle}
                 >
-                  <Heart
+                  <Bookmark
                     className={`w-5 h-5 ${
                       isBookmarked ? "text-white" : "text-gray-400"
                     }`}
@@ -481,8 +481,8 @@ const SongDetail = () => {
                         key={index}
                         className={`w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full shadow-md transition-all duration-300 cursor-pointer transform hover:scale-110 ${
                           userScore === index + 1
-                            ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold"
-                            : "bg-white text-gray-700 hover:bg-gray-100"
+                            ? "bg-gradient-to-r from-pink-500 to-pink-700 text-white font-bold"
+                            : "bg-white text-gray-700 font-semibold hover:bg-gray-100"
                         }`}
                         onClick={() => handleScoreChange(index + 1)}
                       >

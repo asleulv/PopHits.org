@@ -401,9 +401,9 @@ export const getTotalSongsCount = async () => {
 };
 
 // Function to get top-rated songs
-export const getTopRatedSongs = async () => {
+export const getTopRatedSongs = async (limit = 10) => {
   try {
-    const response = await songApi.get('/top-rated-songs/');
+    const response = await songApi.get(`/top-rated-songs/?limit=${limit}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching top-rated songs:', error);
@@ -429,6 +429,17 @@ export const getNumberOneHits = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching number one hits:', error);
+    throw error;
+  }
+};
+
+// Function to get the current Billboard Hot 100 chart
+export const getCurrentHot100 = async () => {
+  try {
+    const response = await songApi.get('/current-hot100/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching current Hot 100:', error);
     throw error;
   }
 };
