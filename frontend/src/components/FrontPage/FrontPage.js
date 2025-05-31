@@ -444,7 +444,7 @@ const FrontPage = () => {
                       <span className="block md:hidden text-gray-700 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 p-1 rounded-lg shadow-sm">
                         <Link
                           to={`/songs/${song.slug}`}
-                          className="text-gray-700 font-bold text-lg hover:text-pink-600 transition-colors"
+                          className="text-gray-700 font-bold text-lg hover:text-pink-600 transition-colors break-words whitespace-normal"
                         >
                           {song.title}
                         </Link>
