@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         cherry: ['Sansita', 'sans-serif'],
+        sansita: ['Sansita', 'sans-serif'],
       },
       colors: {
         pink: {

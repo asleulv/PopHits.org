@@ -20,6 +20,10 @@ const API_ENDPOINTS = {
   editUserComment: (songId, commentId) => `${BASE_URL}/api/songs/${songId}/comment/${commentId}/`,
   toggleBookmark: (songId) => `${BASE_URL}/api/songs/${songId}/bookmark/`,
   userProfile: `${BASE_URL}/api/profile/`,
+  // Blog endpoints
+  blogPosts: `${BASE_URL}/api/blog/`,
+  blogPostBySlug: (slug) => `${BASE_URL}/api/blog/${slug}/`,
+  latestBlogPost: `${BASE_URL}/api/blog/?page=1&page_size=1`,
 };
 
 // Helper function to fetch data
@@ -276,4 +280,38 @@ export async function getUserProfile(authToken) {
       Authorization: `Token ${authToken}`,
     },
   });
+}
+
+// Blog API functions
+export async function getBlogPosts(page = 1, perPage = 10, search = '') {
+  let url = new URL(API_ENDPOINTS.blogPosts);
+  
+  // Add pagination parameters
+  url.searchParams.append('page', page);
+  url.searchParams.append('page_size', perPage);
+  
+  // Add search query if provided
+  if (search) {
+    url.searchParams.append('search', search);
+  }
+  
+  return fetchData(url.toString());
+}
+
+export async function getBlogPostBySlug(slug) {
+  return fetchData(API_ENDPOINTS.blogPostBySlug(slug));
+}
+
+// Get the latest blog post
+export async function getLatestBlogPost() {
+  const response = await fetchData(API_ENDPOINTS.latestBlogPost);
+  
+  // Handle both response formats
+  if (Array.isArray(response)) {
+    return response.length > 0 ? response[0] : null;
+  } else if (response.results && Array.isArray(response.results)) {
+    return response.results.length > 0 ? response.results[0] : null;
+  }
+  
+  return null;
 }

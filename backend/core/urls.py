@@ -9,6 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
     path('api/songs/', include('songs.urls')),
+    path('api/blog/', include('blog.urls')),
     path('', TemplateView.as_view(template_name='index.html')),  # Root URL
     re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),  # Catch-all pattern
 ]

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "songs",
     "users",
+    "blog",
     "rest_framework",
     "rest_framework.authtoken",
     "djoser",
@@ -139,6 +140,10 @@ if DJANGO_ENV == 'production':
             'PASSWORD': os.getenv('DB_PASSWORD'),  # Production database password
             'HOST': os.getenv('DB_HOST', 'localhost'),  # Production host
             'PORT': os.getenv('DB_PORT', '3306'),  # Production port
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'use_unicode': True,
+            },
         }
     }
 else:  # Development
@@ -150,6 +155,10 @@ else:  # Development
             'PASSWORD': os.getenv('DB_PASSWORD'),  # Development database password
             'HOST': os.getenv('DB_HOST', 'localhost'),  # Development host
             'PORT': os.getenv('DB_PORT', '3306'),  # Development port
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'use_unicode': True,
+            },
         }
     }
 

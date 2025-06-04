@@ -1,4 +1,4 @@
-import { getSongs } from '@/lib/api';
+import { getSongs, getBlogPosts } from '@/lib/api';
 
 export default async function sitemap() {
   // Base URL for the site
@@ -27,6 +27,12 @@ export default async function sitemap() {
       url: `${baseUrl}/current-hot100`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: currentDate,
+      changeFrequency: 'daily',
       priority: 0.9,
     },
   ];
@@ -80,6 +86,18 @@ export default async function sitemap() {
     priority: 0.7,
   }));
   
+  // Fetch blog posts for dynamic routes
+  const blogPostsData = await getBlogPosts(1, 100);
+  const blogPosts = blogPostsData.results || [];
+  
+  // Generate blog post routes
+  const blogPostRoutes = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updated_date || post.published_date),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
+  
   // Combine all routes
   return [
     ...staticRoutes,
@@ -87,5 +105,6 @@ export default async function sitemap() {
     ...decadeRoutes,
     ...songRoutes,
     ...artistRoutes,
+    ...blogPostRoutes,
   ];
 }

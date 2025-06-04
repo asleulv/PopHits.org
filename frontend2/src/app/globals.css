@@ -1,6 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+@import '../components/Blog/BlogContent.css';
 
 .app-container {
   margin: 0 auto;

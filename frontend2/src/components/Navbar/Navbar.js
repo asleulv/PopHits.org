@@ -11,7 +11,7 @@ import { MdQuiz } from "react-icons/md";
 import { BsMusicPlayerFill, BsListOl } from "react-icons/bs";
 
 import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
-import { Home, CircleAlert, ListMusic, TrendingUp, Search } from "lucide-react";
+import { Home, CircleAlert, ListMusic, TrendingUp, Search, BookOpen } from "lucide-react";
 import { GiBullseye } from "react-icons/gi";
 
 export default function Navbar() {
@@ -181,6 +181,19 @@ export default function Navbar() {
                     <FaDiceD6 />
                   </span>
                   Random hit
+                </Link>
+              </li>
+
+              <li className="navbar-menu-item">
+                <Link
+                  href="/blog"
+                  className="navbar-menu-link hover:text-gray-300"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="navbar-menu-icon">
+                    <BookOpen />
+                  </span>
+                  Blog
                 </Link>
               </li>
 

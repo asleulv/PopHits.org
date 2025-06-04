@@ -10,9 +10,11 @@ import {
   getRandomHitsByDecade, 
   getSongsWithImages, 
   getCurrentHot100,
-  getNumberOneHits
+  getNumberOneHits,
+  getLatestBlogPost
 } from "@/lib/api";
 import NumberOneHitsSection from "@/components/FrontPage/NumberOneHitsSection";
+import LatestBlogPostSection from "@/components/FrontPage/LatestBlogPostSection";
 
 // Helper function to get decade from year
 function getDecade(year) {
@@ -35,16 +37,18 @@ export default async function FrontPage() {
   let currentHot100 = { songs: [] };
   let songWithImage = null;
   let activeDecade = null;
+  let latestBlogPost = null;
 
   try {
     // Fetch data in parallel
-    const [topRatedSongsData, randomHitsByDecadeData, songsWithImagesData, currentHot100Data, numberOneHitsData] = 
+    const [topRatedSongsData, randomHitsByDecadeData, songsWithImagesData, currentHot100Data, numberOneHitsData, latestBlogPostData] = 
       await Promise.all([
         getTopRatedSongs(),
         getRandomHitsByDecade(),
         getSongsWithImages(),
         getCurrentHot100(),
         getNumberOneHits(),
+        getLatestBlogPost(),
       ]);
     
     // Process data
@@ -53,6 +57,7 @@ export default async function FrontPage() {
     songsWithImages = songsWithImagesData.songs || songsWithImagesData;
     currentHot100 = currentHot100Data;
     numberOneHits = numberOneHitsData.songs || numberOneHitsData;
+    latestBlogPost = latestBlogPostData;
     
     // Get a random song with image
     if (songsWithImages.length > 0) {
@@ -207,6 +212,9 @@ export default async function FrontPage() {
           </div>
         )}
       </div>
+
+      {/* Latest Blog Post Section */}
+      <LatestBlogPostSection latestBlogPost={latestBlogPost} />
 
       <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
         <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">

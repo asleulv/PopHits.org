@@ -1,0 +1,64 @@
+/* Blog content styles */
+.blog-content {
+  font-family: 'Sansita', sans-serif;
+}
+
+.blog-content p,
+.blog-content li,
+.blog-content ul,
+.blog-content ol,
+.blog-content blockquote,
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4,
+.blog-content h5,
+.blog-content h6 {
+  font-family: 'Sansita', sans-serif !important;
+  font-size: 1.125rem;
+}
+
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4,
+.blog-content h5,
+.blog-content h6 {
+  font-weight: bold;
+}
+
+.blog-content p {
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.blog-content a {
+  color: #d74d82;
+  text-decoration: none;
+}
+
+.blog-content a:hover {
+  text-decoration: underline;
+}
+
+.blog-content img {
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.blog-content blockquote {
+  border-left: 4px solid #e2759e;
+  padding-left: 1rem;
+  font-style: italic;
+  margin: 1.5rem 0;
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-content li {
+  margin-bottom: 0.5rem;
+}
