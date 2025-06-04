@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -77,7 +77,7 @@ export default function SongListClient({
   }, []);
   
   // Function to update URL with current filters
-  const updateUrl = () => {
+  const updateUrl = useCallback(() => {
     const params = new URLSearchParams();
     
     // Add pagination
@@ -103,10 +103,22 @@ export default function SongListClient({
     const queryString = params.toString();
     const newUrl = `${path}${queryString ? `?${queryString}` : ''}`;
     router.push(newUrl, { scroll: false });
-  };
+  }, [
+    page, 
+    perPage, 
+    onlyNumberOneHits, 
+    onlyUnratedSongs, 
+    decadeFilter, 
+    searchQuery, 
+    artistSlug, 
+    sortField, 
+    sortOrder, 
+    yearFilter, 
+    router
+  ]);
   
   // Fetch data when filters change
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null); // Reset any previous errors
@@ -160,10 +172,22 @@ export default function SongListClient({
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    page,
+    perPage,
+    artistSlug,
+    yearFilter,
+    sortField,
+    sortOrder,
+    searchQuery,
+    onlyNumberOneHits,
+    onlyUnratedSongs,
+    decadeFilter,
+    isAuthenticated
+  ]);
   
   // Generate page title based on filters
-  const getPageTitle = () => {
+  const getPageTitle = useCallback(() => {
     // Start with base title parts
     let prefix = '';
     let base = 'Hits';
@@ -200,7 +224,7 @@ export default function SongListClient({
     
     // Combine all parts
     return `${prefix}${base}${suffix}`;
-  };
+  }, [onlyUnratedSongs, onlyNumberOneHits, artistSlug, artistName, yearFilter, decadeFilter, searchQuery]);
   
   // Update document title when filters change
   useEffect(() => {

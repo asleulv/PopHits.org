@@ -87,16 +87,22 @@ export default async function sitemap() {
   }));
   
   // Fetch blog posts for dynamic routes
-  const blogPostsData = await getBlogPosts(1, 100);
-  const blogPosts = blogPostsData.results || [];
-  
-  // Generate blog post routes
-  const blogPostRoutes = blogPosts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.updated_date || post.published_date),
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }));
+  let blogPostRoutes = [];
+  try {
+    const blogPostsData = await getBlogPosts(1, 100);
+    const blogPosts = blogPostsData.results || [];
+    
+    // Generate blog post routes
+    blogPostRoutes = blogPosts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.updated_date || post.published_date),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error('Error fetching blog posts for sitemap:', error);
+    // Continue without blog post routes if there's an error
+  }
   
   // Combine all routes
   return [

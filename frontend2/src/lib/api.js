@@ -54,6 +54,13 @@ async function fetchData(url, options = {}) {
       if (response.status === 204) {
         return {};
       }
+      
+      // If we got HTML instead of JSON, return an empty result with appropriate structure
+      if (e.message && e.message.includes("Unexpected token '<'")) {
+        console.warn(`Received HTML instead of JSON from ${url}. Returning empty result.`);
+        return { results: [] };
+      }
+      
       throw e;
     }
   } catch (error) {
@@ -304,14 +311,19 @@ export async function getBlogPostBySlug(slug) {
 
 // Get the latest blog post
 export async function getLatestBlogPost() {
-  const response = await fetchData(API_ENDPOINTS.latestBlogPost);
-  
-  // Handle both response formats
-  if (Array.isArray(response)) {
-    return response.length > 0 ? response[0] : null;
-  } else if (response.results && Array.isArray(response.results)) {
-    return response.results.length > 0 ? response.results[0] : null;
+  try {
+    const response = await fetchData(API_ENDPOINTS.latestBlogPost);
+    
+    // Handle both response formats
+    if (Array.isArray(response)) {
+      return response.length > 0 ? response[0] : null;
+    } else if (response.results && Array.isArray(response.results)) {
+      return response.results.length > 0 ? response.results[0] : null;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error fetching latest blog post:', error);
+    return null;
   }
-  
-  return null;
 }
