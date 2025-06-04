@@ -14,9 +14,19 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.decorators import method_decorator
+from django.http import HttpResponse
+
+
+class CSRFTokenView(APIView):
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request):
+        return HttpResponse("CSRF cookie set")
 
 
 class UserRegistrationView(APIView):
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request):
         username = request.data.get('username')
         email = request.data.get('email')
@@ -39,9 +49,13 @@ class UserRegistrationView(APIView):
         # Send registration email
         send_registration_email(username, email)
 
-        return Response({'token': token.key, 'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+        response = Response({'token': token.key, 'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+        # Ensure CSRF cookie is set
+        response.set_cookie('csrftoken', request.META.get('CSRF_COOKIE', ''), httponly=False, samesite='Lax')
+        return response
 
 class UserLoginView(APIView):
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
@@ -49,7 +63,10 @@ class UserLoginView(APIView):
         
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=200)
+            response = Response({'token': token.key}, status=200)
+            # Ensure CSRF cookie is set
+            response.set_cookie('csrftoken', request.META.get('CSRF_COOKIE', ''), httponly=False, samesite='Lax')
+            return response
         else:
             return Response({'error': 'Invalid credentials'}, status=400)
     

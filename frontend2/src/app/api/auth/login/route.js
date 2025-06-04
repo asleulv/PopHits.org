@@ -8,6 +8,13 @@ export async function POST(request) {
     // Get cookies from the request to forward CSRF token
     const cookies = request.headers.get('cookie') || '';
     
+    // Extract CSRF token from cookies if present
+    let csrfToken = '';
+    const csrfCookie = cookies.split(';').find(c => c.trim().startsWith('csrftoken='));
+    if (csrfCookie) {
+      csrfToken = csrfCookie.split('=')[1];
+    }
+    
     // Forward the request to the backend
     const response = await fetch(backendUrl.toString(), {
       method: 'POST',
@@ -15,6 +22,7 @@ export async function POST(request) {
         'Content-Type': 'application/json',
         'Cookie': cookies, // Forward cookies for CSRF token
         'X-Requested-With': 'XMLHttpRequest', // This helps Django identify AJAX requests
+        'X-CSRFToken': csrfToken, // Include CSRF token in header
       },
       credentials: 'include', // Include credentials (cookies)
       body: JSON.stringify(body),

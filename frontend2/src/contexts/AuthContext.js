@@ -104,14 +104,36 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Get CSRF token
+  const getCSRFToken = async () => {
+    try {
+      // Make a GET request to Django to get the CSRF cookie
+      await fetch('/api/auth/csrf/', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      
+      // The CSRF token is now in the cookies
+      return true;
+    } catch (error) {
+      console.error('Error getting CSRF token:', error);
+      return false;
+    }
+  };
+
   // Login a user
   const loginUser = async (credentials) => {
     try {
+      // Get CSRF token first
+      await getCSRFToken();
+      
       const response = await fetch('/api/auth/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
         },
+        credentials: 'include',
         body: JSON.stringify(credentials),
       });
       
