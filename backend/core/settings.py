@@ -86,6 +86,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3001",
     "https://pophits.org",
     "http://pophits.org",
+    "http://188.245.244.69:3001",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -93,6 +94,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3001",
     "https://pophits.org",
     "http://pophits.org",
+    "http://188.245.244.69:3001",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
