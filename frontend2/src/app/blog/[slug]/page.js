@@ -125,7 +125,7 @@ export default async function BlogPostPage({ params }) {
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg">
           <h1 className="text-2xl font-bold mb-2">Blog Post Not Found</h1>
-          <p>Sorry, we couldn't find the blog post you're looking for.</p>
+          <p>Sorry, we couldn&rsquo;t find the blog post you&rsquo;re looking for.</p>
           <Link
             href="/blog"
             className="text-blue-600 hover:underline mt-4 inline-block"

@@ -213,8 +213,8 @@ export default async function FrontPage() {
         )}
       </div>
 
-      {/* Latest Blog Post Section */}
-      <LatestBlogPostSection latestBlogPost={latestBlogPost} />
+      {/* Latest Blog Post Section - only show if there's a blog post */}
+      {latestBlogPost && <LatestBlogPostSection latestBlogPost={latestBlogPost} />}
 
       <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
         <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">

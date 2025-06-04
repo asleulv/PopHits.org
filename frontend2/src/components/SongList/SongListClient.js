@@ -251,7 +251,8 @@ export default function SongListClient({
     yearFilter,
     searchQuery,
     artistSlug,
-    artistName
+    artistName,
+    getPageTitle // Add getPageTitle to the dependency array
   ]);
   
   // Update URL when filters change
@@ -272,7 +273,8 @@ export default function SongListClient({
     decadeFilter,
     yearFilter,
     searchQuery,
-    artistSlug
+    artistSlug,
+    updateUrl // Add updateUrl to the dependency array
   ]);
   
   // Fetch data when URL changes
@@ -292,7 +294,8 @@ export default function SongListClient({
     yearFilter,
     searchQuery,
     artistSlug,
-    disableAutoFetch
+    disableAutoFetch,
+    fetchData // Add fetchData to the dependency array
   ]);
   
   // Handle number one hits toggle

@@ -73,14 +73,14 @@ export default function AboutPage() {
                   Why was this website created?
                 </h3>
                 <p className="text-gray-700">
-                  Because pop music is history. It's joy, rebellion, heartbreak,
+                  Because pop music is history. It&rsquo;s joy, rebellion, heartbreak,
                   and change—all in three-minute bursts. PopHits.org was created
                   to track the pulse of popular music through the lens of the
                   Hot 100, offering context and connection behind the songs that
                   ruled the charts.
                 </p>
                 <p className="text-gray-700 mt-3">
-                  Whether you're here to dig up forgotten gems, relive musical
+                  Whether you&rsquo;re here to dig up forgotten gems, relive musical
                   milestones, or simply build a killer playlist, this site
                   invites you to explore how pop music reflects who we were—and
                   who we are.
@@ -160,7 +160,7 @@ export default function AboutPage() {
             </h3>
             <p className="text-gray-300 mb-4">
               Ricky Nelson (1940–1985) had the first-ever Hot 100 #1 in 1958
-              with "Poor Little Fool." It set the stage for what would become
+              with &ldquo;Poor Little Fool.&rdquo; It set the stage for what would become
               the definitive pop chart in the U.S.
             </p>
             <Link

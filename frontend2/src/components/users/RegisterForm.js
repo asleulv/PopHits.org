@@ -158,7 +158,7 @@ export default function RegisterForm() {
         
         <div className="mb-4">
           <label className="block text-gray-700 mb-1">
-            Who had the hit "Dancing Queen"?
+            Who had the hit &quot;Dancing Queen&quot;?
           </label>
           <input
             type="text"

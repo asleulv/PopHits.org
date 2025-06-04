@@ -23,7 +23,7 @@ const nextConfig = {
   },
   // Enable experimental features if needed
   experimental: {
-    serverActions: true,
+    serverActions: {},
   },
   // Environment variables
   env: {

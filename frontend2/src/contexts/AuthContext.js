@@ -22,18 +22,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth state on component mount
-  useEffect(() => {
-    const token = getAuthToken();
-    setAuthToken(token);
-    setIsAuthenticated(!!token);
-    setLoading(false);
-    
-    if (token) {
-      fetchUserProfile(token);
-    }
-  }, [getAuthToken]);
-
   // Update auth token in localStorage and state
   const updateAuthToken = useCallback((newToken) => {
     if (typeof window !== 'undefined') {
@@ -49,7 +37,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Fetch user profile data
-  const fetchUserProfile = async (token) => {
+  const fetchUserProfile = useCallback(async (token) => {
     try {
       const response = await fetch('/api/auth/profile', {
         headers: {
@@ -71,7 +59,19 @@ export function AuthProvider({ children }) {
       updateAuthToken(null);
       setUser(null);
     }
-  };
+  }, [updateAuthToken]);
+
+  // Initialize auth state on component mount
+  useEffect(() => {
+    const token = getAuthToken();
+    setAuthToken(token);
+    setIsAuthenticated(!!token);
+    setLoading(false);
+    
+    if (token) {
+      fetchUserProfile(token);
+    }
+  }, [getAuthToken, fetchUserProfile]);
 
   // Register a new user
   const registerUser = async (userData) => {

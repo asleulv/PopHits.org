@@ -392,7 +392,7 @@ export default function ProfileClient() {
           </div>
           
           <p className="text-center text-gray-500 text-sm">
-            You've rated {ratingHistory.length} out of {totalSongsCount} songs in our database
+            You&rsquo;ve rated {ratingHistory.length} out of {totalSongsCount} songs in our database
           </p>
         </div>
       )}
@@ -465,8 +465,8 @@ export default function ProfileClient() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {currentSongsRating.map((rating) => (
-                      <tr key={rating.id} className="hover:bg-gray-50 transition-colors">
+                    {currentSongsRating.map((rating, index) => (
+                      <tr key={`rating-${rating.song_slug}-${index}`} className="hover:bg-gray-50 transition-colors">
                         {/* Remove whitespace-nowrap to allow text wrapping on mobile */}
                         <td className="px-4 py-3 text-sm text-gray-700 break-words">{rating.song_artist}</td>
                         <td className="px-4 py-3 text-sm break-words">

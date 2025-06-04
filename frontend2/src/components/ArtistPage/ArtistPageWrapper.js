@@ -66,7 +66,7 @@ export default function ArtistPageWrapper() {
     }
 
     fetchData();
-  }, [artistSlug, page, perPage, sortBy, order, query, filter, unrated, decade]);
+  }, [artistSlug, page, perPage, sortBy, order, query, filter, unrated, decade, peakRankFilter]);
 
   if (loading) {
     return <div className="container mx-auto px-4 py-8 text-center">Loading songs...</div>;
