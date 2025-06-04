@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
   // Fetch user profile data
   const fetchUserProfile = useCallback(async (token) => {
     try {
-      const response = await fetch(`${baseUrl}/api/user-profile/`, {
+      const response = await fetch(`${baseUrl}/api/profile/`, {
         headers: {
           'Authorization': `Token ${token}`,
           'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export function AuthProvider({ children }) {
       
       if (response.ok) {
         const userData = await response.json();
-        setUser(userData.user_data);
+        setUser(userData);
       } else {
         // If profile fetch fails, log out the user
         updateAuthToken(null);

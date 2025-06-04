@@ -172,7 +172,7 @@ export default function ProfileClient() {
       
       try {
         // Fetch user profile directly from backend
-        const profileResponse = await fetch(`${baseUrl}/api/user-profile/`, {
+        const profileResponse = await fetch(`${baseUrl}/api/profile/`, {
           headers: {
             'Authorization': `Token ${authToken}`,
             'Content-Type': 'application/json',
