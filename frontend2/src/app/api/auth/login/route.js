@@ -15,15 +15,31 @@ export async function POST(request) {
       csrfToken = csrfCookie.split('=')[1];
     }
     
+    // Get CSRF token from headers if present (client might have set it)
+    const headerCsrfToken = request.headers.get('x-csrftoken') || request.headers.get('X-CSRFToken');
+    if (headerCsrfToken) {
+      csrfToken = headerCsrfToken;
+    }
+    
+    // Create headers for the backend request
+    const headers = {
+      'Content-Type': 'application/json',
+      'Cookie': cookies, // Forward cookies for CSRF token
+      'X-Requested-With': 'XMLHttpRequest', // This helps Django identify AJAX requests
+    };
+    
+    // Add CSRF token to headers if available
+    if (csrfToken) {
+      headers['X-CSRFToken'] = csrfToken;
+      console.log('Using CSRF token:', csrfToken);
+    } else {
+      console.warn('No CSRF token found for login request');
+    }
+    
     // Forward the request to the backend
     const response = await fetch(backendUrl.toString(), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': cookies, // Forward cookies for CSRF token
-        'X-Requested-With': 'XMLHttpRequest', // This helps Django identify AJAX requests
-        'X-CSRFToken': csrfToken, // Include CSRF token in header
-      },
+      headers,
       credentials: 'include', // Include credentials (cookies)
       body: JSON.stringify(body),
     });

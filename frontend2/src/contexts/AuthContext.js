@@ -108,16 +108,29 @@ export function AuthProvider({ children }) {
   const getCSRFToken = async () => {
     try {
       // Make a GET request to Django to get the CSRF cookie
-      await fetch('/api/auth/csrf/', {
+      const response = await fetch('/api/auth/csrf/', {
         method: 'GET',
         credentials: 'include',
       });
       
-      // The CSRF token is now in the cookies
-      return true;
+      if (!response.ok) {
+        throw new Error('Failed to fetch CSRF token');
+      }
+      
+      // Extract CSRF token from cookies
+      const cookies = document.cookie.split(';');
+      const csrfCookie = cookies.find(cookie => cookie.trim().startsWith('csrftoken='));
+      
+      if (csrfCookie) {
+        const csrfToken = csrfCookie.split('=')[1];
+        return csrfToken;
+      } else {
+        console.warn('CSRF token not found in cookies');
+        return null;
+      }
     } catch (error) {
       console.error('Error getting CSRF token:', error);
-      return false;
+      return null;
     }
   };
 
@@ -125,14 +138,21 @@ export function AuthProvider({ children }) {
   const loginUser = async (credentials) => {
     try {
       // Get CSRF token first
-      await getCSRFToken();
+      const csrfToken = await getCSRFToken();
+      
+      const headers = {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      };
+      
+      // Add CSRF token to headers if available
+      if (csrfToken) {
+        headers['X-CSRFToken'] = csrfToken;
+      }
       
       const response = await fetch('/api/auth/login/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
+        headers,
         credentials: 'include',
         body: JSON.stringify(credentials),
       });

@@ -4,6 +4,7 @@ import { Sansita } from "next/font/google";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import AuthProviderWrapper from "@/components/AuthProviderWrapper";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,6 +34,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${sansita.variable} antialiased bg-gray-50`}>
         <AuthProviderWrapper>
+          {/* Google Analytics */}
+          <GoogleAnalytics />
+          
           <Navbar />
           <div className="app-container">
             {children}

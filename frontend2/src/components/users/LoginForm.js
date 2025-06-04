@@ -20,12 +20,35 @@ export default function LoginForm() {
     }
   }, [isAuthenticated, router]);
 
+  // Fetch CSRF token before form submission
+  const fetchCsrfToken = async () => {
+    try {
+      const response = await fetch('/api/auth/csrf/', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to fetch CSRF token');
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error fetching CSRF token:', error);
+      return false;
+    }
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setLoginError(null);
 
     try {
+      // Fetch CSRF token first
+      await fetchCsrfToken();
+      
       // Call login API function
       await loginUser({ email, password });
       
