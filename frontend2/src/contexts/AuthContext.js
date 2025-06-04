@@ -3,11 +3,22 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
+// Base URL for API requests
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return process.env.NODE_ENV === 'development' 
+      ? 'http://localhost:8000' 
+      : 'https://pophits.org';
+  }
+  return '';
+};
+
 // Create the auth context
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const router = useRouter();
+  const baseUrl = getBaseUrl();
   
   // Get auth token from localStorage (only on client side)
   const getAuthToken = useCallback(() => {
@@ -39,7 +50,7 @@ export function AuthProvider({ children }) {
   // Fetch user profile data
   const fetchUserProfile = useCallback(async (token) => {
     try {
-      const response = await fetch('/api/auth/profile/', {
+      const response = await fetch(`${baseUrl}/api/profile/`, {
         headers: {
           'Authorization': `Token ${token}`,
           'Content-Type': 'application/json',
@@ -59,7 +70,7 @@ export function AuthProvider({ children }) {
       updateAuthToken(null);
       setUser(null);
     }
-  }, [updateAuthToken]);
+  }, [baseUrl, updateAuthToken]);
 
   // Initialize auth state on component mount
   useEffect(() => {
@@ -76,11 +87,13 @@ export function AuthProvider({ children }) {
   // Register a new user
   const registerUser = async (userData) => {
     try {
-      const response = await fetch('/api/auth/register/', {
+      const response = await fetch(`${baseUrl}/api/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
         },
+        credentials: 'include',
         body: JSON.stringify(userData),
       });
       
@@ -108,7 +121,7 @@ export function AuthProvider({ children }) {
   const getCSRFToken = async () => {
     try {
       // Make a GET request to Django to get the CSRF cookie
-      const response = await fetch('/api/auth/csrf/', {
+      const response = await fetch(`${baseUrl}/api/csrf/`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -137,22 +150,13 @@ export function AuthProvider({ children }) {
   // Login a user
   const loginUser = async (credentials) => {
     try {
-      // Get CSRF token first
-      const csrfToken = await getCSRFToken();
-      
-      const headers = {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-      };
-      
-      // Add CSRF token to headers if available
-      if (csrfToken) {
-        headers['X-CSRFToken'] = csrfToken;
-      }
-      
-      const response = await fetch('/api/auth/login/', {
+      // Make a direct request to the backend API
+      const response = await fetch(`${baseUrl}/api/login/`, {
         method: 'POST',
-        headers,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
         credentials: 'include',
         body: JSON.stringify(credentials),
       });
@@ -180,11 +184,13 @@ export function AuthProvider({ children }) {
   // Reset password
   const resetPassword = async (email) => {
     try {
-      const response = await fetch('/api/auth/reset-password/', {
+      const response = await fetch(`${baseUrl}/api/reset-password/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
         },
+        credentials: 'include',
         body: JSON.stringify({ email }),
       });
       
@@ -205,12 +211,14 @@ export function AuthProvider({ children }) {
   const logoutUser = async () => {
     try {
       if (authToken) {
-        await fetch('/api/auth/logout/', {
+        await fetch(`${baseUrl}/api/logout/`, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${authToken}`,
             'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
           },
+          credentials: 'include',
         });
       }
       
