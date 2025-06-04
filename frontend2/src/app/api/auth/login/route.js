@@ -5,12 +5,18 @@ export async function POST(request) {
     // Build the URL for the backend API
     const backendUrl = new URL(`${process.env.API_URL}/api/login/`);
     
+    // Get cookies from the request to forward CSRF token
+    const cookies = request.headers.get('cookie') || '';
+    
     // Forward the request to the backend
     const response = await fetch(backendUrl.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cookie': cookies, // Forward cookies for CSRF token
+        'X-Requested-With': 'XMLHttpRequest', // This helps Django identify AJAX requests
       },
+      credentials: 'include', // Include credentials (cookies)
       body: JSON.stringify(body),
     });
     
