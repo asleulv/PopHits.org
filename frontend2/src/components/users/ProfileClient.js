@@ -172,7 +172,7 @@ export default function ProfileClient() {
       
       try {
         // Fetch user profile directly from backend
-        const profileResponse = await fetch(`${baseUrl}/api/profile/`, {
+        const profileResponse = await fetch(`${baseUrl}/api/user-profile/`, {
           headers: {
             'Authorization': `Token ${authToken}`,
             'Content-Type': 'application/json',
@@ -193,7 +193,8 @@ export default function ProfileClient() {
         }
         
         // Fetch bookmarked songs directly from backend
-        const bookmarkedResponse = await fetch(`${baseUrl}/api/bookmarked-songs/`, {
+        console.log('Fetching bookmarked songs from:', `${baseUrl}/api/songs/bookmarked-songs/`);
+        const bookmarkedResponse = await fetch(`${baseUrl}/api/songs/bookmarked-songs/`, {
           headers: {
             'Authorization': `Token ${authToken}`,
             'Content-Type': 'application/json',
@@ -274,7 +275,7 @@ export default function ProfileClient() {
 
     if (confirmDelete) {
       try {
-        const response = await fetch(`${baseUrl}/api/bookmarked-songs/delete-all/`, {
+        const response = await fetch(`${baseUrl}/api/songs/bookmarked-songs/delete-all/`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Token ${authToken}`,
