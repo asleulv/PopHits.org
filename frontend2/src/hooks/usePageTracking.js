@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import ReactGA from 'react-ga4';
 
 // Initialize Google Analytics
@@ -16,7 +16,6 @@ export const initGA = (measurementId) => {
 // Hook to track page views
 export default function usePageTracking() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [initialized, setInitialized] = useState(false);
 
   // Initialize GA
@@ -27,20 +26,15 @@ export default function usePageTracking() {
 
   // Track page views
   useEffect(() => {
-    if (!initialized) return;
-    
-    // Construct the full URL including search parameters
-    const url = searchParams.size > 0 
-      ? `${pathname}?${searchParams.toString()}`
-      : pathname;
+    if (!initialized || typeof window === 'undefined') return;
     
     // Send pageview to Google Analytics
     ReactGA.send({ 
       hitType: "pageview", 
-      page: url,
+      page: pathname,
       title: document.title
     });
     
-    console.log(`Page view tracked: ${url}`);
-  }, [pathname, searchParams, initialized]);
+    console.log(`Page view tracked: ${pathname}`);
+  }, [pathname, initialized]);
 }

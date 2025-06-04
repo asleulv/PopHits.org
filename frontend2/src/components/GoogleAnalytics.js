@@ -7,13 +7,23 @@ import usePageTracking, { initGA } from '@/hooks/usePageTracking';
 const GA_ID = 'G-KWCKPJW0YJ';
 
 export default function GoogleAnalytics() {
-  // Use the page tracking hook
-  usePageTracking();
+  // Use the page tracking hook in a try-catch block
+  try {
+    usePageTracking();
+  } catch (error) {
+    console.error('Error in page tracking:', error);
+  }
 
   // Initialize GA on component mount
   useEffect(() => {
-    initGA(GA_ID);
-    console.log('Google Analytics initialized with ID:', GA_ID);
+    try {
+      if (typeof window !== 'undefined') {
+        initGA(GA_ID);
+        console.log('Google Analytics initialized with ID:', GA_ID);
+      }
+    } catch (error) {
+      console.error('Error initializing Google Analytics:', error);
+    }
   }, []);
 
   // This component doesn't render anything
