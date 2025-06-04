@@ -156,18 +156,29 @@ export default function ProfileClient() {
     }
   }, [isAuthenticated, isLoading, router]);
 
+  // Get base URL for API requests
+  const getBaseUrl = () => {
+    return process.env.NODE_ENV === 'development' 
+      ? 'http://localhost:8000' 
+      : 'https://pophits.org';
+  };
+  
+  const baseUrl = getBaseUrl();
+
   // Fetch user profile, rating history, bookmarked songs, and total songs count
   useEffect(() => {
     const fetchData = async () => {
       if (!authToken) return;
       
       try {
-        // Fetch user profile
-        const profileResponse = await fetch('/api/auth/profile/', {
+        // Fetch user profile directly from backend
+        const profileResponse = await fetch(`${baseUrl}/api/profile/`, {
           headers: {
             'Authorization': `Token ${authToken}`,
             'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
           },
+          credentials: 'include',
         });
         
         if (!profileResponse.ok) {
@@ -181,12 +192,14 @@ export default function ProfileClient() {
           setRatingHistory(profileData.rating_history);
         }
         
-        // Fetch bookmarked songs
-        const bookmarkedResponse = await fetch('/api/songs/bookmarked-songs/', {
+        // Fetch bookmarked songs directly from backend
+        const bookmarkedResponse = await fetch(`${baseUrl}/api/bookmarked-songs/`, {
           headers: {
             'Authorization': `Token ${authToken}`,
             'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
           },
+          credentials: 'include',
         });
         
         if (!bookmarkedResponse.ok) {
@@ -196,8 +209,13 @@ export default function ProfileClient() {
         const bookmarkedData = await bookmarkedResponse.json();
         setBookmarkedSongs(bookmarkedData);
         
-        // Fetch total songs count
-        const totalCountResponse = await fetch('/api/songs/total-count/');
+        // Fetch total songs count directly from backend
+        const totalCountResponse = await fetch(`${baseUrl}/api/songs/total-count/`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          credentials: 'include',
+        });
         
         if (!totalCountResponse.ok) {
           throw new Error('Failed to fetch total songs count');
@@ -214,7 +232,7 @@ export default function ProfileClient() {
     };
     
     fetchData();
-  }, [authToken]);
+  }, [authToken, baseUrl]);
 
   // Reset to page 1 when filter changes
   useEffect(() => {
@@ -256,12 +274,14 @@ export default function ProfileClient() {
 
     if (confirmDelete) {
       try {
-        const response = await fetch('/api/songs/bookmarked-songs/delete-all/', {
+        const response = await fetch(`${baseUrl}/api/bookmarked-songs/delete-all/`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Token ${authToken}`,
             'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
           },
+          credentials: 'include',
         });
         
         if (!response.ok) {
