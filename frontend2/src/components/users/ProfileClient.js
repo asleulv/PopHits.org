@@ -210,10 +210,11 @@ export default function ProfileClient() {
         const bookmarkedData = await bookmarkedResponse.json();
         setBookmarkedSongs(bookmarkedData);
         
-        // Fetch total songs count directly from backend
-        const totalCountResponse = await fetch(`${baseUrl}/api/songs/total-count/`, {
+        // Fetch total songs count from the main songs endpoint with pagination
+        const totalCountResponse = await fetch(`${baseUrl}/api/songs/?page=1&page_size=1`, {
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
+            'Authorization': `Token ${authToken}`,
           },
           credentials: 'include',
         });
