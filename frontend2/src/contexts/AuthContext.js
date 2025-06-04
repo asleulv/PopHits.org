@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
   // Fetch user profile data
   const fetchUserProfile = useCallback(async (token) => {
     try {
-      const response = await fetch('/api/auth/profile', {
+      const response = await fetch('/api/auth/profile/', {
         headers: {
           'Authorization': `Token ${token}`,
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export function AuthProvider({ children }) {
   // Register a new user
   const registerUser = async (userData) => {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/register/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export function AuthProvider({ children }) {
   // Login a user
   const loginUser = async (credentials) => {
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ export function AuthProvider({ children }) {
   // Reset password
   const resetPassword = async (email) => {
     try {
-      const response = await fetch('/api/auth/reset-password', {
+      const response = await fetch('/api/auth/reset-password/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export function AuthProvider({ children }) {
   const logoutUser = async () => {
     try {
       if (authToken) {
-        await fetch('/api/auth/logout', {
+        await fetch('/api/auth/logout/', {
           method: 'POST',
           headers: {
             'Authorization': `Token ${authToken}`,

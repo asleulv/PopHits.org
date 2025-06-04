@@ -163,7 +163,7 @@ export default function ProfileClient() {
       
       try {
         // Fetch user profile
-        const profileResponse = await fetch('/api/auth/profile', {
+        const profileResponse = await fetch('/api/auth/profile/', {
           headers: {
             'Authorization': `Token ${authToken}`,
             'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ export default function ProfileClient() {
         setBookmarkedSongs(bookmarkedData);
         
         // Fetch total songs count
-        const totalCountResponse = await fetch('/api/songs/total-count');
+        const totalCountResponse = await fetch('/api/songs/total-count/');
         
         if (!totalCountResponse.ok) {
           throw new Error('Failed to fetch total songs count');
