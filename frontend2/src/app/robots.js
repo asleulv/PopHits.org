@@ -6,9 +6,9 @@ export default function robots() {
       disallow: [
         '/api/',
         '/_next/',
-        '/static/',
+        '/static/admin/',
       ],
     },
-    sitemap: 'https://pophits.org/sitemap.xml',
+    sitemap: 'https://pophits.org/static/sitemap.xml',
   };
 }
