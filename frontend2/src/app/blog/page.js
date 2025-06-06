@@ -73,7 +73,7 @@ export default async function BlogPage() {
   
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl text-center md:text-4xl font-bold mb-2 pb-2 bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+      <h1 className="text-3xl md:text-4xl text-center font-bold mb-2 pb-2 bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent font-sansita">
             The Hit Music Blog
           </h1>
       

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import { Heart, Music, Home, Info, List, HelpCircle } from 'lucide-react';
+import { ScrollText, Music, Home, Info, List, HelpCircle } from 'lucide-react';
 
 export default function Footer() {
   const { isAuthenticated } = useAuth();
@@ -66,17 +66,12 @@ export default function Footer() {
             </Link>
           </div>
           
-          {isAuthenticated && (
-            <div className="flex flex-col items-center">
-              <Heart className="w-5 h-5 text-red-400 mb-2" />
-              <a
-                href="mailto:contact@pophits.org"
-                className="text-gray-300 hover:text-red-300 transition-colors text-sm md:text-base"
-              >
-                Contact Us
-              </a>
-            </div>
-          )}
+          <div className="flex flex-col items-center">
+            <ScrollText className="w-5 h-5 text-red-400 mb-2" />
+            <Link href="/about" className="text-gray-300 hover:text-red-300 transition-colors text-sm md:text-base">
+              Blog
+            </Link>
+          </div>
         </div>
 
         {/* Bottom section with copyright */}
