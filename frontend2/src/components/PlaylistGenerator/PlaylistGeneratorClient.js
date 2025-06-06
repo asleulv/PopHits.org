@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Music, RefreshCw, Copy, Calendar, BarChart2 } from "lucide-react";
+import { generatePlaylist } from "@/lib/api";
 
 export default function PlaylistGeneratorClient() {
   const [numSongs, setNumSongs] = useState(10);
@@ -21,32 +22,6 @@ export default function PlaylistGeneratorClient() {
   ]);
   const [errorMessage, setErrorMessage] = useState("");
   const [notification, setNotification] = useState(null);
-
-  // Define the generatePlaylist function directly in the component
-  const generatePlaylist = async (numSongs, hitLevel, selectedDecades) => {
-    try {
-      // Use our Next.js API route instead of calling the backend directly
-      let url = `/api/playlist?number_of_songs=${numSongs}&hit_size=${hitLevel}`;
-      
-      // Add selected decades as multiple parameters
-      if (selectedDecades && selectedDecades.length > 0) {
-        selectedDecades.forEach(decade => {
-          url += `&decades=${decade}`;
-        });
-      }
-      
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error(`Error generating playlist:`, error);
-      throw error;
-    }
-  };
 
   const handleGeneratePlaylist = async () => {
     if (selectedDecades.length === 0) {

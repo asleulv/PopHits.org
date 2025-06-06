@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { HelpCircle, RefreshCw, Calendar, BarChart2, Eye, EyeOff } from "lucide-react";
+import { generateQuiz } from "@/lib/api";
 
 export default function QuizGeneratorClient() {
   const [numSongs, setNumSongs] = useState(10);
@@ -20,32 +21,6 @@ export default function QuizGeneratorClient() {
   ]);
   const [errorMessage, setErrorMessage] = useState("");
   const [revealedAnswers, setRevealedAnswers] = useState([]);
-
-  // Define the generateQuiz function directly in the component
-  const generateQuiz = async (numSongs, hitLevel, selectedDecades) => {
-    try {
-      // Use our Next.js API route instead of calling the backend directly
-      let url = `/api/quiz?number_of_songs=${numSongs}&hit_size=${hitLevel}`;
-      
-      // Add selected decades as multiple parameters
-      if (selectedDecades && selectedDecades.length > 0) {
-        selectedDecades.forEach(decade => {
-          url += `&decades=${decade}`;
-        });
-      }
-      
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error(`Error generating quiz:`, error);
-      throw error;
-    }
-  };
 
   const handleGenerateQuiz = async () => {
     if (selectedDecades.length === 0) {
