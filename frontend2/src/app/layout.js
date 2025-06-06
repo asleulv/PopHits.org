@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Sansita } from "next/font/google";
+import { Sansita, Open_Sans } from "next/font/google";
 import { Suspense } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
@@ -24,6 +24,12 @@ const sansita = Sansita({
   weight: ["400", "700"],
 });
 
+const openSans = Open_Sans({
+  variable: "--font-opensans",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 export const metadata = {
   title: "PopHits.org - 70 years of hit songs",
   description: "Explore top-rated songs, random hits by decade, and number one hits on PopHits.org. Discover iconic singles from the 50s to today.",
@@ -33,7 +39,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${sansita.variable} antialiased bg-gray-50`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${sansita.variable} ${openSans.variable} antialiased bg-gray-50`}>
         <AuthProviderWrapper>
           {/* Google Analytics wrapped in Suspense boundary */}
           <Suspense fallback={null}>

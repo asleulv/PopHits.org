@@ -1,13 +1,17 @@
 /* Blog content styles */
 .blog-content {
-  font-family: 'Sansita', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .blog-content p,
 .blog-content li,
 .blog-content ul,
 .blog-content ol,
-.blog-content blockquote,
+.blog-content blockquote {
+  font-family: 'Open Sans', sans-serif !important;
+  font-size: 1.125rem;
+}
+
 .blog-content h1,
 .blog-content h2,
 .blog-content h3,

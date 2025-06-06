@@ -7,7 +7,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'content')
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ('published_date', 'updated_date')
-    filter_horizontal = ('related_songs',)  # Makes it easier to select multiple related songs
+    autocomplete_fields = ['related_songs']  # Much more efficient than filter_horizontal for large datasets
     
     fieldsets = (
         (None, {

@@ -10,6 +10,7 @@ module.exports = {
       fontFamily: {
         cherry: ['Sansita', 'sans-serif'],
         sansita: ['Sansita', 'sans-serif'],
+        opensans: ['Open Sans', 'sans-serif'],
       },
       colors: {
         pink: {

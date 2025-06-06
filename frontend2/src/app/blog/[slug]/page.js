@@ -218,7 +218,7 @@ export default async function BlogPostPage({ params }) {
         </ol>
       </nav>
 
-      <article className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden font-sansita">
+      <article className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         {/* Featured Image */}
         {post.featured_image && (
           <div className="relative w-full h-80">
@@ -234,7 +234,7 @@ export default async function BlogPostPage({ params }) {
 
         <div className="p-6 md:p-8">
           {/* Title and Date */}
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 pb-2 bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 pb-2 bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent font-sansita">
             {post.title}
           </h1>
           <div className="text-sm text-gray-500 mb-8">
@@ -252,7 +252,7 @@ export default async function BlogPostPage({ params }) {
           {/* Related Songs Section */}
           {post.related_songs && post.related_songs.length > 0 && (
             <div className="mt-12 pt-8 border-t border-gray-200">
-              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent font-sansita">
                 Related Hits
               </h2>
               <div className="grid gap-4">

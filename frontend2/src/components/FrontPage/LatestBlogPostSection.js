@@ -38,9 +38,9 @@ export default function LatestBlogPostSection({ latestBlogPost }) {
                 />
               </div>
             )}
-            <div className="p-6 font-sansita">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">{latestBlogPost.title}</h3>
-              <p className="text-gray-600 mb-4">{latestBlogPost.meta_description}</p>
+            <div className="p-6">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sansita">{latestBlogPost.title}</h3>
+              <p className="text-gray-600 mb-4 font-opensans">{latestBlogPost.meta_description}</p>
               <div className="flex items-center text-sm text-gray-500">
                 <span>{formattedDate}</span>
               </div>

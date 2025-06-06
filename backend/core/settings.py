@@ -57,13 +57,60 @@ INSTALLED_APPS = [
     "djoser",
     "corsheaders",
     "ckeditor",
+    "tinymce",
 ]
 
+# CKEditor configuration (keeping for backward compatibility)
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
         'height': 300,
         'width': 800,
+    },
+}
+
+# TinyMCE configuration
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': 800,
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'theme': 'silver',
+    'plugins': '''
+        textcolor save link image media preview codesample contextmenu
+        table code lists fullscreen insertdatetime nonbreaking
+        contextmenu directionality searchreplace wordcount visualblocks
+        visualchars code fullscreen autolink lists charmap print hr
+        anchor pagebreak
+    ''',
+    'toolbar1': '''
+        fullscreen preview bold italic underline | fontselect,
+        fontsizeselect | forecolor backcolor | alignleft alignright |
+        aligncenter alignjustify | indent outdent | bullist numlist table |
+        | link image media | codesample |
+    ''',
+    'toolbar2': '''
+        visualblocks visualchars |
+        charmap hr pagebreak nonbreaking anchor | code |
+    ''',
+    'contextmenu': 'formats | link image',
+    'menubar': True,
+    'statusbar': True,
+    'font_formats': 'Sansita=sansita,sans-serif;Open Sans=open sans,sans-serif;Andale Mono=andale mono,times;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier;Georgia=georgia,palatino;Helvetica=helvetica;Impact=impact,chicago;Symbol=symbol;Tahoma=tahoma,arial,helvetica,sans-serif;Terminal=terminal,monaco;Times New Roman=times new roman,times;Trebuchet MS=trebuchet ms,geneva;Verdana=verdana,geneva;Webdings=webdings;Wingdings=wingdings,zapf dingbats',
+    'content_style': '''
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Sansita:wght@400;700&display=swap');
+        body { font-family: 'Open Sans', sans-serif; font-size: 16px; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Sansita', sans-serif; }
+    ''',
+    'formats': {
+        'h1': { 'block': 'h1', 'classes': 'font-sansita' },
+        'h2': { 'block': 'h2', 'classes': 'font-sansita' },
+        'h3': { 'block': 'h3', 'classes': 'font-sansita' },
+        'h4': { 'block': 'h4', 'classes': 'font-sansita' },
+        'h5': { 'block': 'h5', 'classes': 'font-sansita' },
+        'h6': { 'block': 'h6', 'classes': 'font-sansita' },
+        'p': { 'block': 'p', 'classes': 'font-opensans' },
     },
 }
 

@@ -86,7 +86,7 @@ export default async function BlogPage() {
         {blogPosts.results && blogPosts.results.length > 0 ? (
           <div className="grid gap-8">
             {blogPosts.results.map((post) => (
-              <article key={post.id} className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg font-sansita">
+              <article key={post.id} className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg">
                 <Link href={`/blog/${post.slug}`} className="block">
                   <div className="md:flex">
                     {post.featured_image && (
@@ -101,8 +101,8 @@ export default async function BlogPage() {
                       </div>
                     )}
                     <div className="p-6">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">{post.title}</h2>
-                      <p className="text-gray-600 mb-4">{post.meta_description}</p>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2 font-sansita">{post.title}</h2>
+                      <p className="text-gray-600 mb-4 font-opensans">{post.meta_description}</p>
                       <div className="flex items-center text-sm text-gray-500">
                         <span>{new Date(post.published_date).toLocaleDateString('en-US', {
                           year: 'numeric',
