@@ -26,7 +26,7 @@ cd /path/to/your/project
 ./backend/scripts/update_sitemap.sh
 ```
 
-This should generate a sitemap.xml file in your `static_root` directory.
+This should generate a sitemap.xml file in your `static` directory.
 
 ### 3. Set up a cron job
 
@@ -55,7 +55,7 @@ Sitemap: https://pophits.org/static/sitemap.xml
 ## Troubleshooting
 
 - If the script fails, check the log file for errors
-- Make sure the `static_root` directory is writable by the user running the cron job
+- Make sure the `static` directory is writable by the user running the cron job
 - Verify that the sitemap.xml file is accessible at https://pophits.org/static/sitemap.xml
 
 ## Notes

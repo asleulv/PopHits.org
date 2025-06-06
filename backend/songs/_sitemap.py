@@ -16,7 +16,7 @@ from blog.models import BlogPost
 
 def generate_sitemap():
     # Define the output path - this should be in your static directory
-    output_path = os.path.join(BASE_DIR, 'static_root', 'sitemap.xml')
+    output_path = os.path.join(BASE_DIR, 'static', 'sitemap.xml')
     
     # Get current date for lastmod
     today = datetime.now().strftime('%Y-%m-%d')
