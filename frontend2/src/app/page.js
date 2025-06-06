@@ -41,14 +41,13 @@ export default async function FrontPage() {
 
   try {
     // Fetch data in parallel
-    const [topRatedSongsData, randomHitsByDecadeData, songsWithImagesData, currentHot100Data, numberOneHitsData, latestBlogPostData] = 
+    const [topRatedSongsData, randomHitsByDecadeData, songsWithImagesData, currentHot100Data, numberOneHitsData] = 
       await Promise.all([
         getTopRatedSongs(),
         getRandomHitsByDecade(),
         getSongsWithImages(),
         getCurrentHot100(),
         getNumberOneHits(),
-        getLatestBlogPost(),
       ]);
     
     // Process data
@@ -57,7 +56,43 @@ export default async function FrontPage() {
     songsWithImages = songsWithImagesData.songs || songsWithImagesData;
     currentHot100 = currentHot100Data;
     numberOneHits = numberOneHitsData.songs || numberOneHitsData;
-    latestBlogPost = latestBlogPostData;
+    
+    // Fetch latest blog post directly
+    try {
+      const apiUrl = process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:8000/api/blog/?page=1&page_size=1' 
+        : 'https://pophits.org/api/blog/?page=1&page_size=1';
+      
+      console.log('Fetching latest blog post from URL:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+        next: { revalidate: 0 }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Latest blog post data:', data);
+      
+      // Handle both response formats
+      if (Array.isArray(data)) {
+        latestBlogPost = data.length > 0 ? data[0] : null;
+      } else if (data.results && Array.isArray(data.results)) {
+        latestBlogPost = data.results.length > 0 ? data.results[0] : null;
+      }
+      
+      console.log('Processed latest blog post:', latestBlogPost);
+    } catch (blogError) {
+      console.error('Error fetching latest blog post:', blogError);
+      latestBlogPost = null;
+    }
     
     // Get a random song with image
     if (songsWithImages.length > 0) {

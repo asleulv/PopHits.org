@@ -4,8 +4,11 @@ import { FileText } from 'lucide-react';
 
 export default function LatestBlogPostSection({ latestBlogPost }) {
   if (!latestBlogPost) {
+    console.log('No latest blog post available');
     return null;
   }
+  
+  console.log('Rendering latest blog post:', latestBlogPost);
 
   // Format the date
   const formattedDate = new Date(latestBlogPost.published_date).toLocaleDateString('en-US', {

@@ -9,11 +9,31 @@ export async function generateMetadata({ params }) {
   let post;
 
   try {
-    const response = await getBlogPostBySlug(params.slug);
-
+    // Use a direct fetch with the full URL to ensure we're hitting the correct endpoint
+    const apiUrl = process.env.NODE_ENV === 'development' 
+      ? `http://localhost:8000/api/blog/${params.slug}/` 
+      : `https://pophits.org/api/blog/${params.slug}/`;
+    
+    console.log('Fetching blog post metadata from URL:', apiUrl);
+    
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+      next: { revalidate: 0 }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
     // Handle both response formats
-    if (response && typeof response === "object") {
-      post = response;
+    if (data && typeof data === "object") {
+      post = data;
     } else {
       // Default metadata if post not found
       return {
@@ -103,15 +123,39 @@ function BlogPostStructuredData({ post }) {
   );
 }
 
+export const revalidate = 0; // Disable caching for this page
+
 export default async function BlogPostPage({ params }) {
   let post;
 
   try {
-    const response = await getBlogPostBySlug(params.slug);
-
+    // Use a direct fetch with the full URL to ensure we're hitting the correct endpoint
+    const apiUrl = process.env.NODE_ENV === 'development' 
+      ? `http://localhost:8000/api/blog/${params.slug}/` 
+      : `https://pophits.org/api/blog/${params.slug}/`;
+    
+    console.log('Fetching blog post from URL:', apiUrl);
+    
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // This is important for server components to properly fetch from external APIs
+      cache: 'no-store',
+      next: { revalidate: 0 }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Blog post fetched:', data);
+    
     // Handle both response formats
-    if (response && typeof response === "object") {
-      post = response;
+    if (data && typeof data === "object") {
+      post = data;
     } else {
       post = null;
     }
