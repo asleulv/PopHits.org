@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getBlogPosts } from '@/lib/api';
 
 export default function BlogListClient() {
   const [blogPosts, setBlogPosts] = useState([]);
@@ -12,19 +13,9 @@ export default function BlogListClient() {
   useEffect(() => {
     async function fetchBlogPosts() {
       try {
-        const apiUrl = process.env.NODE_ENV === 'development' 
-          ? 'http://localhost:8000/api/blog/' 
-          : 'https://pophits.org/api/blog/';
+        console.log('Fetching blog posts from client side using getBlogPosts');
         
-        console.log('Fetching blog posts from client side:', apiUrl);
-        
-        const response = await fetch(apiUrl);
-        
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
-        }
-        
-        const data = await response.json();
+        const data = await getBlogPosts();
         console.log('Blog posts fetched from client side:', data);
         
         // Handle both formats: array or {results: array}
