@@ -1,10 +1,10 @@
 // Base URL configuration
-const BASE_URL = process.env.NODE_ENV === 'development' 
+export const BASE_URL = process.env.NODE_ENV === 'development' 
   ? 'http://localhost:8000' 
   : 'https://pophits.org';
 
 // API endpoints
-const API_ENDPOINTS = {
+export const API_ENDPOINTS = {
   topRatedSongs: `${BASE_URL}/api/songs/top-rated-songs/`,
   randomHitsByDecade: `${BASE_URL}/api/songs/random-songs-by-decade/`,
   songsWithImages: `${BASE_URL}/api/songs/songs-with-images/`,

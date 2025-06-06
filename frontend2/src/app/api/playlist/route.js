@@ -1,3 +1,5 @@
+import { API_ENDPOINTS } from '@/lib/api';
+
 export async function GET(request) {
   try {
     // Get the URL parameters from the request
@@ -8,8 +10,8 @@ export async function GET(request) {
     const hitSize = searchParams.get('hit_size') || 1;
     const decades = searchParams.getAll('decades');
     
-    // Build the URL for the backend API
-    const backendUrl = new URL('http://localhost:8000/api/songs/generate-playlist/');
+    // Build the URL for the backend API using the API_ENDPOINTS
+    const backendUrl = new URL(API_ENDPOINTS.generatePlaylist);
     
     // Add the parameters to the backend URL
     backendUrl.searchParams.append('number_of_songs', numberOfSongs);
