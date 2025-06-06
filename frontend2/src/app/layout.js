@@ -34,11 +34,16 @@ export const metadata = {
   title: "PopHits.org - 70 years of hit songs",
   description: "Explore top-rated songs, random hits by decade, and number one hits on PopHits.org. Discover iconic singles from the 50s to today.",
   keywords: "pop hits, greatest pop songs, chart-topping hits, music history, Billboard Hot 100",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#000000" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${sansita.variable} ${openSans.variable} antialiased bg-gray-50`}>
         <AuthProviderWrapper>
           {/* Google Analytics wrapped in Suspense boundary */}
