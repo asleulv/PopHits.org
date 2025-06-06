@@ -31,7 +31,7 @@ export async function generateMetadata({ params }) {
       siteName: 'PopHits.org',
       images: [
         {
-          url: song.image_upload || 'https://pophits.org/static/media/oldhits_logo.png',
+          url: song.image_upload || 'https://pophits.org/static/gfx/oldhits_logo.png',
           width: 800,
           height: 600,
           alt: `${song.title} by ${song.artist}`,
