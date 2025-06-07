@@ -39,18 +39,49 @@ export default async function SongsPage({ searchParams }) {
   const songs = songsData.results || [];
   const totalSongs = songsData.count || 0;
 
+  // Prepare JSON-LD for song list
+  const songListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "PopHits.org Hit Songs",
+    "description": "A curated list of hit songs from the Billboard Hot 100 charts.",
+    "numberOfItems": songs.length,
+    "itemListElement": songs.map((song, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `https://pophits.org/songs/${song.slug}`,  // <-- using slug here
+      "name": song.title,
+      "item": {
+        "@type": "MusicRecording",
+        "name": song.title,
+        "byArtist": {
+          "@type": "MusicGroup",
+          "name": song.artist
+        },
+        "url": `https://pophits.org/songs/${song.slug}`
+      }
+    })),
+  };
+
   return (
-    <SongListPage 
-      initialSongs={songs} 
-      totalSongs={totalSongs}
-      initialPage={page}
-      initialPerPage={perPage}
-      initialSortField={sortBy}
-      initialSortOrder={order}
-      initialNumberOneFilter={filter === 'number-one'}
-      initialUnratedFilter={unrated}
-      initialDecadeFilter={decade}
-      initialSearchQuery={query}
-    />
+    <>
+      <SongListPage 
+        initialSongs={songs} 
+        totalSongs={totalSongs}
+        initialPage={page}
+        initialPerPage={perPage}
+        initialSortField={sortBy}
+        initialSortOrder={order}
+        initialNumberOneFilter={filter === 'number-one'}
+        initialUnratedFilter={unrated}
+        initialDecadeFilter={decade}
+        initialSearchQuery={query}
+      />
+      <script
+        type="application/ld+json"
+        // JSON.stringify here converts the object to a string for the script tag
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(songListSchema) }}
+      />
+    </>
   );
 }

@@ -7,6 +7,7 @@ import Footer from "@/components/Footer/Footer";
 import AuthProviderWrapper from "@/components/AuthProviderWrapper";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import "./globals.css";
+import Canonical from "@/components/Canonical";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
+        <Canonical />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${sansita.variable} ${openSans.variable} antialiased bg-gray-50`}>
         <AuthProviderWrapper>

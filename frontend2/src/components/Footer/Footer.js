@@ -68,7 +68,7 @@ export default function Footer() {
           
           <div className="flex flex-col items-center">
             <ScrollText className="w-5 h-5 text-red-400 mb-2" />
-            <Link href="/about" className="text-gray-300 hover:text-red-300 transition-colors text-sm md:text-base">
+            <Link href="/blog" className="text-gray-300 hover:text-red-300 transition-colors text-sm md:text-base">
               Blog
             </Link>
           </div>

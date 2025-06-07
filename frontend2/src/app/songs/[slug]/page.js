@@ -76,9 +76,41 @@ export default async function SongDetailPage({ params }) {
     );
   }
 
+  // Build JSON-LD schema for a MusicRecording (Song)
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MusicRecording",
+    "name": song.title,
+    "byArtist": {
+      "@type": "MusicGroup",
+      "name": song.artist
+    },
+    "datePublished": song.year?.toString() || undefined,
+    "image": song.image_upload || "https://pophits.org/static/gfx/oldhits_logo.png",
+    "url": `https://pophits.org/songs/${song.slug}`,
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": song.peak_rank ? (100 - song.peak_rank + 1) / 10 : undefined, // e.g. higher rank = higher rating approx
+      "ratingCount": 1
+    },
+    "description": song.review || `Listen to ${song.title} by ${song.artist}, peaked at #${song.peak_rank} on the Billboard Hot 100.`,
+    "inAlbum": song.album ? {
+      "@type": "MusicAlbum",
+      "name": song.album
+    } : undefined,
+    "duration": song.duration || undefined // ISO 8601 duration string if you have it
+  };
+
   return (
-    <SongProvider initialSong={song}>
-      <SongDetailContent />
-    </SongProvider>
+    <>
+      <script
+        type="application/ld+json"
+        // dangerouslySetInnerHTML is needed for JSON-LD injection in React
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <SongProvider initialSong={song}>
+        <SongDetailContent />
+      </SongProvider>
+    </>
   );
 }
