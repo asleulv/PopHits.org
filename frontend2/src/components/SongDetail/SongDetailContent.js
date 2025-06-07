@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { Suspense } from "react";
-import { 
-  Calendar, 
-  TrendingUp, 
-  Clock, 
-  Star, 
-  Music, 
-  SquarePlay 
+import {
+  Calendar,
+  TrendingUp,
+  Clock,
+  Star,
+  Music,
+  SquarePlay,
 } from "lucide-react";
 import SongActions from "@/components/SongDetail/SongActions";
 import SongComments from "@/components/SongDetail/SongComments";
@@ -30,30 +30,29 @@ export default function SongDetailContent() {
       <div className="flex flex-col items-center justify-center mb-6 bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl shadow-sm">
         <h1 className="text-3xl md:text-5xl px-1 py-1 font-cherry font-bold mb-2 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
           {song.title}
+          <span className="block text-xl md:text-2xl font-medium text-gray-500">
+            by{" "}
+            <Link
+              href={`/artist/${song.artist_slug}`}
+              className="text-black hover:text-pink-600 transition-colors"
+            >
+              {song.artist}
+            </Link>
+          </span>
         </h1>
-        <div className="text-xl md:text-2xl font-medium text-gray-500 mb-4">
-          by{" "}
-          <Link
-            href={`/artist/${song.artist_slug}`}
-            className="text-black hover:text-pink-600 transition-colors"
-          >
-            {song.artist}
-          </Link>
-        </div>
-        
+
         {/* Bookmark and Average Score */}
         <SongActions showRatingOnly={false} />
       </div>
 
       {/* Song Information Box with Lucide icons */}
+      <h2 className="sr-only">Song Information</h2>
       <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-3 rounded-xl shadow-lg mb-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-gray-700 p-4 rounded-lg text-center">
             <Calendar className="w-6 h-6 text-white mx-auto mb-1" />
             <div className="text-white text-sm">Year</div>
-            <div className="font-bold text-pink-400 text-2xl">
-              {song.year}
-            </div>
+            <div className="font-bold text-pink-400 text-2xl">{song.year}</div>
           </div>
 
           <div className="bg-gray-700 p-4 rounded-lg text-center">
@@ -84,6 +83,7 @@ export default function SongDetailContent() {
 
       {/* Audio Player */}
       <div className="mb-4">
+        <h2 className="sr-only">Spotify Player</h2>
         {song.spotify_url ? (
           <div className="overflow-hidden transform transition-all duration-300 hover:shadow-xl">
             <iframe
@@ -129,19 +129,20 @@ export default function SongDetailContent() {
           </div>
         )}
       </div>
-      
+
       {/* Rating UI - Client Component */}
       <div className="mb-4">
         <SongActions showRatingOnly={true} />
       </div>
-      
+
       {/* Share Options */}
       <ShareButtons song={song} />
 
       {/* Review Section */}
       <div className="mb-8">
+        <h2 className="sr-only">Artist Bio</h2>
         <div className="bg-white p-6 rounded-xl border border-gray-200">
-          <div 
+          <div
             className="prose max-w-none"
             dangerouslySetInnerHTML={{ __html: song.review }}
           />

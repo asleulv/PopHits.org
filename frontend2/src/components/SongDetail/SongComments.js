@@ -194,6 +194,7 @@ export default function SongComments({ song }) {
 
   return (
     <div className="mb-8">
+      <h2 className="sr-only">User Comments</h2>
       {isAuthenticated && (
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
           <form className="w-full">
