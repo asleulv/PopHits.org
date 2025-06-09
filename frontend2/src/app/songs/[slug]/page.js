@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { 
-  Calendar, 
-  TrendingUp, 
-  Clock, 
-  Star, 
-  Music, 
-  SquarePlay 
+import {
+  Calendar,
+  TrendingUp,
+  Clock,
+  Star,
+  Music,
+  SquarePlay,
 } from "lucide-react";
 import { getSongBySlug } from "@/lib/api";
 import SongActions from "@/components/SongDetail/SongActions";
@@ -18,33 +18,38 @@ import SongDetailContent from "@/components/SongDetail/SongDetailContent";
 // Generate metadata for better SEO
 export async function generateMetadata({ params }) {
   const song = await getSongBySlug(params.slug);
-  
+
   return {
     title: `${song.title} by ${song.artist} | PopHits.org`,
-    description: song.review ? 
-      `${song.title} by ${song.artist} (${song.year}) - Peak position: #${song.peak_rank} on the Billboard Hot 100.` : 
-      `Listen to ${song.title} by ${song.artist} from ${song.year}. Peak position: #${song.peak_rank} on the Billboard Hot 100.`,
+    description: song.review
+      ? `${song.title} by ${song.artist} (${song.year}) - Peak position: #${song.peak_rank} on the Billboard Hot 100.`
+      : `Listen to ${song.title} by ${song.artist} from ${song.year}. Peak position: #${song.peak_rank} on the Billboard Hot 100.`,
     openGraph: {
       title: `${song.title} by ${song.artist}`,
       description: `${song.title} by ${song.artist} (${song.year}) - Peak position: #${song.peak_rank} on the Billboard Hot 100.`,
       url: `https://pophits.org/songs/${song.slug}`,
-      siteName: 'PopHits.org',
+      siteName: "PopHits.org",
       images: [
         {
-          url: song.image_upload || 'https://pophits.org/static/gfx/oldhits_logo.png',
+          url:
+            song.image_upload ||
+            "https://pophits.org/static/gfx/oldhits_logo.png",
           width: 800,
           height: 600,
           alt: `${song.title} by ${song.artist}`,
         },
       ],
-      locale: 'en_US',
-      type: 'website',
+      locale: "en_US",
+      type: "website",
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `${song.title} by ${song.artist}`,
       description: `${song.title} by ${song.artist} (${song.year}) - Peak position: #${song.peak_rank} on the Billboard Hot 100.`,
-      images: [song.image_upload || 'https://pophits.org/static/media/oldhits_logo.png'],
+      images: [
+        song.image_upload ||
+          "https://pophits.org/static/media/oldhits_logo.png",
+      ],
     },
     alternates: {
       canonical: `https://pophits.org/songs/${song.slug}`,
@@ -61,14 +66,19 @@ function getTrackIdFromUrl(url) {
 
 export default async function SongDetailPage({ params }) {
   const song = await getSongBySlug(params.slug);
-  
+
   if (!song) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg">
           <h1 className="text-2xl font-bold mb-2">Song Not Found</h1>
-          <p>Sorry, we couldn&rsquo;t find the song you&rsquo;re looking for.</p>
-          <Link href="/" className="text-blue-600 hover:underline mt-4 inline-block">
+          <p>
+            Sorry, we couldn&rsquo;t find the song you&rsquo;re looking for.
+          </p>
+          <Link
+            href="/"
+            className="text-blue-600 hover:underline mt-4 inline-block"
+          >
             Return to Home
           </Link>
         </div>
@@ -80,25 +90,32 @@ export default async function SongDetailPage({ params }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "MusicRecording",
-    "name": song.title,
-    "byArtist": {
+    name: song.title,
+    byArtist: {
       "@type": "MusicGroup",
-      "name": song.artist
+      name: song.artist,
     },
-    "datePublished": song.year?.toString() || undefined,
-    "image": song.image_upload || "https://pophits.org/static/gfx/oldhits_logo.png",
-    "url": `https://pophits.org/songs/${song.slug}`,
-    "aggregateRating": {
+    datePublished: song.year?.toString() || undefined,
+    image:
+      song.image_upload || "https://pophits.org/static/gfx/oldhits_logo.png",
+    url: `https://pophits.org/songs/${song.slug}`,
+    aggregateRating: {
       "@type": "AggregateRating",
-      "ratingValue": song.peak_rank ? (100 - song.peak_rank + 1) / 10 : undefined, // e.g. higher rank = higher rating approx
-      "ratingCount": 1
+      ratingValue: song.peak_rank ? (100 - song.peak_rank + 1) / 10 : undefined, // e.g. higher rank = higher rating approx
+      ratingCount: 1,
+      bestRating: 10,
+      worstRating: 1,
     },
-    "description": song.review || `Listen to ${song.title} by ${song.artist}, peaked at #${song.peak_rank} on the Billboard Hot 100.`,
-    "inAlbum": song.album ? {
-      "@type": "MusicAlbum",
-      "name": song.album
-    } : undefined,
-    "duration": song.duration || undefined // ISO 8601 duration string if you have it
+    description:
+      song.review ||
+      `Listen to ${song.title} by ${song.artist}, peaked at #${song.peak_rank} on the Billboard Hot 100.`,
+    inAlbum: song.album
+      ? {
+          "@type": "MusicAlbum",
+          name: song.album,
+        }
+      : undefined,
+    duration: song.duration || undefined, // ISO 8601 duration string if you have it
   };
 
   return (
