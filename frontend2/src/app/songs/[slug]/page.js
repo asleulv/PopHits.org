@@ -101,8 +101,8 @@ export default async function SongDetailPage({ params }) {
     url: `https://pophits.org/songs/${song.slug}`,
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: song.peak_rank ? (100 - song.peak_rank + 1) / 10 : undefined, // e.g. higher rank = higher rating approx
-      ratingCount: 1,
+      ratingValue: song.average_user_score || undefined,
+      ratingCount: song.total_ratings || 0,
       bestRating: 10,
       worstRating: 1,
     },
