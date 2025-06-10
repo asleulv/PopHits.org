@@ -21,12 +21,10 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `${song.title} by ${song.artist} | PopHits.org`,
-    description: song.review
-      ? `${song.title} by ${song.artist} (${song.year}) - Peak position: #${song.peak_rank} on the Billboard Hot 100.`
-      : `Listen to ${song.title} by ${song.artist} from ${song.year}. Peak position: #${song.peak_rank} on the Billboard Hot 100.`,
+    description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
     openGraph: {
       title: `${song.title} by ${song.artist}`,
-      description: `${song.title} by ${song.artist} (${song.year}) - Peak position: #${song.peak_rank} on the Billboard Hot 100.`,
+      description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
       url: `https://pophits.org/songs/${song.slug}`,
       siteName: "PopHits.org",
       images: [
@@ -45,7 +43,7 @@ export async function generateMetadata({ params }) {
     twitter: {
       card: "summary_large_image",
       title: `${song.title} by ${song.artist}`,
-      description: `${song.title} by ${song.artist} (${song.year}) - Peak position: #${song.peak_rank} on the Billboard Hot 100.`,
+      description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
       images: [
         song.image_upload ||
           "https://pophits.org/static/media/oldhits_logo.png",
