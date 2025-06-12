@@ -17,6 +17,7 @@ from django.utils.encoding import force_bytes
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
+from rest_framework.decorators import api_view
 
 
 class CSRFTokenView(APIView):
@@ -192,3 +193,69 @@ class ResetPasswordConfirm(APIView):
       
     else:
       return Response({'error':'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+@api_view(['GET'])
+def user_stats(request, username):
+    """
+    Calculate and return user statistics including:
+    - Total songs in database
+    - Songs rated by user
+    - Percentage of songs rated
+    - Unrated songs count
+    - Average score
+    - Score distribution
+    - Average score per decade
+    """
+    from django.db.models import Count, Avg
+    from django.db.models.functions import Floor
+    from songs.models import UserSongRating, Song
+    from rest_framework.response import Response
+    from django.db.models import F, IntegerField, ExpressionWrapper, Avg
+    
+    total_songs = Song.objects.count()
+    rated_count = UserSongRating.objects.filter(user__username=username).count()
+    score_agg = UserSongRating.objects.filter(user__username=username).aggregate(avg_score=Avg('score'))
+
+    decade_expr = ExpressionWrapper(
+    Floor(F('song__year') / 10) * 10,
+    output_field=IntegerField()
+)
+    
+    stats = {
+        'total_songs': total_songs,
+        'songs_rated': rated_count,
+        'percent_rated': round((rated_count / total_songs * 100) if total_songs else 0, 1),
+        'songs_unrated': total_songs - rated_count,
+        'average_score': score_agg['avg_score'],
+        'score_distribution': list(UserSongRating.objects
+                                .filter(user__username=username)
+                                .values('score')
+                                .annotate(count=Count('score'))
+                                .order_by('score')),
+        'decade_averages': [
+    {
+        **entry,
+        'scores': list(
+            UserSongRating.objects
+                .filter(user__username=username)
+                .exclude(score__isnull=True)
+                .exclude(score=0)
+                .annotate(decade=decade_expr)
+                .filter(decade=entry['decade'])
+                .values_list('score', flat=True)
+        )
+    }
+    for entry in UserSongRating.objects
+        .filter(user__username=username)
+        .exclude(score__isnull=True)
+        .exclude(score=0)
+        .annotate(decade=decade_expr)
+        .values('decade')
+        .annotate(avg_score=Avg('score'))
+]
+            }
+            
+    return Response(stats)

@@ -11,6 +11,7 @@ import {
   Star,
   Award,
   RefreshCw,
+  Clipboard,
 } from "lucide-react";
 import { getSongs } from "@/lib/api";
 
@@ -1039,6 +1040,32 @@ export default function SongListClient({
         </span>{" "}
         of <span className="font-bold text-pink-600">{totalCount}</span> hit
         songs
+      </div>
+
+      {/* Copy Spotify URLs Button */}
+      <div className="flex justify-center mb-4">
+        <button
+          onClick={() => {
+            const urls = songs
+              .map((song) => song.spotify_url)
+              .filter((url) => url)
+              .slice(0, 1000);
+            if (urls.length > 0) {
+              navigator.clipboard.writeText(urls.join("\n"));
+              alert(
+                `${urls.length} Spotify URL${
+                  urls.length === 1 ? "" : "s"
+                } copied to clipboard!`
+              );
+            } else {
+              alert("No Spotify URLs to copy!");
+            }
+          }}
+          className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors flex items-center gap-2"
+        >
+          <Clipboard className="w-5 h-5" />
+          Copy Spotify URLs to clipboard
+        </button>
       </div>
     </div>
   );
