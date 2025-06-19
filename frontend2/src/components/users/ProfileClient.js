@@ -46,6 +46,44 @@ const scoreColors = {
   10: "bg-blue-300",
 };
 
+// Collapsible list component for highest/lowest rated songs
+const RatedSongsList = ({ title, songs }) => {
+  const [expanded, setExpanded] = useState(false);
+  const visibleSongs = expanded ? songs : songs.slice(0, 3);
+
+  if (!songs || songs.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <h3 className="font-semibold mb-2">
+        {title} <span className="text-gray-500">({songs.length})</span>
+      </h3>
+      <ul>
+        {visibleSongs.map((item) => (
+          <li key={item.song.id} className="mb-1">
+            <Link
+              href={`/songs/${item.song.id}`}
+              className="text-blue-600 hover:text-pink-600 font-medium"
+            >
+              {item.song.title}
+            </Link>{" "}
+            by {item.song.artist} ({item.song.year}) —{" "}
+            <span className="text-pink-600 font-bold">{item.score}</span>
+          </li>
+        ))}
+      </ul>
+      {songs.length > 3 && (
+        <button
+          className="mt-2 text-sm text-blue-600 hover:underline"
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "Show Less" : `Show All (${songs.length})`}
+        </button>
+      )}
+    </div>
+  );
+};
+
 const PaginationControls = ({
   currentPage,
   totalItems,
@@ -415,7 +453,6 @@ export default function ProfileClient() {
               Rating Progress
             </h3>
           </div>
-
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-4">
             <div className="flex flex-col items-center mb-4 md:mb-0">
               <p className="text-gray-500 text-sm">Songs Rated</p>
@@ -487,6 +524,26 @@ export default function ProfileClient() {
 
       {/* Score Distribution Bar Chart */}
       {renderScoreDistribution()}
+
+      {/* Highest and Lowest Rated Songs */}
+      {userStats && (userStats.highest_rated_songs?.length > 0 || userStats.lowest_rated_songs?.length > 0) && (
+        <div className="container mx-auto px-2 sm:px-4 md:px-8 py-6 mb-8 text-black rounded-2xl shadow-lg bg-gradient-to-br from-white to-gray-100">
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex-1">
+              <RatedSongsList
+                title="Highest Rated Songs"
+                songs={userStats.highest_rated_songs}
+              />
+            </div>
+            <div className="flex-1">
+              <RatedSongsList
+                title="Lowest Rated Songs"
+                songs={userStats.lowest_rated_songs}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex justify-center mb-6">
         <div className="bg-white rounded-full shadow-md p-1 inline-flex">
@@ -567,13 +624,13 @@ export default function ProfileClient() {
                         key={`rating-${rating.song_slug}-${index}`}
                         className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="px-4 py-3 text-sm text-gray-700 break-words">
+                        <td className="px-4 py-3 text-sm text-pink-600 break-words">
                           {rating.song_artist}
                         </td>
                         <td className="px-4 py-3 text-sm break-words">
                           <Link
                             href={`/songs/${rating.song_slug}`}
-                            className="text-blue-600 hover:text-pink-600 transition-colors"
+                            className="text-black hover:text-pink-600 transition-colors"
                           >
                             {rating.song_title}
                           </Link>

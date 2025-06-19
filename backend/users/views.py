@@ -197,6 +197,12 @@ class ResetPasswordConfirm(APIView):
 
 
 
+from django.db.models import Count, Avg, Max, Min, F, IntegerField, ExpressionWrapper
+from django.db.models.functions import Floor
+from songs.models import UserSongRating, Song
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
 @api_view(['GET'])
 def user_stats(request, username):
     """
@@ -208,54 +214,85 @@ def user_stats(request, username):
     - Average score
     - Score distribution
     - Average score per decade
+    - Highest and lowest rated songs (all with max/min score)
     """
-    from django.db.models import Count, Avg
-    from django.db.models.functions import Floor
-    from songs.models import UserSongRating, Song
-    from rest_framework.response import Response
-    from django.db.models import F, IntegerField, ExpressionWrapper, Avg
-    
     total_songs = Song.objects.count()
-    rated_count = UserSongRating.objects.filter(user__username=username).count()
-    score_agg = UserSongRating.objects.filter(user__username=username).aggregate(avg_score=Avg('score'))
+    rated_qs = UserSongRating.objects.filter(user__username=username)
+    rated_count = rated_qs.count()
+    score_agg = rated_qs.aggregate(avg_score=Avg('score'))
+
+    # Highest and lowest rated songs
+    max_score = rated_qs.aggregate(Max('score'))['score__max']
+    min_score = rated_qs.aggregate(Min('score'))['score__min']
+
+    highest_rated = rated_qs.filter(score=max_score).select_related('song') if max_score is not None else []
+    lowest_rated = rated_qs.filter(score=min_score).select_related('song') if min_score is not None else []
+
+    highest_rated_songs = [
+        {
+            'score': rating.score,
+            'song': {
+                'title': rating.song.title,
+                'artist': rating.song.artist,
+                'year': rating.song.year,
+                'id': rating.song.id,
+            }
+        }
+        for rating in highest_rated
+    ]
+
+    lowest_rated_songs = [
+        {
+            'score': rating.score,
+            'song': {
+                'title': rating.song.title,
+                'artist': rating.song.artist,
+                'year': rating.song.year,
+                'id': rating.song.id,
+            }
+        }
+        for rating in lowest_rated
+    ]
 
     decade_expr = ExpressionWrapper(
-    Floor(F('song__year') / 10) * 10,
-    output_field=IntegerField()
-)
-    
+        Floor(F('song__year') / 10) * 10,
+        output_field=IntegerField()
+    )
+
     stats = {
         'total_songs': total_songs,
         'songs_rated': rated_count,
         'percent_rated': round((rated_count / total_songs * 100) if total_songs else 0, 1),
         'songs_unrated': total_songs - rated_count,
         'average_score': score_agg['avg_score'],
-        'score_distribution': list(UserSongRating.objects
-                                .filter(user__username=username)
-                                .values('score')
-                                .annotate(count=Count('score'))
-                                .order_by('score')),
+        'score_distribution': list(
+            rated_qs
+            .values('score')
+            .annotate(count=Count('score'))
+            .order_by('score')
+        ),
         'decade_averages': [
-    {
-        **entry,
-        'scores': list(
-            UserSongRating.objects
-                .filter(user__username=username)
+            {
+                **entry,
+                'scores': list(
+                    rated_qs
+                    .exclude(score__isnull=True)
+                    .exclude(score=0)
+                    .annotate(decade=decade_expr)
+                    .filter(decade=entry['decade'])
+                    .values_list('score', flat=True)
+                )
+            }
+            for entry in rated_qs
                 .exclude(score__isnull=True)
                 .exclude(score=0)
                 .annotate(decade=decade_expr)
-                .filter(decade=entry['decade'])
-                .values_list('score', flat=True)
-        )
+                .values('decade')
+                .annotate(avg_score=Avg('score'))
+        ],
+        'highest_rated_songs': highest_rated_songs,
+        'lowest_rated_songs': lowest_rated_songs,
     }
-    for entry in UserSongRating.objects
-        .filter(user__username=username)
-        .exclude(score__isnull=True)
-        .exclude(score=0)
-        .annotate(decade=decade_expr)
-        .values('decade')
-        .annotate(avg_score=Avg('score'))
-]
-            }
-            
+
     return Response(stats)
+
