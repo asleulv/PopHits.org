@@ -32,6 +32,16 @@ const nextConfig = {
       ? 'http://localhost:8000' 
       : 'https://pophits.org',
   },
+  async rewrites() {
+    return process.env.NODE_ENV === 'development'
+      ? [
+          {
+            source: '/api/:path*',
+            destination: 'http://localhost:8000/api/:path*',
+          },
+        ]
+      : [];
+  },
 };
 
 export default withPWA({
