@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from songs.models import UserSongRating
 from .serializers import UserSongRatingSerializer
-from .utils import send_registration_email
+from .utils import send_registration_email, send_password_reset_email
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_str
@@ -144,14 +144,7 @@ class ResetPasswordRequest(APIView):
       uid = urlsafe_base64_encode(force_bytes(user.pk))
       token = default_token_generator.make_token(user)
 
-      reset_url = f'http://localhost:3000/confirm-reset-password/{uid}/{token}'
-      
-      send_mail(
-        'Password Reset',
-        f'Click to reset password: {reset_url}',
-        'from@example.com',
-        [user.email]
-      )
+      send_password_reset_email(user, uid, token)
 
       return Response({'success': 'We have sent you a link to reset your password'})
     

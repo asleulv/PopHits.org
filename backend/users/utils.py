@@ -48,3 +48,43 @@ Let’s dive in and discover some gems! 💿
     send_mail(subject, message, from_email, recipient_list, html_message=html_message)
 
 
+def send_password_reset_email(user, uid, token):
+    subject = 'Reset Your PopHits.org Password'
+    reset_url = f'https://pophits.org/confirm-reset-password/{uid}/{token}'
+    message = f'''Hi {user.username},
+
+You requested a password reset for your PopHits.org account.
+
+Click the link below to reset your password:
+{reset_url}
+
+If you did not request this, you can safely ignore this email.
+
+– The PopHits.org Team
+'''
+
+    html_message = f'''
+    <html><body style="font-family: Arial, sans-serif; color: #333;">
+      <p style="font-size: 20px;"><b>Password Reset Request</b></p>
+      <p style="font-size: 16px;">Hi {user.username},</p>
+      <p style="font-size: 16px;">
+        You requested a password reset for your PopHits.org account.<br>
+        Click the button below to reset your password:
+      </p>
+      <p>
+        <a href="{reset_url}" style="display: inline-block; padding: 12px 24px; background: #007bff; color: #fff; text-decoration: none; border-radius: 4px; font-size: 16px;">
+          Reset Password
+        </a>
+      </p>
+      <p style="font-size: 14px; color: #999;">
+        If you did not request this, you can safely ignore this email.
+      </p>
+      <p style="font-size: 14px; color: #999;">– The PopHits.org Team</p>
+    </body></html>
+    '''
+
+    from django.conf import settings
+    from django.core.mail import send_mail
+    from_email = settings.EMAIL_HOST_USER
+    recipient_list = [user.email]
+    send_mail(subject, message, from_email, recipient_list, html_message=html_message)
