@@ -97,13 +97,19 @@ export default async function SongDetailPage({ params }) {
     image:
       song.image_upload || "https://pophits.org/static/gfx/oldhits_logo.png",
     url: `https://pophits.org/songs/${song.slug}`,
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: song.average_user_score || undefined,
-      ratingCount: song.total_ratings || 0,
-      bestRating: 10,
-      worstRating: 1,
-    },
+
+    // Only include aggregateRating if song has actual ratings
+    ...(song.average_user_score &&
+      song.total_ratings > 0 && {
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: song.average_user_score.toString(),
+          ratingCount: song.total_ratings.toString(),
+          bestRating: "10",
+          worstRating: "1",
+        },
+      }),
+
     description:
       song.review ||
       `Listen to ${song.title} by ${song.artist}, peaked at #${song.peak_rank} on the Billboard Hot 100.`,
@@ -113,7 +119,7 @@ export default async function SongDetailPage({ params }) {
           name: song.album,
         }
       : undefined,
-    duration: song.duration || undefined, // ISO 8601 duration string if you have it
+    duration: song.duration || undefined,
   };
 
   return (
