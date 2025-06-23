@@ -21,8 +21,8 @@ export default function NumberOneHitsSection({ numberOneHits }) {
       <section className="mb-12 p-8 w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 lg:rounded-xl shadow-xl text-white">
         <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-8">
           <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-center">
-            <Trophy className="w-8 h-8 text-yellow-400" />
-            <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">The Number Ones</span>
+            <Trophy className="hidden lg:block w-8 h-8 text-yellow-400" />
+            <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">The Number Ones: Billboard Hot 100 Chart Toppers</span>
           </h2>
         </div>
         <div className="flex justify-center items-center py-12">
@@ -36,8 +36,8 @@ export default function NumberOneHitsSection({ numberOneHits }) {
     <section className="mb-12 p-8 w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 lg:rounded-xl shadow-xl text-white">
       <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-8">
         <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-center">
-          <Trophy className="w-8 h-8 text-yellow-400" />
-          <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">The Number Ones</span>
+          <Trophy className="hidden lg:block w-8 h-8 text-yellow-400" />
+          <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">The Number Ones: Billboard Hot 100 Chart Toppers</span>
         </h2>
         <Link
           href="/songs?filter=number-one"

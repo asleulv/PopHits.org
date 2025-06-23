@@ -20,8 +20,8 @@ export default function LatestBlogPostSection({ latestBlogPost }) {
   return (
     <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
       <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-        <FileText className="w-8 h-8 text-pink-500" />
-        <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">Latest from the Blog</span>
+        <FileText className="hidden lg:block w-8 h-8 text-pink-500" />
+        <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">Latest Music Posts and Billboard Updates</span>
       </h2>
       
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg">

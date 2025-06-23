@@ -75,6 +75,37 @@ const Footer = () => {
           )}
         </div>
 
+        {/* Social Media section */}
+<div className="flex justify-center items-center mb-6 px-4">
+  <div className="flex space-x-6">
+    <a
+      href="https://bsky.app/profile/yourusername.bsky.social"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-gray-300 hover:text-blue-400 transition-colors group"
+      aria-label="Follow us on Bluesky"
+    >
+      <svg 
+        className="w-6 h-6 group-hover:scale-110 transition-transform" 
+        viewBox="0 0 24 24" 
+        fill="currentColor"
+      >
+        <path d="M12 2.5c-1.4 0-2.7.4-3.8 1.1C6.9 4.4 6 5.7 6 7.2v1.6c0 1.5.9 2.8 2.2 3.6 1.1.7 2.4 1.1 3.8 1.1s2.7-.4 3.8-1.1c1.3-.8 2.2-2.1 2.2-3.6V7.2c0-1.5-.9-2.8-2.2-3.6C14.7 2.9 13.4 2.5 12 2.5z"/>
+      </svg>
+    </a>
+    
+    {/* Add other social media icons here if needed */}
+    <a
+      href="mailto:contact@pophits.org"
+      className="text-gray-300 hover:text-red-400 transition-colors group"
+      aria-label="Contact us via email"
+    >
+      <Heart className="w-6 h-6 group-hover:scale-110 transition-transform" />
+    </a>
+  </div>
+</div>
+
+
         {/* Bottom section with copyright */}
         <div className="border-t border-gray-700 pt-6 text-center px-4">
           <p className="text-sm text-gray-500">

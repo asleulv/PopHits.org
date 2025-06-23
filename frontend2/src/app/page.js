@@ -31,11 +31,51 @@ function getDecade(year) {
 }
 
 export const metadata = {
-  title: "PopHits.org - 70 years of hit songs",
+  title:
+    "PopHits.org - Chart-Topping Hits & Hidden Gems from 70 Years of Music",
   description:
-    "Explore top-rated songs, random hits by decade, and number one hits on PopHits.org. Discover iconic singles from the 50s to today.",
+    "Listen to Billboard chart hits and discover top-rated songs by decade on PopHits.org. Explore number one singles, hidden gems, and weekly chart updates with Spotify integration from 70 years of music history featuring 30,000+ curated hits.",
   keywords:
-    "pop hits, greatest pop songs, chart-topping hits, music history, Billboard Hot 100",
+    "pop hits, greatest pop songs, chart-topping hits, music history, Billboard Hot 100, listen, spotify, weekly charts",
+
+  openGraph: {
+    title:
+      "PopHits.org - Chart-Topping Hits & Hidden Gems from 70 Years of Music",
+    description:
+      "Listen to Billboard chart hits and discover top-rated songs by decade on PopHits.org. Explore number one singles, hidden gems, and weekly chart updates with Spotify integration from 70 years of music history featuring 30,000+ curated hits.",
+    url: "https://pophits.org",
+    siteName: "PopHits.org",
+    type: "website",
+    images: [
+      {
+        url: "https://pophits.org/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "PopHits.org - Chart-topping hits and hidden gems database",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "PopHits.org - Chart-Topping Hits & Hidden Gems from 70 Years of Music",
+    description:
+      "Listen to Billboard chart hits and discover top-rated songs by decade on PopHits.org. Explore number one singles, hidden gems, and weekly chart updates with Spotify integration.",
+    images: ["https://pophits.org/og-image.jpg"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default async function FrontPage() {
@@ -169,7 +209,7 @@ export default async function FrontPage() {
         <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm animate-fadeIn">
           <div className="flex-1 mb-6 md:mb-0">
             <h1 className="text-3xl md:text-4xl underline font-cherry font-bold mb-6 text-center bg-gradient-to-r from-blue-500 via-pink-400 to-purple-900 bg-clip-text text-transparent pb-2">
-              The hit song database
+              Listen to Billboard Chart Hits and Hidden Gems from 70 Years of Music
             </h1>
 
             <p className="mb-6 text-center md:text-left text-md md:text-xl font-semibold">
@@ -248,8 +288,8 @@ export default async function FrontPage() {
             <div className="flex-1 mb-0 md:mb-0 w-full">
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 w-full relative lg:rounded-xl shadow-lg transform transition-transform">
                 <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-4 text-center flex items-center justify-center gap-2">
-                  <Disc className="w-8 h-8 text-pink-400" />
-                  Featured hit
+                  <Disc className="hidden lg:block w-8 h-8 text-pink-400" />
+                  Featured Billboard Chart Song
                 </h2>
                 <div className="relative w-full bg-gray-700 rounded-lg overflow-hidden shadow-md">
                   <Image
@@ -309,9 +349,9 @@ export default async function FrontPage() {
 
         <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
           <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-            <CalendarDays className="w-8 h-8 text-pink-600" />
+            <CalendarDays className="hidden lg:block w-8 h-8 text-pink-600" />
             <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
-              Hits by year
+              Browse Billboard Hot 100 Hits by Year
             </span>
           </h2>
           <div className="flex flex-wrap justify-center gap-2">
@@ -370,9 +410,9 @@ export default async function FrontPage() {
           <section className="mb-8 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white p-8 w-full lg:rounded-xl shadow-lg">
             <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-6">
               <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-white">
-                <Shuffle className="w-8 h-8 text-yellow-400" />
+                <Shuffle className="hidden lg:block w-8 h-8 text-yellow-400" />
                 <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">
-                  Random hits by decade
+                  Explore Chart-Topping Songs and Hidden Gems by Decade
                 </span>
               </h2>
             </div>
@@ -460,9 +500,9 @@ export default async function FrontPage() {
         {topRatedSongs.length > 0 ? (
           <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
             <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-              <Flame className="w-8 h-8 text-pink-500" />
+              <Flame className="hidden lg:block w-8 h-8 text-pink-500" />
               <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
-                Top 10 user ranked hits
+                Top 10 User-Rated Billboard Chart Hits
               </span>
             </h2>
             <div className="overflow-x-auto rounded-lg shadow-md">
@@ -588,9 +628,9 @@ export default async function FrontPage() {
         ) : (
           <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
             <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-              <Flame className="w-8 h-8 text-pink-500" />
+              <Flame className="hidden lg:block w-8 h-8 text-pink-500" />
               <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
-                Top 10 user ranked hits
+                Top 10 User-Rated Billboard Chart Hits
               </span>
             </h2>
             <div className="flex justify-center items-center py-12">
@@ -609,9 +649,9 @@ export default async function FrontPage() {
         currentHot100.songs.length > 0 ? (
           <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
             <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-              <ListMusic className="w-8 h-8 text-pink-500" />
+              <ListMusic className="hidden lg:block w-8 h-8 text-pink-500" />
               <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
-                Current Billboard Hot 100
+                Current Billboard Hot 100 Chart - Weekly Updates
               </span>
             </h2>
 
@@ -673,9 +713,9 @@ export default async function FrontPage() {
         ) : (
           <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
             <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-              <ListMusic className="w-8 h-8 text-pink-500" />
+              <ListMusic className="hidden lg:block w-8 h-8 text-pink-500" />
               <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
-                Current Billboard Hot 100
+                Current Billboard Hot 100 Chart - Weekly Updates
               </span>
             </h2>
             <div className="flex justify-center items-center py-12">
