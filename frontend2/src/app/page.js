@@ -19,10 +19,10 @@ import {
   getSongsWithImages,
   getCurrentHot100,
   getNumberOneHits,
-  getLatestBlogPost,
 } from "@/lib/api";
 import NumberOneHitsSection from "@/components/FrontPage/NumberOneHitsSection";
 import LatestBlogPostSection from "@/components/FrontPage/LatestBlogPostSection";
+import RandomHitsByDecadeClient from "@/components/FrontPage/RandomHitsByDecadeClient";
 
 // Helper function to get decade from year
 function getDecade(year) {
@@ -86,7 +86,6 @@ export default async function FrontPage() {
   let numberOneHits = [];
   let currentHot100 = { songs: [] };
   let songWithImage = null;
-  let activeDecade = null;
   let latestBlogPost = null;
 
   try {
@@ -170,13 +169,6 @@ export default async function FrontPage() {
     return acc;
   }, {});
 
-  // Get a random decade
-  const availableDecades = Object.keys(groupedByDecade);
-  if (availableDecades.length > 0) {
-    activeDecade =
-      availableDecades[Math.floor(Math.random() * availableDecades.length)];
-  }
-
   // Generate year buttons from 1958 to today
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -209,7 +201,8 @@ export default async function FrontPage() {
         <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm animate-fadeIn">
           <div className="flex-1 mb-6 md:mb-0">
             <h1 className="text-3xl md:text-4xl underline font-cherry font-bold mb-6 text-center bg-gradient-to-r from-blue-500 via-pink-400 to-purple-900 bg-clip-text text-transparent pb-2">
-              Listen to Billboard Chart Hits and Hidden Gems from 70 Years of Music
+              Listen to Billboard Chart Hits and Hidden Gems from 70 Years of
+              Music
             </h1>
 
             <p className="mb-6 text-center md:text-left text-md md:text-xl font-semibold">
@@ -417,77 +410,18 @@ export default async function FrontPage() {
               </h2>
             </div>
 
-            <div className="flex flex-col items-center">
-              <div className="w-full mb-6">
-                <div className="flex flex-wrap justify-center gap-3 px-2">
-                  {Object.keys(groupedByDecade).map((decade) => (
-                    <button
-                      key={decade}
-                      className={`px-5 py-2 rounded-lg text-md transition-all duration-300 transform hover:scale-105 shadow-md ${
-                        activeDecade === decade
-                          ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold"
-                          : "bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-white"
-                      }`}
-                    >
-                      {decade}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="w-full">
-                {activeDecade && groupedByDecade[activeDecade]?.length > 0 ? (
-                  groupedByDecade[activeDecade].map((song) => (
-                    <div
-                      key={song.id}
-                      className="mb-8 w-full bg-gray-700 rounded-lg p-4 shadow-lg transform transition-all duration-300 hover:shadow-xl"
-                    >
-                      <iframe
-                        src={`https://open.spotify.com/embed/track/${song.spotify_url
-                          .split("/")
-                          .pop()}`}
-                        width="100%"
-                        height="380"
-                        frameBorder="0"
-                        allowtransparency="true"
-                        allow="encrypted-media"
-                        className="w-full rounded-md shadow-md"
-                        title={`${song.title} by ${song.artist}`}
-                      ></iframe>
-                      <p className="mt-4 text-center text-sm bg-gray-800 p-3 rounded-lg shadow-inner">
-                        <Link
-                          href={`/songs/${song.slug}`}
-                          className="text-pink-300 hover:text-pink-200 transition-colors font-bold"
-                        >
-                          {song.title}
-                        </Link>{" "}
-                        by{" "}
-                        <Link
-                          href={`/artist/${song.artist_slug}`}
-                          className="text-blue-300 hover:text-blue-200 transition-colors font-bold"
-                        >
-                          {song.artist}
-                        </Link>{" "}
-                        entered the charts in{" "}
-                        <Link
-                          href={`/year/${song.year}`}
-                          className="text-gray-300 hover:text-gray-400 transition-colors font-bold"
-                        >
-                          {song.year}
-                        </Link>{" "}
-                        peaking at{" "}
-                        <span className="text-pink-300 px-2 py-1 rounded-full font-bold">
-                          #{song.peak_rank}
-                        </span>
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center p-6 bg-gray-700 rounded-lg">
-                    No songs available for this decade.
-                  </p>
-                )}
-              </div>
-            </div>
+            <RandomHitsByDecadeClient
+              groupedByDecade={groupedByDecade}
+              initialDecade={
+                Object.keys(groupedByDecade).length > 0
+                  ? Object.keys(groupedByDecade)[
+                      Math.floor(
+                        Math.random() * Object.keys(groupedByDecade).length
+                      )
+                    ]
+                  : null
+              }
+            />
           </section>
         ) : (
           <section className="mb-8 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white p-8 w-full lg:rounded-xl shadow-lg">
