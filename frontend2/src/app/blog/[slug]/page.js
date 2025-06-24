@@ -1,93 +1,12 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getBlogPostBySlug } from "@/lib/api";
 import SongPreview from "@/components/Blog/SongPreview";
 import YouTubeEmbed from "@/components/Blog/YouTubeEmbed";
-
-// Generate metadata for better SEO
-export async function generateMetadata({ params }) {
-  let post;
-
-  try {
-    // Use a direct fetch with the full URL to ensure we're hitting the correct endpoint
-    const apiUrl = process.env.NODE_ENV === 'development' 
-      ? `http://localhost:8000/api/blog/${params.slug}/` 
-      : `https://pophits.org/api/blog/${params.slug}/`;
-    
-    console.log('Fetching blog post metadata from URL:', apiUrl);
-    
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-      next: { revalidate: 0 }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    // Handle both response formats
-    if (data && typeof data === "object") {
-      post = data;
-    } else {
-      // Default metadata if post not found
-      return {
-        title: "Blog Post Not Found | PopHits.org",
-        description: "The requested blog post could not be found.",
-      };
-    }
-  } catch (error) {
-    console.error("Error fetching blog post for metadata:", error);
-    // Default metadata on error
-    return {
-      title: "Blog | PopHits.org",
-      description:
-        "Explore articles about pop music history, one-hit wonders, Billboard chart history, and more.",
-    };
-  }
-
-  return {
-    title: `${post.title} | PopHits.org Blog`,
-    description: post.meta_description,
-    openGraph: {
-      title: post.title,
-      description: post.meta_description,
-      url: `https://pophits.org/blog/${post.slug}`,
-      siteName: "PopHits.org",
-      images: [
-        {
-          url:
-            post.featured_image ||
-            "https://pophits.org/static/media/oldhits_logo.png",
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-      locale: "en_US",
-      type: "article",
-      publishedTime: post.published_date,
-      modifiedTime: post.updated_date,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.meta_description,
-      images: [
-        post.featured_image ||
-          "https://pophits.org/static/media/oldhits_logo.png",
-      ],
-    },
-    alternates: {
-      canonical: `https://pophits.org/blog/${post.slug}`,
-    },
-  };
-}
+import SignupCTA from "@/components/Blog/SignupCTA";
 
 // Add structured data for better SEO
 function BlogPostStructuredData({ post }) {
@@ -123,45 +42,88 @@ function BlogPostStructuredData({ post }) {
   );
 }
 
-export const revalidate = 0; // Disable caching for this page
+export default function BlogPostPage() {
+  // Use useParams hook instead of React.use()
+  const params = useParams();
+  const slug = params.slug;
+  
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-export default async function BlogPostPage({ params }) {
-  let post;
+  useEffect(() => {
+    async function fetchPost() {
+      try {
+        const apiUrl =
+          process.env.NODE_ENV === "development"
+            ? `http://localhost:8000/api/blog/${slug}/`
+            : `https://pophits.org/api/blog/${slug}/`;
 
-  try {
-    // Use a direct fetch with the full URL to ensure we're hitting the correct endpoint
-    const apiUrl = process.env.NODE_ENV === 'development' 
-      ? `http://localhost:8000/api/blog/${params.slug}/` 
-      : `https://pophits.org/api/blog/${params.slug}/`;
-    
-    console.log('Fetching blog post from URL:', apiUrl);
-    
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // This is important for server components to properly fetch from external APIs
-      cache: 'no-store',
-      next: { revalidate: 0 }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+        console.log('Fetching blog post from URL:', apiUrl);
+
+        const response = await fetch(apiUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Blog post fetched:', data);
+        setPost(data);
+      } catch (err) {
+        console.error("Error fetching blog post:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
-    
-    const data = await response.json();
-    console.log('Blog post fetched:', data);
-    
-    // Handle both response formats
-    if (data && typeof data === "object") {
-      post = data;
-    } else {
-      post = null;
+
+    if (slug) {
+      fetchPost();
     }
-  } catch (error) {
-    console.error("Error fetching blog post:", error);
-    post = null;
+
+    // Check authentication using the same pattern as your SongActions component
+    const checkAuth = () => {
+      const authToken = localStorage.getItem('authToken');
+      console.log('Auth token found:', !!authToken);
+      setIsAuthenticated(!!authToken);
+    };
+
+    checkAuth();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg">
+          <h1 className="text-2xl font-bold mb-2">Error Loading Post</h1>
+          <p>{error}</p>
+          <Link
+            href="/blog"
+            className="text-blue-600 hover:underline mt-4 inline-block"
+          >
+            Return to Blog
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (!post) {
@@ -197,7 +159,7 @@ export default async function BlogPostPage({ params }) {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 320 512"
             >
-              <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
+              <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.30c9.373 9.372 9.373 24.568.001 33.941z" />
             </svg>
           </li>
           <li className="flex items-center">
@@ -209,7 +171,7 @@ export default async function BlogPostPage({ params }) {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 320 512"
             >
-              <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" />
+              <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9-375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.30c9.373 9.372 9.373 24.568.001 33.941z" />
             </svg>
           </li>
           <li className="flex items-center">
@@ -248,6 +210,9 @@ export default async function BlogPostPage({ params }) {
 
           {/* Blog Content with YouTube Embed Support */}
           <YouTubeEmbed content={post.content} />
+
+          {/* Signup CTA for non-logged-in users */}
+          <SignupCTA isLoggedIn={isAuthenticated} />
 
           {/* Related Songs Section */}
           {post.related_songs && post.related_songs.length > 0 && (
