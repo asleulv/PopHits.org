@@ -174,18 +174,7 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl shadow-sm text-center mb-8">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <Mail className="w-5 h-5 text-pink-500" />
-          <h3 className="text-lg font-semibold text-gray-700">Contact Us</h3>
-        </div>
-        <a
-          href="mailto:contact@pophits.org"
-          className="text-pink-600 hover:text-pink-700 transition-colors font-medium"
-        >
-          contact@pophits.org
-        </a>
-      </div>
+      
     </div>
   );
 }

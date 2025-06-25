@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
-import { ScrollText, Music, Home, Info, List, HelpCircle } from "lucide-react";
+import { ScrollText, Music, Home, Info, List, HelpCircle, Mail } from "lucide-react";
 
 export default function Footer() {
   const { isAuthenticated } = useAuth();
@@ -31,7 +31,7 @@ export default function Footer() {
         </div>
 
         {/* Middle section with navigation links */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-6 mb-8 px-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-6 mb-8 px-4">
           <div className="flex flex-col items-center">
             <Home className="w-5 h-5 text-pink-400 mb-2" />
             <Link
@@ -92,7 +92,17 @@ export default function Footer() {
             </Link>
           </div>
 
-          {/* Add Bluesky as the 7th item - same level as the others */}
+          <div className="flex flex-col items-center">
+            <Mail className="w-5 h-5 text-orange-400 mb-2" />
+            <Link
+              href="/contact"
+              className="text-gray-300 hover:text-orange-300 transition-colors text-sm md:text-base"
+            >
+              Contact
+            </Link>
+          </div>
+
+          {/* Bluesky as the 8th item */}
           <div className="flex flex-col items-center">
             <svg
               className="w-5 h-5 text-cyan-400 mb-2"
@@ -112,17 +122,35 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom section with copyright */}
+        {/* Bottom section with copyright and legal links */}
         <div className="border-t border-gray-700 pt-6 text-center px-4">
           <p className="text-sm text-gray-500">
             © {currentYear} PopHits.org by Asle. All rights reserved.
           </p>
-          <div className="mt-4 flex justify-center space-x-4">
+          <div className="mt-4 flex justify-center space-x-6">
             <Link
-              href="/privacy-policy"
+              href="/legal/privacy"
+              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/legal/terms"
+              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              Terms of Use
+            </Link>
+            <Link
+              href="/legal/cookies"
               className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
             >
               Cookie Policy
+            </Link>
+            <Link
+              href="/legal"
+              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              Legal Info
             </Link>
           </div>
         </div>
