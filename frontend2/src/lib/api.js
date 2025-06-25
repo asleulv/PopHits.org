@@ -1,7 +1,8 @@
 // Base URL configuration
-export const BASE_URL = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:8000' 
-  : 'https://pophits.org';
+export const BASE_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8000"
+    : "https://pophits.org";
 
 // API endpoints
 export const API_ENDPOINTS = {
@@ -16,8 +17,10 @@ export const API_ENDPOINTS = {
   generatePlaylist: `${BASE_URL}/api/songs/generate-playlist/`,
   submitUserScore: (songId) => `${BASE_URL}/api/songs/${songId}/rate/`,
   submitUserComment: (songId) => `${BASE_URL}/api/songs/${songId}/comment/`,
-  deleteUserComment: (commentId) => `${BASE_URL}/api/songs/${commentId}/comment/`,
-  editUserComment: (songId, commentId) => `${BASE_URL}/api/songs/${songId}/comment/${commentId}/`,
+  deleteUserComment: (commentId) =>
+    `${BASE_URL}/api/songs/${commentId}/comment/`,
+  editUserComment: (songId, commentId) =>
+    `${BASE_URL}/api/songs/${songId}/comment/${commentId}/`,
   toggleBookmark: (songId) => `${BASE_URL}/api/songs/${songId}/bookmark/`,
   userProfile: `${BASE_URL}/api/profile/`,
   // Blog endpoints
@@ -32,9 +35,11 @@ async function fetchData(url, options = {}) {
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
+      // Add Next.js cache options if provided
+      next: options.next || undefined,
     });
 
     if (!response.ok) {
@@ -42,7 +47,7 @@ async function fetchData(url, options = {}) {
     }
 
     // For DELETE requests that return 204 No Content, return an empty object
-    if (options.method === 'DELETE' && response.status === 204) {
+    if (options.method === "DELETE" && response.status === 204) {
       return {};
     }
 
@@ -54,13 +59,15 @@ async function fetchData(url, options = {}) {
       if (response.status === 204) {
         return {};
       }
-      
+
       // If we got HTML instead of JSON, return an empty result with appropriate structure
       if (e.message && e.message.includes("Unexpected token '<'")) {
-        console.warn(`Received HTML instead of JSON from ${url}. Returning empty result.`);
+        console.warn(
+          `Received HTML instead of JSON from ${url}. Returning empty result.`
+        );
         return { results: [] };
       }
-      
+
       throw e;
     }
   } catch (error) {
@@ -88,7 +95,9 @@ export async function getNumberOneHits() {
 }
 
 export async function getCurrentHot100() {
-  return fetchData(API_ENDPOINTS.currentHot100);
+  return fetchData(API_ENDPOINTS.currentHot100, { 
+    next: { tags: ['hot100'] } 
+  });
 }
 
 export async function getSongBySlug(slug) {
@@ -101,121 +110,123 @@ export async function getSongs(
   filterType = null,
   filterValue = null,
   sortField = null,
-  sortOrder = '',
-  query = '',
+  sortOrder = "",
+  query = "",
   peakRankFilter = null,
   unratedOnly = false,
   decade = null
 ) {
   // Build the URL with query parameters
   let url = new URL(API_ENDPOINTS.songs);
-  
+
   // Add pagination parameters
-  url.searchParams.append('page', page);
-  url.searchParams.append('page_size', perPage);
-  
+  url.searchParams.append("page", page);
+  url.searchParams.append("page_size", perPage);
+
   // Add filter parameters if provided
   if (filterType && filterValue) {
     url.searchParams.append(filterType, filterValue);
   }
-  
+
   // Add sorting parameters if provided
   if (sortField) {
     // Add sort_by parameter
-    url.searchParams.append('sort_by', sortField);
-    
+    url.searchParams.append("sort_by", sortField);
+
     // Add order parameter (asc or desc)
-    if (sortOrder === '-') {
-      url.searchParams.append('order', 'desc');
+    if (sortOrder === "-") {
+      url.searchParams.append("order", "desc");
     } else {
-      url.searchParams.append('order', 'asc');
+      url.searchParams.append("order", "asc");
     }
-    
-    console.log('Sorting with parameters:', {
+
+    console.log("Sorting with parameters:", {
       sort_by: sortField,
-      order: sortOrder === '-' ? 'desc' : 'asc'
+      order: sortOrder === "-" ? "desc" : "asc",
     });
   }
-  
+
   // Add search query if provided
   if (query) {
-    url.searchParams.append('search', query);
+    url.searchParams.append("search", query);
   }
-  
+
   // Add peak rank filter if provided
   if (peakRankFilter) {
-    url.searchParams.append('peak_rank', peakRankFilter);
+    url.searchParams.append("peak_rank", peakRankFilter);
   }
-  
+
   // Add unrated filter if true
   if (unratedOnly) {
-    url.searchParams.append('unrated_only', 'true');
+    url.searchParams.append("unrated_only", "true");
   }
-  
+
   // Add decade filter if provided
   if (decade) {
-    url.searchParams.append('decade', decade);
+    url.searchParams.append("decade", decade);
   }
-  
+
   // Get auth token if available (needed for unrated filter)
   const options = {};
-  if (typeof window !== 'undefined') {
-    const authToken = localStorage.getItem('authToken');
+  if (typeof window !== "undefined") {
+    const authToken = localStorage.getItem("authToken");
     if (authToken) {
       options.headers = {
-        'Authorization': `Token ${authToken}`
+        Authorization: `Token ${authToken}`,
       };
-      
+
       // Log for debugging
       if (unratedOnly) {
-        console.log('Sending request with auth token for unrated songs');
+        console.log("Sending request with auth token for unrated songs");
       }
     } else if (unratedOnly) {
-      console.log('Warning: Requesting unrated songs but no auth token available');
+      console.log(
+        "Warning: Requesting unrated songs but no auth token available"
+      );
     }
   }
-  
+
   // Log the full URL for debugging
-  console.log('Fetching songs with URL:', url.toString());
-  
+  console.log("Fetching songs with URL:", url.toString());
+
   const result = await fetchData(url.toString(), options);
-  console.log('API response received:', result);
+  console.log("API response received:", result);
   return result;
 }
 
 export async function generateQuiz(numSongs, hitLevel, selectedDecades) {
   // Build the URL with query parameters
   let url = new URL(API_ENDPOINTS.generateQuiz);
-  
+
   // Add parameters
-  url.searchParams.append('number_of_songs', numSongs);
-  url.searchParams.append('hit_size', hitLevel);
-  
+  url.searchParams.append("number_of_songs", numSongs);
+  url.searchParams.append("hit_size", hitLevel);
+
   // Add selected decades as a comma-separated string
   if (selectedDecades && selectedDecades.length > 0) {
-    selectedDecades.forEach(decade => {
-      url.searchParams.append('decades', decade);
+    selectedDecades.forEach((decade) => {
+      url.searchParams.append("decades", decade);
     });
   }
-  
+
   return fetchData(url.toString());
 }
 
 export async function generatePlaylist(numSongs, hitLevel, selectedDecades) {
   // Build the URL with query parameters
   let url = new URL(API_ENDPOINTS.generatePlaylist);
-  
+
   // Add parameters
-  url.searchParams.append('number_of_songs', numSongs);
-  url.searchParams.append('hit_size', hitLevel);
-  
+  url.searchParams.append("number_of_songs", numSongs);
+  url.searchParams.append("hit_size", hitLevel);
+
   // Add selected decades as a comma-separated string
   if (selectedDecades && selectedDecades.length > 0) {
-    selectedDecades.forEach(decade => {
-      url.searchParams.append('decades', decade);
+    selectedDecades.forEach((decade) => {
+      url.searchParams.append("decades", decade);
     });
   }
-  
+
   return fetchData(url.toString());
 }
 
@@ -223,7 +234,7 @@ export async function generatePlaylist(numSongs, hitLevel, selectedDecades) {
 export async function submitUserScore(songId, userScore, authToken) {
   const url = API_ENDPOINTS.submitUserScore(songId);
   return fetchData(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Token ${authToken}`,
     },
@@ -234,7 +245,7 @@ export async function submitUserScore(songId, userScore, authToken) {
 export async function submitUserComment(songId, commentText, authToken) {
   const url = API_ENDPOINTS.submitUserComment(songId);
   return fetchData(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Token ${authToken}`,
     },
@@ -246,7 +257,7 @@ export async function deleteUserComment(commentId, authToken) {
   // In the original React frontend, the endpoint is ${commentId}/comment/
   const url = `${BASE_URL}/api/songs/${commentId}/comment/`;
   return fetchData(url, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
       Authorization: `Token ${authToken}`,
     },
@@ -257,15 +268,15 @@ export async function editUserComment(songId, commentId, newText, authToken) {
   // Let's try a different approach with PUT instead of PATCH
   // and use comment_text instead of text
   const url = `${BASE_URL}/api/songs/${songId}/comment/${commentId}/`;
-  
-  console.log('Editing comment with URL:', url);
-  console.log('Comment data:', { songId, commentId, newText });
-  
+
+  console.log("Editing comment with URL:", url);
+  console.log("Comment data:", { songId, commentId, newText });
+
   return fetchData(url, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
       Authorization: `Token ${authToken}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ comment_text: newText }),
   });
@@ -274,7 +285,7 @@ export async function editUserComment(songId, commentId, newText, authToken) {
 export async function toggleBookmarkSong(songId, authToken) {
   const url = API_ENDPOINTS.toggleBookmark(songId);
   return fetchData(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Token ${authToken}`,
     },
@@ -290,18 +301,18 @@ export async function getUserProfile(authToken) {
 }
 
 // Blog API functions
-export async function getBlogPosts(page = 1, perPage = 10, search = '') {
+export async function getBlogPosts(page = 1, perPage = 10, search = "") {
   let url = new URL(API_ENDPOINTS.blogPosts);
-  
+
   // Add pagination parameters
-  url.searchParams.append('page', page);
-  url.searchParams.append('page_size', perPage);
-  
+  url.searchParams.append("page", page);
+  url.searchParams.append("page_size", perPage);
+
   // Add search query if provided
   if (search) {
-    url.searchParams.append('search', search);
+    url.searchParams.append("search", search);
   }
-  
+
   return fetchData(url.toString());
 }
 
@@ -313,17 +324,17 @@ export async function getBlogPostBySlug(slug) {
 export async function getLatestBlogPost() {
   try {
     const response = await fetchData(API_ENDPOINTS.latestBlogPost);
-    
+
     // Handle both response formats
     if (Array.isArray(response)) {
       return response.length > 0 ? response[0] : null;
     } else if (response.results && Array.isArray(response.results)) {
       return response.results.length > 0 ? response.results[0] : null;
     }
-    
+
     return null;
   } catch (error) {
-    console.error('Error fetching latest blog post:', error);
+    console.error("Error fetching latest blog post:", error);
     return null;
   }
 }

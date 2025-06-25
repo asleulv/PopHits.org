@@ -40,6 +40,9 @@ EMAIL_HOST_USER = 'pophitsdotorg@gmail.com'  # Your Gmail address
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 PASSWORD_RESET_TEMPLATE = 'users/email/password_reset.html'
 
+# SAFER ADMIN PATH
+ADMIN_URL = os.getenv('DJANGO_ADMIN_URL', 'admin/')
+
 # Application definition
 
 INSTALLED_APPS = [

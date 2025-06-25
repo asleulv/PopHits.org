@@ -3,14 +3,14 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   TrendingUp,
-  Calendar,
-  Music,
   ArrowUp,
   ArrowDown,
   Minus,
   Star,
 } from "lucide-react";
 import { getCurrentHot100 } from "@/lib/api";
+
+export const revalidate = 86400;
 
 export const metadata = {
   title: "Current Billboard Hot 100 Chart - Weekly Updates | PopHits.org",
