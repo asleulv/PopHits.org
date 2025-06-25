@@ -91,7 +91,7 @@ export default function ContactForm({
             <span className="font-medium">Message sent successfully!</span>
           </div>
           <p className="text-green-600 text-sm mt-1">
-            Thank you for contacting us. We'll get back to you soon.
+            Thank you for contacting us. We&apos;ll get back to you soon.
           </p>
         </div>
       )}

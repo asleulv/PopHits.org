@@ -51,7 +51,7 @@ export default function ContactPage() {
 
         <div className="text-center text-lg text-gray-700 mb-6 flex items-center justify-center gap-2">
           <MessageSquare className="w-5 h-5 text-pink-500" />
-          <span>We'd love to hear from you!</span>
+          <span>We&apos;d love to hear from you!</span>
         </div>
       </div>
 
@@ -80,7 +80,7 @@ export default function ContactPage() {
               </div>
               <p className="text-gray-600 text-sm">
                 We typically respond to messages within 24-48 hours. For urgent 
-                issues related to our Billboard Hot 100 database, we'll get back 
+                issues related to our Billboard Hot 100 database, we&apos;ll get back 
                 to you as soon as possible.
               </p>
             </div>
@@ -136,7 +136,7 @@ export default function ContactPage() {
         <h3 className="text-xl font-semibold text-gray-800 mb-3">About PopHits.org</h3>
         <p className="text-gray-600 mb-4 max-w-2xl mx-auto">
           PopHits.org is your comprehensive source for Billboard Hot 100 chart history from 1958 to today. 
-          We're passionate about music data and helping people discover the rich history of popular music.
+          We&apos;re passionate about music data and helping people discover the rich history of popular music.
         </p>
         <Link
           href="/about"

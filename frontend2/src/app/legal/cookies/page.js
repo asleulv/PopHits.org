@@ -212,7 +212,7 @@ export default function CookiesPage() {
               <div className="bg-yellow-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-gray-800 mb-2">Cookie Banner</h4>
                 <p className="text-sm text-gray-700">
-                  When you first visit PopHits.org, you'll see a cookie consent banner that allows 
+                  When you first visit PopHits.org, you&apos;ll see a cookie consent banner that allows 
                   you to accept or decline non-essential cookies. You can change your preferences 
                   at any time by clearing your browser cookies and revisiting our site.
                 </p>
@@ -248,7 +248,7 @@ export default function CookiesPage() {
                 <li>• Accept or decline non-essential cookies</li>
                 <li>• Delete cookies from your browser at any time</li>
                 <li>• Change your cookie preferences</li>
-                <li>• Access information about cookies we've placed</li>
+                <li>• Access information about cookies we&apos;ve placed</li>
               </ul>
             </div>
           </div>
@@ -263,7 +263,7 @@ export default function CookiesPage() {
             <p className="text-gray-700 mb-4">
               We may update this Cookie Policy from time to time to reflect changes in our practices 
               or for other operational, legal, or regulatory reasons. We will notify you of any 
-              material changes by updating the "Last Updated" date at the top of this policy.
+              material changes by updating the Last Updated date at the top of this policy.
             </p>
           </div>
         </div>

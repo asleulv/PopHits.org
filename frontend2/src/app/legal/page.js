@@ -112,7 +112,7 @@ export default function LegalPage() {
                   </h3>
                   <p className="text-gray-600 mb-3">
                     Understand how we collect, use, and protect your information when you 
-                    explore our music database. Your privacy matters to us, and we're 
+                    explore our music database. Your privacy matters to us, and we&apos;re 
                     committed to transparency.
                   </p>
                   <div className="flex items-center gap-2 text-purple-600 group-hover:text-purple-700 font-medium">

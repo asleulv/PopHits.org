@@ -113,7 +113,7 @@ export default function TermsPage() {
                 <li>• Submit false, misleading, or inappropriate content</li>
                 <li>• Attempt to manipulate song ratings or chart data</li>
                 <li>• Use automated tools to scrape or harvest data from our website</li>
-                <li>• Interfere with the website's functionality or security</li>
+                <li>• Interfere with the website&apos;s functionality or security</li>
                 <li>• Violate any applicable laws or regulations</li>
                 <li>• Infringe on intellectual property rights of others</li>
               </ul>
@@ -155,7 +155,7 @@ export default function TermsPage() {
             </div>
             <div className="text-gray-700 space-y-3">
               <p>
-                PopHits.org is provided "as is" without warranties of any kind. We strive for 
+                PopHits.org is provided AS IS without warranties of any kind. We strive for 
                 accuracy in our chart data and information, but cannot guarantee that all 
                 information is error-free or complete.
               </p>

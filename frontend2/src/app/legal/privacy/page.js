@@ -234,7 +234,7 @@ export default function PrivacyPage() {
             <div className="flex items-center gap-2 mb-4">
               <Users className="w-5 h-5 text-pink-500" />
               <h3 className="text-xl font-semibold text-gray-800">
-                Children's Privacy
+                Children&apos;s Privacy
               </h3>
             </div>
             <p className="text-gray-700 mb-4">
@@ -254,7 +254,7 @@ export default function PrivacyPage() {
             </div>
             <p className="text-gray-700 mb-4">
               We may update this Privacy Policy from time to time. We will notify you of any 
-              changes by posting the new Privacy Policy on this page and updating the "Last Updated" 
+              changes by posting the new Privacy Policy on this page and updating the Last Updated 
               date. Your continued use of PopHits.org after any changes constitutes acceptance 
               of the updated policy.
             </p>
