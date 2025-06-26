@@ -200,7 +200,7 @@ export default async function FrontPage() {
         {/* Enhanced Hero Section with animation */}
         <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm animate-fadeIn">
           <div className="flex-1 mb-6 md:mb-0">
-            <h1 className="text-3xl md:text-4xl underline font-cherry font-bold mb-6 text-center bg-gradient-to-r from-blue-500 via-pink-400 to-purple-900 bg-clip-text text-transparent pb-2">
+            <h1 className="text-3xl md:text-4xl font-cherry font-bold drop-shadow-md mb-6 text-center bg-gradient-to-r from-pink-600 via-fuchsia-600 to-purple-600 bg-clip-text text-transparent pb-2">
               Listen to Billboard Chart Hits and Hidden Gems from 70 Years of
               Music
             </h1>
@@ -340,8 +340,8 @@ export default async function FrontPage() {
           <LatestBlogPostSection latestBlogPost={latestBlogPost} />
         )}
 
-        <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
-          <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
+        <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl shadow-md">
+          <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex flex-col lg:flex-row items-center justify-center gap-2">
             <CalendarDays className="hidden lg:block w-8 h-8 text-pink-600" />
             <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
               Browse Billboard Hot 100 Hits by Year
@@ -349,10 +349,7 @@ export default async function FrontPage() {
           </h2>
           <div className="flex flex-wrap justify-center gap-2">
             {years.map((year) => {
-              // Determine decade for color coding
               const decade = Math.floor(year / 10) * 10;
-
-              // Define color classes based on decade
               let colorClass;
               switch (decade) {
                 case 1950:
@@ -390,7 +387,7 @@ export default async function FrontPage() {
                 <Link
                   key={year}
                   href={`/year/${year}`}
-                  className={`px-4 py-2 rounded-lg text-md ${colorClass} hover:text-white transition-all duration-300 transform hover:scale-105 shadow-sm`}
+                  className={`px-4 py-2 rounded-lg text-md ${colorClass} ring-1 ring-inset ring-white/20 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-all duration-100 transform hover:scale-105 shadow-sm`}
                 >
                   {year}
                 </Link>
