@@ -215,11 +215,13 @@ def user_stats(request, username):
     score_agg = rated_qs.aggregate(avg_score=Avg('score'))
 
     # Highest and lowest rated songs
-    max_score = rated_qs.aggregate(Max('score'))['score__max']
-    min_score = rated_qs.aggregate(Min('score'))['score__min']
+    rated_qs_clean = rated_qs.exclude(score=0)
 
-    highest_rated = rated_qs.filter(score=max_score).select_related('song') if max_score is not None else []
-    lowest_rated = rated_qs.filter(score=min_score).select_related('song') if min_score is not None else []
+    max_score = rated_qs_clean.aggregate(Max('score'))['score__max']
+    min_score = rated_qs_clean.aggregate(Min('score'))['score__min']
+
+    highest_rated = rated_qs_clean.filter(score=max_score) if max_score is not None else []
+    lowest_rated = rated_qs_clean.filter(score=min_score) if min_score is not None else []
 
     highest_rated_songs = [
         {

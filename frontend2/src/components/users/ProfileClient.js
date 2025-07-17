@@ -360,12 +360,27 @@ export default function ProfileClient() {
   if (!isAuthenticated && !isLoading) return null;
 
   // Score distribution bar chart
+  // Score distribution bar chart with count & percentage
   const renderScoreDistribution = () => {
     if (!userStats || !userStats.score_distribution) return null;
-    // Find the max count for scaling
-    const maxCount = Math.max(
-      ...userStats.score_distribution.map((s) => s.count)
+
+    // Ensure bars for all scores 1..10, even if user's never given that score
+    const allScores = Array.from({ length: 10 }, (_, i) => i + 1); // [1,2,...,10]
+    const distMap = Object.fromEntries(
+      userStats.score_distribution.map(({ score, count }) => [score, count])
     );
+
+    // Calculate max for scaling (if all 0, use 1 so bars don't disappear)
+    const maxCount = Math.max(
+      1,
+      ...allScores.map((score) => distMap[score] || 0)
+    );
+    // Total ratings (for percent)
+    const totalRatings = allScores.reduce(
+      (sum, score) => sum + (distMap[score] || 0),
+      0
+    );
+
     return (
       <div className="mt-10 mb-8 bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm">
         <div className="flex items-center justify-center mb-3 gap-2">
@@ -375,9 +390,10 @@ export default function ProfileClient() {
           </h4>
         </div>
         <div className="flex flex-col gap-2 w-full max-w-2xl mx-auto">
-          {userStats.score_distribution
-            .filter((s) => s.score > 0) // skip 0 if you want, or include it
-            .map(({ score, count }) => (
+          {allScores.map((score) => {
+            const count = distMap[score] || 0;
+            const percent = totalRatings > 0 ? (count / totalRatings) * 100 : 0;
+            return (
               <div key={score} className="flex items-center gap-2">
                 <span className="w-6 text-right text-xs font-bold text-gray-700">
                   {score}
@@ -393,11 +409,22 @@ export default function ProfileClient() {
                     }}
                   />
                 </div>
+                <span className="w-16 text-xs text-gray-700 text-right">
+                  {count}
+                  {totalRatings > 0 && (
+                    <span className="text-gray-500 ml-1">
+                      ({percent.toFixed(0)}%)
+                    </span>
+                  )}
+                </span>
               </div>
-            ))}
+            );
+          })}
         </div>
         <div className="text-center text-xs text-gray-500 mt-2">
-          <span>Shows how many times you gave each score.</span>
+          <span>
+            Shows how many times you gave each score (and the % of all ratings).
+          </span>
         </div>
       </div>
     );
@@ -526,24 +553,26 @@ export default function ProfileClient() {
       {renderScoreDistribution()}
 
       {/* Highest and Lowest Rated Songs */}
-      {userStats && (userStats.highest_rated_songs?.length > 0 || userStats.lowest_rated_songs?.length > 0) && (
-        <div className="container mx-auto px-2 sm:px-4 md:px-8 py-6 mb-8 text-black rounded-2xl shadow-lg bg-gradient-to-br from-white to-gray-100">
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="flex-1">
-              <RatedSongsList
-                title="Highest Rated Songs"
-                songs={userStats.highest_rated_songs}
-              />
-            </div>
-            <div className="flex-1">
-              <RatedSongsList
-                title="Lowest Rated Songs"
-                songs={userStats.lowest_rated_songs}
-              />
+      {userStats &&
+        (userStats.highest_rated_songs?.length > 0 ||
+          userStats.lowest_rated_songs?.length > 0) && (
+          <div className="container mx-auto px-2 sm:px-4 md:px-8 py-6 mb-8 text-black rounded-2xl shadow-lg bg-gradient-to-br from-white to-gray-100">
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="flex-1">
+                <RatedSongsList
+                  title="Highest Rated Songs"
+                  songs={userStats.highest_rated_songs}
+                />
+              </div>
+              <div className="flex-1">
+                <RatedSongsList
+                  title="Lowest Rated Songs"
+                  songs={userStats.lowest_rated_songs}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       <div className="flex justify-center mb-6">
         <div className="bg-white rounded-full shadow-md p-1 inline-flex">
