@@ -165,10 +165,10 @@ class Command(BaseCommand):
                         
                         # Try different artist selectors
                         artist_selectors = [
-                            'span.c-label.a-font-primary-s',
-                            'span.chart-element__information__artist',
-                            'span.c-label',
-                            '.chart-row__artist'
+                            'span.c-label.a-no-trucate.a-font-secondary',  # Current Billboard structure
+                            'span.c-label.a-font-secondary',                # Fallback without a-no-trucate
+                            'span.c-label',                                 # Generic fallback
+                            'span.chart-element__information__artist'       # Old structure
                         ]
                         
                         for artist_selector in artist_selectors:
@@ -303,10 +303,10 @@ class Command(BaseCommand):
             ]
             
             artist_selectors = [
-                'span.c-label.a-font-primary-s',
-                'span.chart-element__information__artist',
-                'span.c-label',
-                '.chart-row__artist'
+                'span.c-label.a-no-trucate.a-font-secondary',  # Current Billboard structure
+                'span.c-label.a-font-secondary',                # Fallback without a-no-trucate
+                'span.c-label',                                 # Generic fallback
+                'span.chart-element__information__artist'       # Old structure
             ]
             
             for idx, item in enumerate(chart_items):

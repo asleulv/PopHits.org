@@ -28,6 +28,23 @@ class Song(models.Model):
         self.artist_slug = slugify(self.artist)
         super().save(*args, **kwargs)
 
+    def get_artist_image(self):
+        """Get the first available image from any other song by this artist (using artist_slug)"""
+        artist_song_with_image = Song.objects.filter(
+            artist_slug=self.artist_slug,
+            image_upload__isnull=False
+        ).exclude(id=self.id).first()
+        
+        return artist_song_with_image.image_upload if artist_song_with_image else None
+
+    def get_display_image(self):
+        """Get image for display - prioritize song image, fall back to artist image"""
+        return self.image_upload or self.get_artist_image()
+
+    def get_all_artist_songs(self):
+        """Get all songs by this artist excluding current song"""
+        return Song.objects.filter(artist_slug=self.artist_slug).exclude(id=self.id)
+
     def __str__(self):
         return f"{self.title} by {self.artist}, Year: {self.year}, Peak Rank: {self.peak_rank}"
     

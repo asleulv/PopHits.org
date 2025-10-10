@@ -1,17 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
-import { Suspense } from "react";
-import {
-  Calendar,
-  TrendingUp,
-  Clock,
-  Star,
-  Music,
-  SquarePlay,
-} from "lucide-react";
 import { getSongBySlug } from "@/lib/api";
-import SongActions from "@/components/SongDetail/SongActions";
-import SongComments from "@/components/SongDetail/SongComments";
 import { SongProvider } from "@/contexts/SongContext";
 import SongDetailContent from "@/components/SongDetail/SongDetailContent";
 
@@ -23,6 +11,7 @@ export async function generateMetadata({ params }) {
     title: `${song.title} by ${song.artist} | PopHits.org`,
     description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
     openGraph: {
+      type: "music.song", // ← Changed from "website"
       title: `${song.title} by ${song.artist}`,
       description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
       url: `https://pophits.org/songs/${song.slug}`,
@@ -32,21 +21,22 @@ export async function generateMetadata({ params }) {
           url:
             song.image_upload ||
             "https://pophits.org/static/gfx/oldhits_logo.png",
-          width: 800,
-          height: 600,
-          alt: `${song.title} by ${song.artist}`,
+          width: 1200, // ← Better dimensions
+          height: 630, // ← Better dimensions
+          alt: song.image_upload
+            ? `${song.title} by ${song.artist} cover art`
+            : `${song.title} by ${song.artist} - PopHits.org`,
+          type: "image/png",
         },
       ],
       locale: "en_US",
-      type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: `${song.title} by ${song.artist}`,
       description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
       images: [
-        song.image_upload ||
-          "https://pophits.org/static/media/oldhits_logo.png",
+        song.image_upload || "https://pophits.org/static/gfx/oldhits_logo.png", // ← Same path as OpenGraph
       ],
     },
     alternates: {
