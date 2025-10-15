@@ -96,7 +96,7 @@ export default function HeroSection({ songWithImage }) {
           <div className="bg-gradient-to-br from-black via-gray-700 to-black text-white p-6 rounded-2xl shadow-xl">
             <div className="flex items-center gap-2 mb-4">
               <Disc className="w-6 h-6 text-pink-400" />
-              <h2 className="text-lg font-semibold">Today's Discovery</h2>
+              <h2 className="text-lg font-semibold">Featured Hit</h2>
             </div>
 
             <div className="relative rounded-xl overflow-hidden shadow-lg mb-4">
@@ -123,7 +123,7 @@ export default function HeroSection({ songWithImage }) {
                   href={`/songs/${songWithImage.slug}`}
                   className="text-blue-200 hover:text-white transition-colors"
                 >
-                  "{songWithImage.title}"
+                  &ldquo;{songWithImage.title}&rdquo;
                 </Link>
               </div>
               <div className="text-purple-300 text-sm">

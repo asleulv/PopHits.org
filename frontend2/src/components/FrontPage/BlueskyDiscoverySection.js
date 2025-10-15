@@ -83,10 +83,12 @@ export default function BlueskyDiscoverySection({ posts }) {
           >
             {post.image && (
               <div className="mb-3">
-                <img
+                <Image
                   src={post.image}
                   alt="Album cover"
-                  className="w-full h-full rounded-lg shadow-md object-cover"
+                  width={400}
+                  height={128}
+                  className="w-full h-32 rounded-lg shadow-md object-cover"
                 />
               </div>
             )}
@@ -109,10 +111,12 @@ export default function BlueskyDiscoverySection({ posts }) {
           >
             {post.image && (
               <div className="mb-3">
-                <img
+                <Image
                   src={post.image}
                   alt="Album cover"
-                  className="w-full h-full rounded-lg shadow-md object-cover"
+                  width={400}
+                  height={128}
+                  className="w-full h-32 rounded-lg shadow-md object-cover"
                 />
               </div>
             )}
