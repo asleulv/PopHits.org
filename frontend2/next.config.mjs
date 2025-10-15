@@ -20,6 +20,12 @@ const nextConfig = {
         hostname: 'i.scdn.co',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.bsky.app',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   // Enable experimental features if needed

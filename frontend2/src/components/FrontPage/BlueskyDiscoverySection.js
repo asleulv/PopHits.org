@@ -1,4 +1,5 @@
 import { MessageCircleHeart, ExternalLink } from "lucide-react";
+import Image from "next/image";
 
 // Helper function to format date
 const formatDate = (dateString) => {
@@ -87,8 +88,8 @@ export default function BlueskyDiscoverySection({ posts }) {
                   src={post.image}
                   alt="Album cover"
                   width={400}
-                  height={128}
-                  className="w-full h-32 rounded-lg shadow-md object-cover"
+                  height={400}
+                  className="w-full rounded-lg shadow-md object-cover" // Remove h-32
                 />
               </div>
             )}
@@ -115,8 +116,8 @@ export default function BlueskyDiscoverySection({ posts }) {
                   src={post.image}
                   alt="Album cover"
                   width={400}
-                  height={128}
-                  className="w-full h-32 rounded-lg shadow-md object-cover"
+                  height={400}
+                  className="w-full rounded-lg shadow-md object-cover"
                 />
               </div>
             )}
