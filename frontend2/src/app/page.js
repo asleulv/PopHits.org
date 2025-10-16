@@ -18,6 +18,7 @@ import CurrentHot100Section from "@/components/FrontPage/CurrentHot100Section";
 import NumberOneHitsSection from "@/components/FrontPage/NumberOneHitsSection";
 import RandomHitsByDecadeClient from "@/components/FrontPage/RandomHitsByDecadeClient";
 import BlueskyDiscoverySection from "@/components/FrontPage/BlueskyDiscoverySection";
+import FeaturedArtists from "@/components/FrontPage/FeaturedArtists";
 
 // Helper function to get decade from year
 function getDecade(year) {
@@ -243,6 +244,9 @@ export default async function FrontPage() {
         )}
 
         <TopRatedSongsSection topRatedSongs={topRatedSongs} />
+
+        <FeaturedArtists songsWithImages={songsWithImages} />
+
 
         <Suspense fallback={<div>Loading Number One Hits...</div>}>
           <NumberOneHitsSection numberOneHits={numberOneHits} />

@@ -118,7 +118,7 @@ export default function HeroSection({ songWithImage }) {
                   {songWithImage.artist}
                 </Link>
               </div>
-              <div className="text-lg">
+              <div className="text-xl">
                 <Link
                   href={`/songs/${songWithImage.slug}`}
                   className="text-blue-200 hover:text-white transition-colors"

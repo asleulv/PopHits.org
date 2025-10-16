@@ -26,10 +26,55 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
           Top 10 User-Rated Billboard Chart Hits
         </span>
       </h2>
-      <div className="overflow-x-auto rounded-lg shadow-md">
+
+      {/* Mobile Layout */}
+      <div className="block md:hidden space-y-3">
+        {topRatedSongs.map((song, index) => (
+          <div
+            key={song.id}
+            className="flex items-start justify-between py-2 border-b border-gray-200 last:border-b-0"
+          >
+            <div className="flex gap-3 flex-1 min-w-0">
+              <span className="text-gray-400 font-semibold text-sm w-6 text-center">
+                #{index + 1}
+              </span>
+              <div className="flex-1 min-w-0">
+                <Link
+                  href={`/songs/${song.slug}`}
+                  className="text-gray-800 font-semibold text-sm hover:text-pink-600 transition-colors block truncate"
+                >
+                  {song.title}
+                </Link>
+                <div className="text-xs text-gray-500 mt-0.5">
+                  <Link
+                    href={`/artist/${song.artist_slug}`}
+                    className="text-pink-600 hover:text-gray-800 transition-colors"
+                  >
+                    {song.artist}
+                  </Link>
+                </div>
+                <div className="text-xs text-gray-500">
+                  <Link
+                    href={`/year/${song.year}`}
+                    className="text-gray-500 hover:text-pink-600 transition-colors"
+                  >
+                    {song.year}
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <span className="bg-pink-500 text-white text-xs font-bold px-2 py-1 rounded-full ml-2 flex-shrink-0">
+              {song.average_user_score}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Layout - keep the same */}
+      <div className="hidden md:block overflow-x-auto rounded-lg shadow-md">
         <table className="min-w-full divide-y divide-gray-200 border-collapse">
           <thead className="bg-gradient-to-r from-gray-800 to-gray-900 text-white">
-            <tr className="hidden md:table-row">
+            <tr>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 #
               </th>
@@ -51,13 +96,10 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
             {topRatedSongs.map((song, index) => (
               <tr
                 key={song.id}
-                className="flex flex-col md:table-row md:w-full text-center md:text-left hover:bg-gray-50 transition-colors duration-200"
+                className="hover:bg-gray-50 transition-colors duration-200"
               >
-                <td className="flex md:table-cell px-4 py-3 whitespace-nowrap text-black text-xl md:text-base items-center justify-center md:justify-start">
-                  <span className="block md:hidden font-medium text-gray-500">
-                    #{index + 1}
-                  </span>
-                  <span className="hidden md:block font-semibold">
+                <td className="px-4 py-3 whitespace-nowrap text-base">
+                  <span className="font-semibold">
                     {index === 0 ? (
                       <span className="text-yellow-500 text-xl">1</span>
                     ) : index === 1 ? (
@@ -69,46 +111,15 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
                     )}
                   </span>
                 </td>
-
-                <td className="flex flex-col md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
-                  <span className="block md:hidden text-gray-700 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 p-1 rounded-lg shadow-sm">
-                    <Link
-                      href={`/songs/${song.slug}`}
-                      className="text-gray-700 font-bold text-lg hover:text-pink-600 transition-colors break-words whitespace-normal"
-                    >
-                      {song.title}
-                    </Link>
-                    <br className="block md:hidden" />{" "}
-                    <Link
-                      href={`/artist/${song.artist_slug}`}
-                      className="text-pink-600 text-lg hover:text-gray-800 transition-colors"
-                    >
-                      {song.artist}
-                    </Link>
-                    <br className="block md:hidden" />{" "}
-                    <Link
-                      href={`/year/${song.year}`}
-                      className="text-cyan-500 hover:text-pink-600 font-semibold transition-colors"
-                    >
-                      {song.year}
-                    </Link>
-                    <br className="block md:hidden" />{" "}
-                    <span className="block md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full text-lg font-medium bg-pink-500 text-white">
-                      {song.average_user_score}
-                    </span>
-                  </span>
-
-                  <span className="hidden md:block">
-                    <Link
-                      href={`/songs/${song.slug}`}
-                      className="text-gray-800 font-bold hover:text-pink-600 transition-colors"
-                    >
-                      {song.title}
-                    </Link>
-                  </span>
+                <td className="px-4 py-3 whitespace-nowrap text-base">
+                  <Link
+                    href={`/songs/${song.slug}`}
+                    className="text-gray-800 font-bold hover:text-pink-600 transition-colors"
+                  >
+                    {song.title}
+                  </Link>
                 </td>
-
-                <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
+                <td className="px-4 py-3 whitespace-nowrap text-base">
                   <Link
                     href={`/artist/${song.artist_slug}`}
                     className="text-pink-600 hover:text-gray-800 transition-colors"
@@ -116,7 +127,7 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
                     {song.artist}
                   </Link>
                 </td>
-                <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
+                <td className="px-4 py-3 whitespace-nowrap text-base">
                   <Link
                     href={`/year/${song.year}`}
                     className="text-cyan-600 hover:text-pink-600 transition-colors"
@@ -124,7 +135,7 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
                     {song.year}
                   </Link>
                 </td>
-                <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap text-sm md:text-base">
+                <td className="px-4 py-3 whitespace-nowrap text-base">
                   <span className="bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold px-3 py-1 rounded-full">
                     {song.average_user_score}
                   </span>
@@ -134,6 +145,7 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
           </tbody>
         </table>
       </div>
+
       <div className="text-center mt-6">
         <Link
           href="/songs?sort_by=average_user_score&order=desc"
