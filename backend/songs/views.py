@@ -409,17 +409,23 @@ def featured_artists(request):
     # Convert to list with formatted image paths
     artists_list = []
     for artist in artists_with_images:
+        # Build full URL for images
+        image_url = None
+        if artist.image:
+            image_url = request.build_absolute_uri(artist.image.url)
+        
         artists_list.append({
             'id': artist.id,
             'name': artist.name,
             'slug': artist.slug,
-            'image': f'/media/{artist.image}' if artist.image else None  # ← FIX HERE
+            'image': image_url
         })
     
     # Shuffle and return up to 25
     random.shuffle(artists_list)
     
     return Response(artists_list[:25])
+
     
 class CurrentHot100View(generics.ListAPIView):
     serializer_class = CurrentHot100Serializer
