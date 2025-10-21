@@ -2,8 +2,9 @@
 
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getSongs } from '@/lib/api';
+import { getSongs, getArtistBySlug } from '@/lib/api'; // ← ADD getArtistBySlug
 import SongListPage from '@/components/SongList/SongListPage';
+import ArtistInfo from '@/components/ArtistPage/ArtistInfo'; // ← ADD THIS
 
 // Helper function to capitalize words
 function capitalizeWords(str) {
@@ -18,6 +19,7 @@ export default function ArtistPageWrapper() {
   const searchParams = useSearchParams();
   const [songs, setSongs] = useState([]);
   const [totalSongs, setTotalSongs] = useState(0);
+  const [artistData, setArtistData] = useState(null); // ← ADD THIS STATE
   const [loading, setLoading] = useState(true);
   const artistSlug = params?.slug;
   const artistName = artistSlug ? capitalizeWords(artistSlug) : '';
@@ -36,12 +38,16 @@ export default function ArtistPageWrapper() {
   const peakRankFilter = filter === 'number-one' ? '1' : null;
 
   useEffect(() => {
-    async function fetchData() {
-      if (artistSlug) {
-        try {
-          setLoading(true);
-          // Fetch songs data for the specific artist with all filters
-          const songsData = await getSongs(
+  async function fetchData() {
+    if (artistSlug) {
+      try {
+        setLoading(true);
+        
+        console.log('Fetching artist:', artistSlug); // ← ADD THIS
+        
+        // Fetch both songs AND artist data in parallel
+        const [songsData, artistDataResponse] = await Promise.all([
+          getSongs(
             page,
             perPage,
             'artist',
@@ -52,42 +58,57 @@ export default function ArtistPageWrapper() {
             peakRankFilter,
             unrated,
             decade
-          );
+          ),
+          getArtistBySlug(artistSlug)
+        ]);
 
-          // Extract songs and total count
-          setSongs(songsData.results || []);
-          setTotalSongs(songsData.count || 0);
-        } catch (error) {
-          console.error('Error fetching songs:', error);
-        } finally {
-          setLoading(false);
-        }
+        console.log('Artist data received:', artistDataResponse); // ← ADD THIS
+        console.log('Songs data received:', songsData); // ← ADD THIS
+
+        // Extract songs and total count
+        setSongs(songsData.results || []);
+        setTotalSongs(songsData.count || 0);
+        setArtistData(artistDataResponse); // ← SET ARTIST DATA
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     }
-
-    fetchData();
-  }, [artistSlug, page, perPage, sortBy, order, query, filter, unrated, decade, peakRankFilter]);
-
-  if (loading) {
-    return <div className="container mx-auto px-4 py-8 text-center">Loading songs...</div>;
   }
 
+  fetchData();
+}, [artistSlug, page, perPage, sortBy, order, query, filter, unrated, decade, peakRankFilter]);
+
+console.log('Current artistData state:', artistData); // ← ADD THIS
+
+if (loading) {
+  return <div className="container mx-auto px-4 py-8 text-center">Loading...</div>;
+}
+
+
   return (
-    <SongListPage 
-      initialSongs={songs} 
-      totalSongs={totalSongs} 
-      filterType="artist"
-      filterValue={artistSlug}
-      artistSlug={artistSlug}
-      artistName={artistName}
-      initialPage={page}
-      initialPerPage={perPage}
-      initialSortField={sortBy}
-      initialSortOrder={order}
-      initialNumberOneFilter={filter === 'number-one'}
-      initialUnratedFilter={unrated}
-      initialDecadeFilter={decade}
-      initialSearchQuery={query}
-    />
+    <div className="container mx-auto px-4 py-8">
+      {/* ← RENDER ARTIST INFO AT THE TOP */}
+      {artistData && <ArtistInfo artistData={artistData} />}
+      
+      {/* Then render the song list */}
+      <SongListPage 
+        initialSongs={songs} 
+        totalSongs={totalSongs} 
+        filterType="artist"
+        filterValue={artistSlug}
+        artistSlug={artistSlug}
+        artistName={artistName}
+        initialPage={page}
+        initialPerPage={perPage}
+        initialSortField={sortBy}
+        initialSortOrder={order}
+        initialNumberOneFilter={filter === 'number-one'}
+        initialUnratedFilter={unrated}
+        initialDecadeFilter={decade}
+        initialSearchQuery={query}
+      />
+    </div>
   );
 }

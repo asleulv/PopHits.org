@@ -6,10 +6,10 @@ from django.shortcuts import get_object_or_404
 from django.db.models.functions import Random
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.cache import cache
-from .models import Song, UserSongRating, UserSongComment, Bookmark, NumberOneSong, CurrentHot100
-from .serializers import SongSerializer, UserSongCommentSerializer, CurrentHot100Serializer
+from .models import Song, UserSongRating, UserSongComment, Bookmark, NumberOneSong, CurrentHot100, Artist
+from .serializers import SongSerializer, UserSongCommentSerializer, CurrentHot100Serializer, ArtistDetailSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
@@ -21,6 +21,15 @@ class CustomPagination(PageNumberPagination):
     page_size = 100  # Set the number of records per page
     page_size_query_param = 'page_size'
     max_page_size = 1000  # Set the maximum number of records per page
+
+class ArtistDetailView(generics.RetrieveAPIView):
+    """
+    API endpoint to get detailed artist information by slug
+    Returns artist bio, tags, members, billboard stats, etc.
+    """
+    queryset = Artist.objects.all()
+    serializer_class = ArtistDetailSerializer
+    lookup_field = 'slug'
 
 # API VIEW: songlist
 class SongListCreateView(generics.ListCreateAPIView):
@@ -104,6 +113,31 @@ class SongListCreateView(generics.ListCreateAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+    
+class ArtistListView(APIView):
+    """List all artists with their hit count"""
+    
+    def get(self, request):
+        # Get all artists with their hit count
+        artists = Artist.objects.annotate(
+            total_hits=Count('songs', distinct=True)  # ← CHANGE 'song' to 'songs'
+        ).filter(
+            total_hits__gt=0  # Only include artists with at least one hit
+        ).order_by('name')
+        
+        artists_data = []
+        for artist in artists:
+            artists_data.append({
+                'id': artist.id,
+                'name': artist.name,
+                'slug': artist.slug,
+                'image': f'/media/{artist.image}' if artist.image else None,
+                'total_hits': artist.total_hits,
+                'nationality': artist.nationality,
+                'artist_type': artist.artist_type,
+            })
+        
+        return Response(artists_data)
 
 
 # API VIEW: song detail by id
@@ -365,6 +399,27 @@ class SongsWithImagesView(generics.ListAPIView):
 
     def get_queryset(self):
         return Song.objects.exclude(image_upload='').exclude(image_upload__isnull=True)
+    
+@api_view(['GET'])
+def featured_artists(request):
+    """Get random artists with images for homepage"""
+    # Get all artists with images
+    artists_with_images = Artist.objects.exclude(image='')
+    
+    # Convert to list with formatted image paths
+    artists_list = []
+    for artist in artists_with_images:
+        artists_list.append({
+            'id': artist.id,
+            'name': artist.name,
+            'slug': artist.slug,
+            'image': f'/media/{artist.image}' if artist.image else None  # ← FIX HERE
+        })
+    
+    # Shuffle and return up to 25
+    random.shuffle(artists_list)
+    
+    return Response(artists_list[:25])
     
 class CurrentHot100View(generics.ListAPIView):
     serializer_class = CurrentHot100Serializer

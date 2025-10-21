@@ -4,6 +4,7 @@ import {
   getTopRatedSongs,
   getRandomHitsByDecade,
   getSongsWithImages,
+  getFeaturedArtists,
   getCurrentHot100,
   getNumberOneHits,
 } from "@/lib/api";
@@ -79,6 +80,7 @@ export default async function FrontPage() {
   let topRatedSongs = [];
   let randomHitsByDecade = [];
   let songsWithImages = [];
+  let featuredArtists = [];
   let numberOneHits = [];
   let currentHot100 = { songs: [] };
   let songWithImage = null;
@@ -91,12 +93,14 @@ export default async function FrontPage() {
       topRatedSongsData,
       randomHitsByDecadeData,
       songsWithImagesData,
+      featuredArtistsData,
       currentHot100Data,
       numberOneHitsData,
     ] = await Promise.all([
       getTopRatedSongs(),
       getRandomHitsByDecade(),
       getSongsWithImages(),
+      getFeaturedArtists(),
       getCurrentHot100(),
       getNumberOneHits(),
     ]);
@@ -104,7 +108,7 @@ export default async function FrontPage() {
     // Process data - KEEP THIS EXACTLY THE SAME
     topRatedSongs = topRatedSongsData.songs || topRatedSongsData;
     randomHitsByDecade = randomHitsByDecadeData.songs || randomHitsByDecadeData;
-    songsWithImages = songsWithImagesData.songs || songsWithImagesData;
+    featuredArtists = featuredArtistsData || [];
     currentHot100 = currentHot100Data;
     numberOneHits = numberOneHitsData.songs || numberOneHitsData;
 
@@ -245,7 +249,7 @@ export default async function FrontPage() {
 
         <TopRatedSongsSection topRatedSongs={topRatedSongs} />
 
-        <FeaturedArtists songsWithImages={songsWithImages} />
+        <FeaturedArtists artists={featuredArtists} />
 
 
         <Suspense fallback={<div>Loading Number One Hits...</div>}>

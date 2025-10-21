@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react"; // ← Add useState, useEffect
 import {
   Calendar,
   TrendingUp,
@@ -16,13 +16,19 @@ import ShareButtons from "./ShareButtons";
 import { useSong } from "@/contexts/SongContext";
 
 export default function SongDetailContent() {
-  // Helper function to extract track ID from Spotify URL
   function getTrackIdFromUrl(url) {
     if (!url) return null;
     const parts = url.split("/");
     return parts[parts.length - 1];
   }
+
   const { song } = useSong();
+  const [isClient, setIsClient] = useState(false); // ← Add this
+
+  // Only render ArtistInfo on client to avoid hydration errors
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8 animate-fadeIn">
@@ -41,7 +47,6 @@ export default function SongDetailContent() {
           </span>
         </h1>
 
-        {/* Bookmark and Average Score */}
         <SongActions showRatingOnly={false} />
       </div>
 

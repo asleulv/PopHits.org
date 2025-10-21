@@ -9,10 +9,13 @@ export const API_ENDPOINTS = {
   topRatedSongs: `${BASE_URL}/api/songs/top-rated-songs/`,
   randomHitsByDecade: `${BASE_URL}/api/songs/random-songs-by-decade/`,
   songsWithImages: `${BASE_URL}/api/songs/songs-with-images/`,
+  featuredArtists: `${BASE_URL}/api/songs/featured-artists/`, 
   numberOneHits: `${BASE_URL}/api/songs/number-one-songs/`,
   currentHot100: `${BASE_URL}/api/songs/current-hot100/`,
   songBySlug: (slug) => `${BASE_URL}/api/songs/${slug}/`,
+  artistBySlug: (slug) => `${BASE_URL}/api/artists/${slug}/`,
   songs: `${BASE_URL}/api/songs/`,
+  artists: `${BASE_URL}/api/artists/`,
   generateQuiz: `${BASE_URL}/api/songs/generate-quiz/`,
   generatePlaylist: `${BASE_URL}/api/songs/generate-playlist/`,
   submitUserScore: (songId) => `${BASE_URL}/api/songs/${songId}/rate/`,
@@ -103,6 +106,20 @@ export async function getCurrentHot100() {
 export async function getSongBySlug(slug) {
   return fetchData(API_ENDPOINTS.songBySlug(slug));
 }
+
+export async function getArtistBySlug(slug) {
+  return fetchData(API_ENDPOINTS.artistBySlug(slug));
+}
+
+// Add function
+export async function getArtists() {
+  return fetchData(API_ENDPOINTS.artists);
+}
+
+export async function getFeaturedArtists() {
+  return fetchData(API_ENDPOINTS.featuredArtists);
+}
+
 
 export async function getSongs(
   page = 1,

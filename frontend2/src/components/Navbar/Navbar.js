@@ -11,7 +11,14 @@ import { MdQuiz } from "react-icons/md";
 import { BsMusicPlayerFill, BsListOl } from "react-icons/bs";
 
 import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
-import { Home, CircleAlert, ListMusic, TrendingUp, Search, BookOpen } from "lucide-react";
+import {
+  Home,
+  CircleAlert,
+  ListMusic,
+  TrendingUp,
+  Search,
+  BookOpen,
+} from "lucide-react";
 import { GiBullseye } from "react-icons/gi";
 
 export default function Navbar() {
@@ -128,7 +135,20 @@ export default function Navbar() {
                   <span className="navbar-menu-icon">
                     <BsMusicPlayerFill />
                   </span>
-                  Database
+                  Song Database
+                </Link>
+              </li>
+
+              <li className="navbar-menu-item">
+                <Link
+                  href="/artists"
+                  className="navbar-menu-link hover:text-gray-300"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="navbar-menu-icon">
+                    <FaUser />
+                  </span>
+                  Artist Database
                 </Link>
               </li>
 

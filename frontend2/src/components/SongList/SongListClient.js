@@ -544,110 +544,113 @@ export default function SongListClient({
 
   return (
     <div>
-      {/* Filters Section */}
-      <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
-        {/* Left Column - Toggle Switches */}
-        <div className="w-full md:w-1/3">
-          {/* #1 Hits Only Toggle */}
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm mb-4 flex flex-col items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Award className="w-6 h-6 text-orange-300" />
-              <span className="text-lg font-medium">#1 hits only</span>
-            </div>
-            <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
-              <input
-                type="checkbox"
-                id="numberOneToggle"
-                className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-gray-300 checked:border-pink-500 left-0 checked:left-6"
-                checked={onlyNumberOneHits}
-                onChange={(e) => handleNumberOneToggle(e.target.checked)}
-              />
-              <label
-                htmlFor="numberOneToggle"
-                className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-gray-300 peer-checked:bg-pink-500"
-              ></label>
-            </div>
-          </div>
-
-          {/* Unrated Songs Toggle - Only visible when logged in */}
-          {isAuthenticated && (
-            <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center gap-2">
+      {/* Filters Section - HIDE COMPLETELY ON ARTIST PAGES */}
+      {!artistSlug && (
+        <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+          {/* Left Column - Toggle Switches */}
+          <div className="w-full md:w-1/3">
+            {/* #1 Hits Only Toggle */}
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm mb-4 flex flex-col items-center gap-2">
               <div className="flex items-center gap-2">
-                <Star className="w-6 h-6 text-gray-500" />
-                <span className="text-lg font-medium">Unrated songs only</span>
+                <Award className="w-6 h-6 text-orange-300" />
+                <span className="text-lg font-medium">#1 hits only</span>
               </div>
               <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
                 <input
                   type="checkbox"
-                  id="unratedToggle"
-                  className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-gray-300 checked:border-blue-500 left-0 checked:left-6"
-                  checked={onlyUnratedSongs}
-                  onChange={(e) => handleUnratedToggle(e.target.checked)}
+                  id="numberOneToggle"
+                  className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-gray-300 checked:border-pink-500 left-0 checked:left-6"
+                  checked={onlyNumberOneHits}
+                  onChange={(e) => handleNumberOneToggle(e.target.checked)}
                 />
                 <label
-                  htmlFor="unratedToggle"
-                  className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-gray-300 peer-checked:bg-blue-500"
+                  htmlFor="numberOneToggle"
+                  className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-gray-300 peer-checked:bg-pink-500"
                 ></label>
               </div>
             </div>
-          )}
-        </div>
 
-        {/* Middle Column - Dropdowns */}
-        <div className="w-full md:w-1/3">
-          {/* Year Filter */}
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm mb-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-6 h-6 text-pink-500" />
-              <span className="text-lg font-medium">Jump to year:</span>
-            </div>
-            <select
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-              value={yearFilter || "all"}
-              onChange={(e) => handleYearChange(e.target.value)}
-            >
-              <option value="all">All Years</option>
-              {years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
+            {/* Unrated Songs Toggle - Only visible when logged in */}
+            {isAuthenticated && (
+              <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center gap-2">
+                <div className="flex items-center gap-2">
+                  <Star className="w-6 h-6 text-gray-500" />
+                  <span className="text-lg font-medium">
+                    Unrated songs only
+                  </span>
+                </div>
+                <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
+                  <input
+                    type="checkbox"
+                    id="unratedToggle"
+                    className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-gray-300 checked:border-blue-500 left-0 checked:left-6"
+                    checked={onlyUnratedSongs}
+                    onChange={(e) => handleUnratedToggle(e.target.checked)}
+                  />
+                  <label
+                    htmlFor="unratedToggle"
+                    className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-gray-300 peer-checked:bg-blue-500"
+                  ></label>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Decade Filter */}
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-6 h-6 text-blue-500" />
-              <span className="text-lg font-medium">Filter by decade:</span>
+          {/* Middle Column - Dropdowns */}
+          <div className="w-full md:w-1/3">
+            {/* Year Filter */}
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar className="w-6 h-6 text-pink-500" />
+                <span className="text-lg font-medium">Jump to year:</span>
+              </div>
+              <select
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                value={yearFilter || "all"}
+                onChange={(e) => handleYearChange(e.target.value)}
+              >
+                <option value="all">All Years</option>
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
             </div>
-            <select
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={decadeFilter || "all"}
-              onChange={(e) => handleDecadeChange(e.target.value)}
+
+            {/* Decade Filter */}
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar className="w-6 h-6 text-blue-500" />
+                <span className="text-lg font-medium">Filter by decade:</span>
+              </div>
+              <select
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={decadeFilter || "all"}
+                onChange={(e) => handleDecadeChange(e.target.value)}
+              >
+                <option value="all">All Decades</option>
+                {decades.map((decade) => (
+                  <option key={decade.value} value={decade.value}>
+                    {decade.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Right Column - Reset Button */}
+          <div className="w-full md:w-1/3">
+            <button
+              onClick={handleReset}
+              className="w-full bg-gray-50 p-4 rounded-lg shadow-sm text-pink-500 hover:text-pink-600 flex items-center justify-center gap-2 text-lg font-medium transition-colors h-full"
             >
-              <option value="all">All Decades</option>
-              {decades.map((decade) => (
-                <option key={decade.value} value={decade.value}>
-                  {decade.label}
-                </option>
-              ))}
-            </select>
+              <RefreshCw className="w-5 h-5" />
+              Reset all filters
+            </button>
           </div>
         </div>
-
-        {/* Right Column - Reset Button */}
-        <div className="w-full md:w-1/3">
-          {/* Reset Button */}
-          <button
-            onClick={handleReset}
-            className="w-full bg-gray-50 p-4 rounded-lg shadow-sm text-pink-500 hover:text-pink-600 flex items-center justify-center gap-2 text-lg font-medium transition-colors h-full"
-          >
-            <RefreshCw className="w-5 h-5" />
-            Reset all filters
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Sort Controls */}
       <div className="bg-white rounded-xl shadow-md p-4 mb-4">

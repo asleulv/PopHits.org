@@ -45,10 +45,14 @@ const nextConfig = {
             source: '/api/:path*',
             destination: 'http://localhost:8000/api/:path*',
           },
+          {
+            source: '/media/:path*',  // ← ADD THIS
+            destination: 'http://localhost:8000/media/:path*',  // ← ADD THIS
+          },
         ]
       : [];
   },
-  // Add the headers function for caching - FIXED VERSION
+  // Add the headers function for caching
   async headers() {
     return [
       {
