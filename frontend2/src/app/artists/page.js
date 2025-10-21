@@ -1,5 +1,6 @@
 import { getArtists } from '@/lib/api';
 import ArtistsListClient from '@/components/Artists/ArtistsListClient';
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Browse Artists | PopHits.org',
