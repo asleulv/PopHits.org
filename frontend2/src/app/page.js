@@ -6,6 +6,7 @@ import {
   getFeaturedArtists,
   getCurrentHot100,
   getNumberOneHits,
+  getRandomSongByArtist,
 } from "@/lib/api";
 import { getBlueskyPosts } from "@/lib/bluesky";
 
@@ -140,50 +141,27 @@ export default async function FrontPage() {
       latestBlogPost = null;
     }
 
-    // NEW: Get featured hit from a random featured artist
+    // Get featured hit from a random featured artist
     if (featuredArtists.length > 0) {
+      const randomArtist =
+        featuredArtists[Math.floor(Math.random() * featuredArtists.length)];
       try {
-        // Pick a random featured artist
-        const randomArtist =
-          featuredArtists[Math.floor(Math.random() * featuredArtists.length)];
-
-        // Fetch one random song by this artist
-        const baseUrl =
-          process.env.NODE_ENV === "development"
-            ? "http://localhost:8000"
-            : "https://pophits.org";
-
-        const songResponse = await fetch(
-          `${baseUrl}/api/songs/?artist=${randomArtist.slug}&limit=1`,
-          {
-            cache: "no-store",
-            next: { revalidate: 0 },
-          }
-        );
-
-        if (songResponse.ok) {
-          const songData = await songResponse.json();
-
-          if (songData.results && songData.results.length > 0) {
-            const song = songData.results[0];
-
-            // Combine song data with artist image
-            songWithImage = {
-              id: song.id,
-              title: song.title,
-              artist: randomArtist.name,
-              artist_slug: randomArtist.slug,
-              year: song.year,
-              slug: song.slug,
-              image_upload: randomArtist.image, // Use artist image!
-              average_user_score: song.average_user_score,
-              peak_rank: song.peak_rank,
-            };
-          }
+        const song = await getRandomSongByArtist(randomArtist.slug);
+        if (song?.id) {
+          songWithImage = {
+            id: song.id,
+            title: song.title,
+            artist: randomArtist.name,
+            artist_slug: randomArtist.slug,
+            year: song.year,
+            slug: song.slug,
+            image_upload: randomArtist.image,
+            average_user_score: song.average_user_score,
+            peak_rank: song.peak_rank,
+          };
         }
-      } catch (featuredHitError) {
-        console.error("Featured hit fetch failed:", featuredHitError);
-        songWithImage = null;
+      } catch (error) {
+        console.error("Featured hit fetch failed:", error);
       }
     }
 

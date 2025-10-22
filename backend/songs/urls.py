@@ -4,7 +4,7 @@ from .views import (
     UserSongRatingCreateView, UserSongCommentUpdateView, get_user_rating_for_song, 
     UserBookmarkView, UserBookmarkedSongsView, BookmarkStatusView, CommentStatusView,
     RandomSongView, TopRatedSongsView, RandomSongsByDecadeView, NumberOneSongsView,
-    SongsWithImagesView, PlaylistGeneratorView, QuizGeneratorView, CurrentHot100View, featured_artists 
+    SongsWithImagesView, PlaylistGeneratorView, QuizGeneratorView, CurrentHot100View, featured_artists, random_song_by_artist
 )
 
 urlpatterns = [
@@ -19,6 +19,7 @@ urlpatterns = [
     path('songs-with-images/', SongsWithImagesView.as_view(), name='songs-with-images'), 
     path('featured-artists/', featured_artists, name='featured-artists'),
     path('random-songs-by-decade/', RandomSongsByDecadeView.as_view(), name='random-songs-by-decade'),
+    path('random-by-artist/', random_song_by_artist, name='random-by-artist'),
     path('generate-playlist/', PlaylistGeneratorView.as_view(), name='generate-playlist'),
     path('generate-quiz/', QuizGeneratorView.as_view(), name='generate-quiz'),
     path('current-hot100/', CurrentHot100View.as_view(), name='current-hot100'),

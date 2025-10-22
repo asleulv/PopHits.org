@@ -1,23 +1,31 @@
-// Base URL configuration
+/**
+ * API Configuration and Helper Functions
+ * Centralized API client for all backend communication
+ */
+
+// ============================================================================
+// BASE URL CONFIGURATION
+// ============================================================================
+
 export const BASE_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:8000"
     : "https://pophits.org";
 
-// API endpoints
+// ============================================================================
+// API ENDPOINTS
+// ============================================================================
+
 export const API_ENDPOINTS = {
+  // Song endpoints
   topRatedSongs: `${BASE_URL}/api/songs/top-rated-songs/`,
   randomHitsByDecade: `${BASE_URL}/api/songs/random-songs-by-decade/`,
-  songsWithImages: `${BASE_URL}/api/songs/songs-with-images/`,
-  featuredArtists: `${BASE_URL}/api/songs/featured-artists/`, 
   numberOneHits: `${BASE_URL}/api/songs/number-one-songs/`,
   currentHot100: `${BASE_URL}/api/songs/current-hot100/`,
+  randomByArtist: (artistSlug) =>
+    `${BASE_URL}/api/songs/random-by-artist/?artist_slug=${artistSlug}`,
   songBySlug: (slug) => `${BASE_URL}/api/songs/${slug}/`,
-  artistBySlug: (slug) => `${BASE_URL}/api/artists/${slug}/`,
   songs: `${BASE_URL}/api/songs/`,
-  artists: `${BASE_URL}/api/artists/`,
-  generateQuiz: `${BASE_URL}/api/songs/generate-quiz/`,
-  generatePlaylist: `${BASE_URL}/api/songs/generate-playlist/`,
   submitUserScore: (songId) => `${BASE_URL}/api/songs/${songId}/rate/`,
   submitUserComment: (songId) => `${BASE_URL}/api/songs/${songId}/comment/`,
   deleteUserComment: (commentId) =>
@@ -25,14 +33,33 @@ export const API_ENDPOINTS = {
   editUserComment: (songId, commentId) =>
     `${BASE_URL}/api/songs/${songId}/comment/${commentId}/`,
   toggleBookmark: (songId) => `${BASE_URL}/api/songs/${songId}/bookmark/`,
+  generateQuiz: `${BASE_URL}/api/songs/generate-quiz/`,
+  generatePlaylist: `${BASE_URL}/api/songs/generate-playlist/`,
+
+  // Artist endpoints
+  artistBySlug: (slug) => `${BASE_URL}/api/artists/${slug}/`,
+  artists: `${BASE_URL}/api/artists/`,
+  featuredArtists: `${BASE_URL}/api/songs/featured-artists/`,
+
+  // User endpoints
   userProfile: `${BASE_URL}/api/profile/`,
+
   // Blog endpoints
   blogPosts: `${BASE_URL}/api/blog/`,
   blogPostBySlug: (slug) => `${BASE_URL}/api/blog/${slug}/`,
   latestBlogPost: `${BASE_URL}/api/blog/?page=1&page_size=1`,
 };
 
-// Helper function to fetch data
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Generic fetch wrapper with error handling
+ * @param {string} url - The URL to fetch from
+ * @param {object} options - Fetch options (headers, method, body, etc.)
+ * @returns {Promise<object>} - Parsed JSON response
+ */
 async function fetchData(url, options = {}) {
   try {
     const response = await fetch(url, {
@@ -41,7 +68,6 @@ async function fetchData(url, options = {}) {
         "Content-Type": "application/json",
         ...options.headers,
       },
-      // Add Next.js cache options if provided
       next: options.next || undefined,
     });
 
@@ -49,25 +75,22 @@ async function fetchData(url, options = {}) {
       throw new Error(`API error: ${response.status}`);
     }
 
-    // For DELETE requests that return 204 No Content, return an empty object
+    // Handle 204 No Content responses
     if (options.method === "DELETE" && response.status === 204) {
       return {};
     }
 
-    // For all other requests, try to parse JSON
+    // Parse and return JSON
     try {
       return await response.json();
     } catch (e) {
-      // If there's no JSON content, return an empty object
       if (response.status === 204) {
         return {};
       }
 
-      // If we got HTML instead of JSON, return an empty result with appropriate structure
-      if (e.message && e.message.includes("Unexpected token '<'")) {
-        console.warn(
-          `Received HTML instead of JSON from ${url}. Returning empty result.`
-        );
+      // Handle HTML responses (error pages)
+      if (e.message?.includes("Unexpected token '<'")) {
+        console.warn(`Received HTML instead of JSON from ${url}`);
         return { results: [] };
       }
 
@@ -79,62 +102,94 @@ async function fetchData(url, options = {}) {
   }
 }
 
-// Server-side API functions (for use in server components)
+// ============================================================================
+// SERVER-SIDE API FUNCTIONS (for use in server components)
+// ============================================================================
+
+/**
+ * Fetch top-rated songs
+ */
 export async function getTopRatedSongs(limit = 10) {
   const url = `${API_ENDPOINTS.topRatedSongs}?limit=${limit}`;
   return fetchData(url);
 }
 
+/**
+ * Fetch random songs grouped by decade
+ */
 export async function getRandomHitsByDecade() {
   return fetchData(API_ENDPOINTS.randomHitsByDecade);
 }
 
-export async function getSongsWithImages() {
-  return fetchData(API_ENDPOINTS.songsWithImages);
-}
-
+/**
+ * Fetch number one hits
+ */
 export async function getNumberOneHits() {
   return fetchData(API_ENDPOINTS.numberOneHits);
 }
 
+/**
+ * Fetch current Hot 100 chart
+ */
 export async function getCurrentHot100() {
-  return fetchData(API_ENDPOINTS.currentHot100, { 
-    next: { tags: ['hot100'] } 
+  return fetchData(API_ENDPOINTS.currentHot100, {
+    next: { tags: ["hot100"] },
   });
 }
 
-export async function getSongBySlug(slug) {
-  return fetchData(API_ENDPOINTS.songBySlug(slug));
-}
-
-export async function getArtistBySlug(slug) {
-  return fetchData(API_ENDPOINTS.artistBySlug(slug));
-}
-
-// Add function
-export async function getArtists(options = {}) {
-  const { letter, page = 1, pageSize = 100 } = options;
-  
-  // Build URL with query parameters using URL API (like getSongs does)
-  let url = new URL(API_ENDPOINTS.artists);
-  
-  url.searchParams.append("page", page);
-  url.searchParams.append("page_size", pageSize);
-  
-  // Add letter filter if specified
-  if (letter && letter !== 'All') {
-    url.searchParams.append("letter", letter);
-  }
-  
-  return fetchData(url.toString());
-}
-
-
+/**
+ * Fetch featured artists with images
+ */
 export async function getFeaturedArtists() {
   return fetchData(API_ENDPOINTS.featuredArtists);
 }
 
+/**
+ * Fetch a random song by artist slug (optimized endpoint)
+ */
+export async function getRandomSongByArtist(artistSlug) {
+  return fetchData(API_ENDPOINTS.randomByArtist(artistSlug));
+}
 
+/**
+ * Fetch song by slug
+ */
+export async function getSongBySlug(slug) {
+  return fetchData(API_ENDPOINTS.songBySlug(slug));
+}
+
+/**
+ * Fetch artist by slug with full details
+ */
+export async function getArtistBySlug(slug) {
+  return fetchData(API_ENDPOINTS.artistBySlug(slug));
+}
+
+/**
+ * Fetch artists with optional filters
+ * @param {object} options - Filter options (letter, page, pageSize)
+ */
+export async function getArtists(options = {}) {
+  const { letter, page = 1, pageSize = 100 } = options;
+
+  const url = new URL(API_ENDPOINTS.artists);
+  url.searchParams.append("page", page);
+  url.searchParams.append("page_size", pageSize);
+
+  if (letter && letter !== "All") {
+    url.searchParams.append("letter", letter);
+  }
+
+  return fetchData(url.toString());
+}
+
+// ============================================================================
+// COMPLEX QUERY FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch songs with advanced filtering and sorting
+ */
 export async function getSongs(
   page = 1,
   perPage = 25,
@@ -147,94 +202,63 @@ export async function getSongs(
   unratedOnly = false,
   decade = null
 ) {
-  // Build the URL with query parameters
-  let url = new URL(API_ENDPOINTS.songs);
+  const url = new URL(API_ENDPOINTS.songs);
 
-  // Add pagination parameters
+  // Pagination
   url.searchParams.append("page", page);
   url.searchParams.append("page_size", perPage);
 
-  // Add filter parameters if provided
+  // Filters
   if (filterType && filterValue) {
     url.searchParams.append(filterType, filterValue);
   }
 
-  // Add sorting parameters if provided
+  // Sorting
   if (sortField) {
-    // Add sort_by parameter
     url.searchParams.append("sort_by", sortField);
-
-    // Add order parameter (asc or desc)
-    if (sortOrder === "-") {
-      url.searchParams.append("order", "desc");
-    } else {
-      url.searchParams.append("order", "asc");
-    }
-
-    console.log("Sorting with parameters:", {
-      sort_by: sortField,
-      order: sortOrder === "-" ? "desc" : "asc",
-    });
+    url.searchParams.append("order", sortOrder === "-" ? "desc" : "asc");
   }
 
-  // Add search query if provided
+  // Search
   if (query) {
     url.searchParams.append("search", query);
   }
 
-  // Add peak rank filter if provided
+  // Additional filters
   if (peakRankFilter) {
     url.searchParams.append("peak_rank", peakRankFilter);
   }
 
-  // Add unrated filter if true
   if (unratedOnly) {
     url.searchParams.append("unrated_only", "true");
   }
 
-  // Add decade filter if provided
   if (decade) {
     url.searchParams.append("decade", decade);
   }
 
-  // Get auth token if available (needed for unrated filter)
+  // Get auth token if needed
   const options = {};
   if (typeof window !== "undefined") {
     const authToken = localStorage.getItem("authToken");
     if (authToken) {
-      options.headers = {
-        Authorization: `Token ${authToken}`,
-      };
-
-      // Log for debugging
-      if (unratedOnly) {
-        console.log("Sending request with auth token for unrated songs");
-      }
-    } else if (unratedOnly) {
-      console.log(
-        "Warning: Requesting unrated songs but no auth token available"
-      );
+      options.headers = { Authorization: `Token ${authToken}` };
     }
   }
 
-  // Log the full URL for debugging
-  console.log("Fetching songs with URL:", url.toString());
-
-  const result = await fetchData(url.toString(), options);
-  console.log("API response received:", result);
-  return result;
+  return fetchData(url.toString(), options);
 }
 
+/**
+ * Generate quiz questions based on criteria
+ */
 export async function generateQuiz(numSongs, hitLevel, selectedDecades) {
-  // Build the URL with query parameters
-  let url = new URL(API_ENDPOINTS.generateQuiz);
+  const url = new URL(API_ENDPOINTS.generateQuiz);
 
-  // Add parameters
   url.searchParams.append("number_of_songs", numSongs);
   url.searchParams.append("hit_size", hitLevel);
 
-  // Add selected decades as a comma-separated string
-  if (selectedDecades && selectedDecades.length > 0) {
+  if (selectedDecades?.length > 0) {
     selectedDecades.forEach((decade) => {
       url.searchParams.append("decades", decade);
     });
@@ -243,16 +267,16 @@ export async function generateQuiz(numSongs, hitLevel, selectedDecades) {
   return fetchData(url.toString());
 }
 
+/**
+ * Generate playlist based on criteria
+ */
 export async function generatePlaylist(numSongs, hitLevel, selectedDecades) {
-  // Build the URL with query parameters
-  let url = new URL(API_ENDPOINTS.generatePlaylist);
+  const url = new URL(API_ENDPOINTS.generatePlaylist);
 
-  // Add parameters
   url.searchParams.append("number_of_songs", numSongs);
   url.searchParams.append("hit_size", hitLevel);
 
-  // Add selected decades as a comma-separated string
-  if (selectedDecades && selectedDecades.length > 0) {
+  if (selectedDecades?.length > 0) {
     selectedDecades.forEach((decade) => {
       url.searchParams.append("decades", decade);
     });
@@ -261,85 +285,85 @@ export async function generatePlaylist(numSongs, hitLevel, selectedDecades) {
   return fetchData(url.toString());
 }
 
-// Client-side API functions (to be used with 'use client' directive)
+// ============================================================================
+// CLIENT-SIDE API FUNCTIONS (requires 'use client' directive)
+// ============================================================================
+
+/**
+ * Submit user rating for a song
+ */
 export async function submitUserScore(songId, userScore, authToken) {
-  const url = API_ENDPOINTS.submitUserScore(songId);
-  return fetchData(url, {
+  return fetchData(API_ENDPOINTS.submitUserScore(songId), {
     method: "POST",
-    headers: {
-      Authorization: `Token ${authToken}`,
-    },
+    headers: { Authorization: `Token ${authToken}` },
     body: JSON.stringify({ rating: userScore }),
   });
 }
 
+/**
+ * Submit user comment on a song
+ */
 export async function submitUserComment(songId, commentText, authToken) {
-  const url = API_ENDPOINTS.submitUserComment(songId);
-  return fetchData(url, {
+  return fetchData(API_ENDPOINTS.submitUserComment(songId), {
     method: "POST",
-    headers: {
-      Authorization: `Token ${authToken}`,
-    },
+    headers: { Authorization: `Token ${authToken}` },
     body: JSON.stringify({ comment_text: commentText }),
   });
 }
 
+/**
+ * Delete a user comment
+ */
 export async function deleteUserComment(commentId, authToken) {
-  // In the original React frontend, the endpoint is ${commentId}/comment/
-  const url = `${BASE_URL}/api/songs/${commentId}/comment/`;
-  return fetchData(url, {
+  return fetchData(API_ENDPOINTS.deleteUserComment(commentId), {
     method: "DELETE",
-    headers: {
-      Authorization: `Token ${authToken}`,
-    },
+    headers: { Authorization: `Token ${authToken}` },
   });
 }
 
+/**
+ * Edit a user comment
+ */
 export async function editUserComment(songId, commentId, newText, authToken) {
-  // Let's try a different approach with PUT instead of PATCH
-  // and use comment_text instead of text
-  const url = `${BASE_URL}/api/songs/${songId}/comment/${commentId}/`;
-
-  console.log("Editing comment with URL:", url);
-  console.log("Comment data:", { songId, commentId, newText });
-
-  return fetchData(url, {
+  return fetchData(API_ENDPOINTS.editUserComment(songId, commentId), {
     method: "PUT",
-    headers: {
-      Authorization: `Token ${authToken}`,
-      "Content-Type": "application/json",
-    },
+    headers: { Authorization: `Token ${authToken}` },
     body: JSON.stringify({ comment_text: newText }),
   });
 }
 
+/**
+ * Toggle bookmark for a song
+ */
 export async function toggleBookmarkSong(songId, authToken) {
-  const url = API_ENDPOINTS.toggleBookmark(songId);
-  return fetchData(url, {
+  return fetchData(API_ENDPOINTS.toggleBookmark(songId), {
     method: "POST",
-    headers: {
-      Authorization: `Token ${authToken}`,
-    },
+    headers: { Authorization: `Token ${authToken}` },
   });
 }
 
+/**
+ * Fetch user profile
+ */
 export async function getUserProfile(authToken) {
   return fetchData(API_ENDPOINTS.userProfile, {
-    headers: {
-      Authorization: `Token ${authToken}`,
-    },
+    headers: { Authorization: `Token ${authToken}` },
   });
 }
 
-// Blog API functions
-export async function getBlogPosts(page = 1, perPage = 10, search = "") {
-  let url = new URL(API_ENDPOINTS.blogPosts);
+// ============================================================================
+// BLOG API FUNCTIONS
+// ============================================================================
 
-  // Add pagination parameters
+/**
+ * Fetch blog posts with pagination and search
+ */
+export async function getBlogPosts(page = 1, perPage = 10, search = "") {
+  const url = new URL(API_ENDPOINTS.blogPosts);
+
   url.searchParams.append("page", page);
   url.searchParams.append("page_size", perPage);
 
-  // Add search query if provided
   if (search) {
     url.searchParams.append("search", search);
   }
@@ -347,20 +371,24 @@ export async function getBlogPosts(page = 1, perPage = 10, search = "") {
   return fetchData(url.toString());
 }
 
+/**
+ * Fetch single blog post by slug
+ */
 export async function getBlogPostBySlug(slug) {
   return fetchData(API_ENDPOINTS.blogPostBySlug(slug));
 }
 
-// Get the latest blog post
+/**
+ * Fetch the latest blog post
+ */
 export async function getLatestBlogPost() {
   try {
     const response = await fetchData(API_ENDPOINTS.latestBlogPost);
 
-    // Handle both response formats
     if (Array.isArray(response)) {
       return response.length > 0 ? response[0] : null;
-    } else if (response.results && Array.isArray(response.results)) {
-      return response.results.length > 0 ? response.results[0] : null;
+    } else if (response.results?.length > 0) {
+      return response.results[0];
     }
 
     return null;

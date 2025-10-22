@@ -601,3 +601,22 @@ class QuizGeneratorView(APIView):
         
         except Exception as e:
             return Response({'detail': 'An error occurred while processing your request.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def random_song_by_artist(request):
+    """Get a random song by artist slug - optimized endpoint"""
+    artist_slug = request.query_params.get('artist_slug')
+    
+    if not artist_slug:
+        return Response({'error': 'artist_slug required'}, status=400)
+    
+    # Optimized query with select_related to avoid N+1
+    song = Song.objects.filter(
+        artist_fk__slug=artist_slug
+    ).select_related('artist_fk').order_by('?').first()
+    
+    if not song:
+        return Response({'detail': 'Not found'}, status=404)
+    
+    serializer = SongSerializer(song)
+    return Response(serializer.data)
