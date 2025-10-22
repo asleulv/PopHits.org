@@ -610,13 +610,16 @@ def random_song_by_artist(request):
     if not artist_slug:
         return Response({'error': 'artist_slug required'}, status=400)
     
-    # Optimized query with select_related to avoid N+1
+    # Get just the song fields, no nested artist data
     song = Song.objects.filter(
         artist_fk__slug=artist_slug
-    ).select_related('artist_fk').order_by('?').first()
+    ).values(
+        'id', 'title', 'year', 'peak_rank', 'weeks_on_chart',
+        'average_user_score', 'slug', 'artist_slug', 'is_original_recording'
+    ).order_by('?').first()
     
     if not song:
         return Response({'detail': 'Not found'}, status=404)
     
-    serializer = SongSerializer(song)
-    return Response(serializer.data)
+    return Response(song)
+
