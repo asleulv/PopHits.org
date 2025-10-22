@@ -112,9 +112,23 @@ export async function getArtistBySlug(slug) {
 }
 
 // Add function
-export async function getArtists() {
-  return fetchData(API_ENDPOINTS.artists);
+export async function getArtists(options = {}) {
+  const { letter, page = 1, pageSize = 100 } = options;
+  
+  // Build URL with query parameters using URL API (like getSongs does)
+  let url = new URL(API_ENDPOINTS.artists);
+  
+  url.searchParams.append("page", page);
+  url.searchParams.append("page_size", pageSize);
+  
+  // Add letter filter if specified
+  if (letter && letter !== 'All') {
+    url.searchParams.append("letter", letter);
+  }
+  
+  return fetchData(url.toString());
 }
+
 
 export async function getFeaturedArtists() {
   return fetchData(API_ENDPOINTS.featuredArtists);

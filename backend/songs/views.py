@@ -114,30 +114,47 @@ class SongListCreateView(generics.ListCreateAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
+class ArtistPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
 class ArtistListView(APIView):
     """List all artists with their hit count"""
     
     def get(self, request):
-        # Get all artists with their hit count
-        artists = Artist.objects.annotate(
-            total_hits=Count('songs', distinct=True)  # ← CHANGE 'song' to 'songs'
-        ).filter(
-            total_hits__gt=0  # Only include artists with at least one hit
-        ).order_by('name')
+        letter = request.query_params.get('letter', None)
         
+        # Simple query - just get artists with songs
+        artists = Artist.objects.filter(
+            songs__isnull=False  # Has at least one song
+        ).distinct()  # Remove duplicates from the JOIN
+        
+        # Filter by letter if provided
+        if letter and len(letter) == 1:
+            artists = artists.filter(name__istartswith=letter)
+        
+        # Order consistently
+        artists = artists.order_by('name', 'id')
+        
+        # Paginate FIRST, then annotate (prevents duplicate rows)
+        paginator = ArtistPagination()
+        paginated_artists = paginator.paginate_queryset(artists, request)
+        
+        # Now get the count for each paginated artist
         artists_data = []
-        for artist in artists:
+        for artist in paginated_artists:
             artists_data.append({
                 'id': artist.id,
                 'name': artist.name,
                 'slug': artist.slug,
                 'image': f'/media/{artist.image}' if artist.image else None,
-                'total_hits': artist.total_hits,
+                'total_hits': artist.songs.count(),  # Count here instead
                 'nationality': artist.nationality,
                 'artist_type': artist.artist_type,
             })
         
-        return Response(artists_data)
+        return paginator.get_paginated_response(artists_data)
 
 
 # API VIEW: song detail by id

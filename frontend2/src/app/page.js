@@ -3,12 +3,11 @@ import { Shuffle } from "lucide-react";
 import {
   getTopRatedSongs,
   getRandomHitsByDecade,
-  getSongsWithImages,
   getFeaturedArtists,
   getCurrentHot100,
   getNumberOneHits,
 } from "@/lib/api";
-import { getBlueskyPosts } from "@/lib/bluesky"; // ADD THIS LINE
+import { getBlueskyPosts } from "@/lib/bluesky";
 
 // Component imports
 import HeroSection from "@/components/FrontPage/HeroSection";
@@ -79,7 +78,6 @@ export default async function FrontPage() {
   // Fetch data with error handling
   let topRatedSongs = [];
   let randomHitsByDecade = [];
-  let songsWithImages = [];
   let featuredArtists = [];
   let numberOneHits = [];
   let currentHot100 = { songs: [] };
@@ -88,32 +86,29 @@ export default async function FrontPage() {
   let blueskyPosts = [];
 
   try {
-    // Fetch data in parallel - KEEP THIS EXACTLY THE SAME
+    // Fetch data in parallel - REMOVED songsWithImagesData
     const [
       topRatedSongsData,
       randomHitsByDecadeData,
-      songsWithImagesData,
       featuredArtistsData,
       currentHot100Data,
       numberOneHitsData,
     ] = await Promise.all([
       getTopRatedSongs(),
       getRandomHitsByDecade(),
-      getSongsWithImages(),
       getFeaturedArtists(),
       getCurrentHot100(),
       getNumberOneHits(),
     ]);
 
-    // Process data - KEEP THIS EXACTLY THE SAME
+    // Process data
     topRatedSongs = topRatedSongsData.songs || topRatedSongsData;
     randomHitsByDecade = randomHitsByDecadeData.songs || randomHitsByDecadeData;
-    songsWithImages = songsWithImagesData || [];
     featuredArtists = featuredArtistsData || [];
     currentHot100 = currentHot100Data;
     numberOneHits = numberOneHitsData.songs || numberOneHitsData;
 
-    // Fetch latest blog post directly - KEEP THIS EXACTLY THE SAME
+    // Fetch latest blog post directly
     try {
       const apiUrl =
         process.env.NODE_ENV === "development"
@@ -145,27 +140,66 @@ export default async function FrontPage() {
       latestBlogPost = null;
     }
 
-    // Get a random song with image - KEEP THIS EXACTLY THE SAME
-    if (songsWithImages.length > 0) {
-      songWithImage =
-        songsWithImages[Math.floor(Math.random() * songsWithImages.length)];
+    // NEW: Get featured hit from a random featured artist
+    if (featuredArtists.length > 0) {
+      try {
+        // Pick a random featured artist
+        const randomArtist =
+          featuredArtists[Math.floor(Math.random() * featuredArtists.length)];
+
+        // Fetch one random song by this artist
+        const baseUrl =
+          process.env.NODE_ENV === "development"
+            ? "http://localhost:8000"
+            : "https://pophits.org";
+
+        const songResponse = await fetch(
+          `${baseUrl}/api/songs/?artist=${randomArtist.slug}&limit=1`,
+          {
+            cache: "no-store",
+            next: { revalidate: 0 },
+          }
+        );
+
+        if (songResponse.ok) {
+          const songData = await songResponse.json();
+
+          if (songData.results && songData.results.length > 0) {
+            const song = songData.results[0];
+
+            // Combine song data with artist image
+            songWithImage = {
+              id: song.id,
+              title: song.title,
+              artist: randomArtist.name,
+              artist_slug: randomArtist.slug,
+              year: song.year,
+              slug: song.slug,
+              image_upload: randomArtist.image, // Use artist image!
+              average_user_score: song.average_user_score,
+              peak_rank: song.peak_rank,
+            };
+          }
+        }
+      } catch (featuredHitError) {
+        console.error("Featured hit fetch failed:", featuredHitError);
+        songWithImage = null;
+      }
     }
 
-    // REPLACE THIS ENTIRE SECTION:
     // Fetch Bluesky posts SEPARATELY so it can't break anything
     try {
-      blueskyPosts = await getBlueskyPosts(); // REAL API CALL!
+      blueskyPosts = await getBlueskyPosts();
     } catch (blueskyError) {
       console.error("Bluesky fetch failed:", blueskyError);
       blueskyPosts = [];
     }
-
   } catch (error) {
     console.error("Error fetching data:", error);
     // Continue with empty data - we'll handle this in the UI
   }
 
-  // Group songs by decade - KEEP THIS EXACTLY THE SAME
+  // Group songs by decade
   const groupedByDecade = randomHitsByDecade.reduce((acc, song) => {
     const decade = getDecade(song.year);
     if (!acc[decade]) {
@@ -175,7 +209,7 @@ export default async function FrontPage() {
     return acc;
   }, {});
 
-  // Generate year buttons from 1958 to today - KEEP THIS EXACTLY THE SAME
+  // Generate year buttons from 1958 to today
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1958 + 1 },
@@ -203,19 +237,18 @@ export default async function FrontPage() {
         }}
       />
       <div className="px-0 py-8 sm:px-4 md:px-6 lg:px-8 mx-auto max-w-full">
-        
         {/* 1. Hero Section */}
         <HeroSection songWithImage={songWithImage} />
 
         {/* 2. Current Hot 100 - Shows site is current and updated */}
         <CurrentHot100Section currentHot100={currentHot100} />
 
-        {/* 3. Featured Discovery (Bluesky) - REAL DATA NOW! */}
+        {/* 3. Featured Discovery (Bluesky) */}
         {blueskyPosts.length > 0 && (
           <BlueskyDiscoverySection posts={blueskyPosts} />
         )}
 
-        {/* Rest of your sections stay exactly the same... */}
+        {/* 4. Random Hits by Decade */}
         {randomHitsByDecade.length > 0 ? (
           <section className="mb-8 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white p-8 w-full lg:rounded-xl shadow-lg">
             <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-6">
@@ -252,7 +285,6 @@ export default async function FrontPage() {
 
         <FeaturedArtists artists={featuredArtists} />
 
-
         <Suspense fallback={<div>Loading Number One Hits...</div>}>
           <NumberOneHitsSection numberOneHits={numberOneHits} />
         </Suspense>
@@ -262,7 +294,6 @@ export default async function FrontPage() {
         {latestBlogPost && (
           <LatestBlogPostSection latestBlogPost={latestBlogPost} />
         )}
-
       </div>
     </>
   );
