@@ -3,16 +3,20 @@ import django
 import sys
 from datetime import datetime
 
+
 # Add the root directory of your Django project to the Python path
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
+
 
 # Set the DJANGO_SETTINGS_MODULE environment variable
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
-from songs.models import Song
+
+from songs.models import Song, Artist
 from blog.models import BlogPost
+
 
 def generate_sitemap():
     # Define the output path - this should be in your static directory
@@ -56,6 +60,19 @@ def generate_sitemap():
         if song_count % 1000 == 0:
             print(f"Added {song_count} songs so far...")
     
+    # Add artist pages - NEW!
+    print(f"Adding artists to sitemap...")
+    artist_count = 0
+    for artist in Artist.objects.all():
+        sitemap_urls.append({
+            'url': f'https://pophits.org/artist/{artist.slug}',
+            'priority': '0.7',
+            'changefreq': 'monthly'
+        })
+        artist_count += 1
+        if artist_count % 500 == 0:
+            print(f"Added {artist_count} artists so far...")
+    
     # Add blog posts
     print(f"Adding blog posts to sitemap...")
     blog_count = 0
@@ -94,7 +111,8 @@ def generate_sitemap():
         
         f.write('</urlset>')
     
-    print(f"Sitemap generated with {len(sitemap_urls)} URLs ({song_count} songs, {blog_count} blog posts)")
+    print(f"Sitemap generated with {len(sitemap_urls)} URLs ({song_count} songs, {artist_count} artists, {blog_count} blog posts)")
+
 
 if __name__ == "__main__":
     generate_sitemap()
