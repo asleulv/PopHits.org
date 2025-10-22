@@ -29,50 +29,51 @@ export default function ArtistInfo({ artistData }) {
   // Determine what type of artist this is and show appropriate relationships
   const relatedArtists = [];
 
-  // COLLABORATION ARTISTS: Show the participating solo artists
-  if (artistData.participating_artists && artistData.participating_artists.length > 0) {
+  // Add members (if band)
+  if (artistData.members && artistData.members.length > 0) {
+    artistData.members.forEach((member) => {
+      relatedArtists.push({
+        name: member.artist_name,
+        slug: member.artist_slug,
+        type: "member",
+      });
+    });
+  }
+
+  // Add bands (if solo artist)
+  if (artistData.member_of && artistData.member_of.length > 0) {
+    artistData.member_of.forEach((band) => {
+      relatedArtists.push({
+        name: band.artist_name,
+        slug: band.artist_slug,
+        type: "band",
+      });
+    });
+  }
+
+  // Add collaborations
+  if (artistData.collaborations && artistData.collaborations.length > 0) {
+    artistData.collaborations.forEach((collab) => {
+      relatedArtists.push({
+        name: collab.name,
+        slug: collab.slug,
+        type: "collaboration",
+      });
+    });
+  }
+
+  // Add participating artists (for collaboration artists)
+  if (
+    artistData.participating_artists &&
+    artistData.participating_artists.length > 0
+  ) {
     artistData.participating_artists.forEach((artist) => {
       relatedArtists.push({
         name: artist.name,
         slug: artist.slug,
-        type: 'collaborator',
+        type: "collaborator",
       });
     });
-  }
-  // MAIN ARTISTS: Show their bands, members, and collaborations
-  else {
-    // Add members (if band)
-    if (artistData.members && artistData.members.length > 0) {
-      artistData.members.forEach((member) => {
-        relatedArtists.push({
-          name: member.artist_name,
-          slug: member.artist_slug,
-          type: "member",
-        });
-      });
-    }
-
-    // Add bands (if solo artist)
-    if (artistData.member_of && artistData.member_of.length > 0) {
-      artistData.member_of.forEach((band) => {
-        relatedArtists.push({
-          name: band.artist_name,
-          slug: band.artist_slug,
-          type: "band",
-        });
-      });
-    }
-
-    // Add collaborations
-    if (artistData.collaborations && artistData.collaborations.length > 0) {
-      artistData.collaborations.forEach((collab) => {
-        relatedArtists.push({
-          name: collab.name,
-          slug: collab.slug,
-          type: "collaboration",
-        });
-      });
-    }
   }
 
   return (

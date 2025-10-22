@@ -108,6 +108,7 @@ export default async function FrontPage() {
     // Process data - KEEP THIS EXACTLY THE SAME
     topRatedSongs = topRatedSongsData.songs || topRatedSongsData;
     randomHitsByDecade = randomHitsByDecadeData.songs || randomHitsByDecadeData;
+    songsWithImages = songsWithImagesData || [];
     featuredArtists = featuredArtistsData || [];
     currentHot100 = currentHot100Data;
     numberOneHits = numberOneHitsData.songs || numberOneHitsData;
