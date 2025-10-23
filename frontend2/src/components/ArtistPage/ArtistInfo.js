@@ -50,7 +50,7 @@ export default function ArtistInfo({ artistData }) {
   if (artistData.nationality)
     infoItems.push({
       icon: Globe,
-      label: "Nationality",
+      label: "From",
       value: artistData.nationality,
     });
   if (artistData.birth_date)
