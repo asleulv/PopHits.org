@@ -160,12 +160,33 @@ class Command(BaseCommand):
                     raise e
 
     def is_collaboration_artist(self, artist_name):
-        """Detect if this is a collaboration"""
+        """Check MusicBrainz type - if it's Group/Person, it's a real artist, not a collaboration"""
+        try:
+            result = self.safe_musicbrainz_request(
+                musicbrainzngs.search_artists,
+                artist=artist_name,
+                limit=1
+            )
+            
+            if result['artist-list']:
+                mb_artist = result['artist-list'][0]
+                artist_type = mb_artist.get('type', '').lower()
+                
+                # Real artists (registered entities)
+                if artist_type in ['person', 'group', 'duo', 'orchestra', 'choir', 'collective']:
+                    return False  # NOT a collaboration - it's a real artist
+                
+        except Exception as e:
+            # If MusicBrainz lookup fails, fall back to name-based detection
+            self.stdout.write(f'    ⚠️  MB lookup failed: {str(e)[:50]}..., using name parsing')
+        
+        # Fall back to name-based detection if MusicBrainz has no data
         collaboration_indicators = [
-            ' featuring ', ' ft. ', ' ft ', ' & ', ' and ', ' with ', 
+            ' featuring ', ' ft. ', ' ft ', ' & ', ' and ', ' with ',
             ' vs ', ' vs. ', '/', ' duet with ', ' feat. ', ' feat '
         ]
         return any(indicator in artist_name.lower() for indicator in collaboration_indicators)
+
 
     def extract_all_artists_from_collaboration(self, collab_name):
         """Extract all artist names from a collaboration string"""
