@@ -11,32 +11,29 @@ export const initGA = (measurementId: string) => {
 
   // Initialize dataLayer FIRST
   (window as any).dataLayer = (window as any).dataLayer || [];
-  
+
+  // Define gtag function BEFORE loading script
+  function gtag(...args: any[]) {
+    (window as any).dataLayer?.push(arguments);
+  }
+  (window as any).gtag = gtag;
+
   // Load the Google Analytics script
   const script = document.createElement('script');
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
   
-  script.onload = () => {
-    console.log('✅ GA Script loaded, now configuring...');
-    setTimeout(() => {
-      if ((window as any).gtag) {
-        (window as any).gtag('config', measurementId, { anonymize_ip: true });
-        (window as any).GA_INITIALIZED = true;
-        console.log('✅ GA Configured');
-      }
-    }, 50);
-  };
-  
-  document.head.appendChild(script);
-
-  // Define gtag function before script loads
-  function gtag(...args: any[]) {
-    (window as any).dataLayer?.push(arguments);
-  }
-  (window as any).gtag = gtag;
+  // Initialize gtag immediately
   gtag('js', new Date());
+  gtag('config', measurementId, { anonymize_ip: true });
+  
+  // Append script
+  document.head.appendChild(script);
+  
+  (window as any).GA_INITIALIZED = true;
+  console.log('✅ GA Initialized');
 };
+
 
 export default function usePageTracking() {
   const pathname = usePathname();
