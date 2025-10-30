@@ -1,6 +1,6 @@
 from .songs import (
     SongListCreateView, SongDetailView, SongDetailBySlugView, RandomSongView,
-    SongsWithImagesView, random_song_by_artist
+    SongsWithImagesView, random_song_by_artist, SongTimelineView
 )
 from .artists import (
     ArtistDetailView, ArtistListView, featured_artists
@@ -22,6 +22,7 @@ __all__ = [
     # Songs
     'SongListCreateView',
     'SongDetailView',
+    'SongTimelineView',
     'SongDetailBySlugView',
     'RandomSongView',
     'SongsWithImagesView',

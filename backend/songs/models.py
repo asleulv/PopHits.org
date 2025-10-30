@@ -232,6 +232,24 @@ class Song(models.Model):
     def __str__(self):
         return f"{self.title} by {self.artist}, Year: {self.year}, Peak Rank: {self.peak_rank}"
     
+class SongTimeline(models.Model):
+    song = models.ForeignKey('Song', on_delete=models.CASCADE, related_name='chart_entries')
+    chart_date = models.DateField(db_index=True)
+    rank = models.PositiveIntegerField()
+    peak_rank = models.PositiveIntegerField(null=True, blank=True)
+    weeks_on_chart = models.PositiveIntegerField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['chart_date']
+        indexes = [
+            models.Index(fields=['chart_date']),
+            models.Index(fields=['rank']),
+        ]
+        unique_together = ('song', 'chart_date')  # One entry per song per date
+
+    def __str__(self):
+        return f"{self.song} on {self.chart_date}: Rank {self.rank}"
+    
 class NumberOneSong(models.Model):
     title = models.CharField(max_length=100)
     artist = models.CharField(max_length=100)

@@ -1,17 +1,18 @@
 import Link from "next/link";
-import { getSongBySlug } from "@/lib/api";
+import { getSongBySlug, getSongTimelineBySlug } from "@/lib/api";
 import { SongProvider } from "@/contexts/SongContext";
 import SongDetailContent from "@/components/SongDetail/SongDetailContent";
 
 // Generate metadata for better SEO
 export async function generateMetadata({ params }) {
-  const song = await getSongBySlug(params.slug);
+  const { slug } = await params; // Await params here
+  const song = await getSongBySlug(slug);
 
   return {
     title: `${song.title} by ${song.artist} | PopHits.org`,
     description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
     openGraph: {
-      type: "music.song", // ← Changed from "website"
+      type: "music.song",
       title: `${song.title} by ${song.artist}`,
       description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
       url: `https://pophits.org/songs/${song.slug}`,
@@ -21,8 +22,8 @@ export async function generateMetadata({ params }) {
           url:
             song.image_upload ||
             "https://pophits.org/static/gfx/oldhits_logo.png",
-          width: 1200, // ← Better dimensions
-          height: 630, // ← Better dimensions
+          width: 1200,
+          height: 630,
           alt: song.image_upload
             ? `${song.title} by ${song.artist} cover art`
             : `${song.title} by ${song.artist} - PopHits.org`,
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }) {
       title: `${song.title} by ${song.artist}`,
       description: `${song.title} by ${song.artist} (${song.year}) hit #${song.peak_rank} on the Billboard Hot 100. Listen, view chart stats, read trivia, rate the song, and join the discussion on PopHits.`,
       images: [
-        song.image_upload || "https://pophits.org/static/gfx/oldhits_logo.png", // ← Same path as OpenGraph
+        song.image_upload || "https://pophits.org/static/gfx/oldhits_logo.png",
       ],
     },
     alternates: {
@@ -45,24 +46,16 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// Helper function to extract track ID from Spotify URL
-function getTrackIdFromUrl(url) {
-  if (!url) return null;
-  const parts = url.split("/");
-  return parts[parts.length - 1];
-}
-
 export default async function SongDetailPage({ params }) {
-  const song = await getSongBySlug(params.slug);
+  const { slug } = await params; // Await params here
+  const song = await getSongBySlug(slug);
 
   if (!song) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg">
           <h1 className="text-2xl font-bold mb-2">Song Not Found</h1>
-          <p>
-            Sorry, we couldn&rsquo;t find the song you&rsquo;re looking for.
-          </p>
+          <p>Sorry, we couldn&rsquo;t find the song you&rsquo;re looking for.</p>
           <Link
             href="/"
             className="text-blue-600 hover:underline mt-4 inline-block"
@@ -74,7 +67,10 @@ export default async function SongDetailPage({ params }) {
     );
   }
 
-  // Build JSON-LD schema for a MusicRecording (Song)
+  // Fetch timeline server-side
+  const timelineData = await getSongTimelineBySlug(slug);
+
+  // JSON-LD schema (unchanged)
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "MusicRecording",
@@ -87,8 +83,6 @@ export default async function SongDetailPage({ params }) {
     image:
       song.image_upload || "https://pophits.org/static/gfx/oldhits_logo.png",
     url: `https://pophits.org/songs/${song.slug}`,
-
-    // Only include aggregateRating if song has actual ratings
     ...(song.average_user_score &&
       song.total_ratings > 0 && {
         aggregateRating: {
@@ -99,7 +93,6 @@ export default async function SongDetailPage({ params }) {
           worstRating: "1",
         },
       }),
-
     description:
       song.review ||
       `Listen to ${song.title} by ${song.artist}, peaked at #${song.peak_rank} on the Billboard Hot 100.`,
@@ -116,11 +109,10 @@ export default async function SongDetailPage({ params }) {
     <>
       <script
         type="application/ld+json"
-        // dangerouslySetInnerHTML is needed for JSON-LD injection in React
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <SongProvider initialSong={song}>
-        <SongDetailContent />
+        <SongDetailContent initialTimeline={timelineData.timeline || []} />
       </SongProvider>
     </>
   );

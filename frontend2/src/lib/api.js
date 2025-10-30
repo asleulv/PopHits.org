@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
   randomByArtist: (artistSlug) =>
     `${BASE_URL}/api/songs/random-by-artist/?artist_slug=${artistSlug}`,
   songBySlug: (slug) => `${BASE_URL}/api/songs/${slug}/`,
+  songTimelineBySlug: (slug) => `${BASE_URL}/api/songs/slug/${slug}/timeline/`,
   songs: `${BASE_URL}/api/songs/`,
   submitUserScore: (songId) => `${BASE_URL}/api/songs/${songId}/rate/`,
   submitUserComment: (songId) => `${BASE_URL}/api/songs/${songId}/comment/`,
@@ -156,6 +157,13 @@ export async function getRandomSongByArtist(artistSlug) {
  */
 export async function getSongBySlug(slug) {
   return fetchData(API_ENDPOINTS.songBySlug(slug));
+}
+
+/**
+ * Fetch songTimeline by slug
+ */
+export async function getSongTimelineBySlug(slug) {
+  return fetchData(API_ENDPOINTS.songTimelineBySlug(slug));
 }
 
 /**

@@ -5,9 +5,10 @@ import openai
 from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from songs.models import Song
+from songs.models import Song, SongTimeline
 from fuzzywuzzy import fuzz
 from dotenv import load_dotenv
+
 
 class Command(BaseCommand):
     help = 'Import Billboard Hot 100 data from 2009 onwards'
@@ -70,9 +71,10 @@ class Command(BaseCommand):
         # Dictionary to track unique songs
         unique_songs = {}
         
+        # Dictionary to store timeline data for each song
+        song_timeline_data = {}
+        
         # Load and parse the JSON data
-        # We're loading the entire response content here, which could be memory-intensive
-        # In a future optimization, we could use ijson to stream the parsing
         try:
             # Read the response content in chunks to avoid memory issues
             chunks = []
@@ -152,6 +154,17 @@ class Command(BaseCommand):
                             'peak_position': peak_position,
                             'weeks_on_chart': weeks_on_chart
                         }
+                    
+                    # Store timeline entry for this song
+                    if song_key not in song_timeline_data:
+                        song_timeline_data[song_key] = []
+                    
+                    song_timeline_data[song_key].append({
+                        'chart_date': date,
+                        'rank': this_week if this_week else peak_position,
+                        'peak_rank': peak_position,
+                        'weeks_on_chart': weeks_on_chart
+                    })
                 
                 weeks_processed += 1
                 if weeks_processed % 50 == 0:
@@ -166,7 +179,7 @@ class Command(BaseCommand):
             if dry_run:
                 self.preview_data(unique_songs)
             elif do_import:
-                self.import_data(unique_songs, add_spotify, add_openai, force_update)
+                self.import_data(unique_songs, song_timeline_data, add_spotify, add_openai, force_update)
         
         except json.JSONDecodeError as e:
             self.stdout.write(self.style.ERROR(f"Error parsing JSON: {e}"))
@@ -365,7 +378,7 @@ class Command(BaseCommand):
                 return f"""<strong>Artist Bio:</strong><br>
 <p>Information about {artist} is currently unavailable.</p>"""
     
-    def import_data(self, unique_songs, add_spotify=False, add_openai=False, force_update=False):
+    def import_data(self, unique_songs, song_timeline_data, add_spotify=False, add_openai=False, force_update=False):
         """Import the processed data into the database."""
         self.stdout.write("\n=== IMPORTING DATA ===\n")
         
@@ -385,14 +398,15 @@ class Command(BaseCommand):
                 add_spotify = False
         
         # Import songs one by one to ensure save() method is called for slug generation
-        # This is slower than bulk_create but ensures proper slug generation
         songs_created = 0
         songs_skipped = 0
         songs_updated = 0
         spotify_urls_added = 0
         descriptions_added = 0
+        timeline_entries_created = 0
+        timeline_entries_updated = 0
         
-        for song_data in unique_songs.values():
+        for song_key, song_data in unique_songs.items():
             # Generate the slug manually
             from django.utils.text import slugify
             slug = slugify(f"{song_data['artist']} {song_data['title']}")
@@ -400,6 +414,7 @@ class Command(BaseCommand):
             
             # Check if a song with this slug already exists
             existing_song = Song.objects.filter(slug=slug).first()
+            
             if existing_song:
                 # If the song exists, check if we need to update its peak position or weeks on chart
                 updated = False
@@ -456,6 +471,33 @@ class Command(BaseCommand):
                         songs_updated += 1
                         self.stdout.write(f"Updated existing song: '{song_data['title']}' by {song_data['artist']}")
                 
+                # Update or create timeline entries for existing song
+                if song_key in song_timeline_data:
+                    for timeline_entry in song_timeline_data[song_key]:
+                        timeline_obj, created = SongTimeline.objects.get_or_create(
+                            song=existing_song,
+                            chart_date=timeline_entry['chart_date'],
+                            defaults={
+                                'rank': timeline_entry['rank'],
+                                'peak_rank': timeline_entry['peak_rank'],
+                                'weeks_on_chart': timeline_entry['weeks_on_chart']
+                            }
+                        )
+                        if created:
+                            timeline_entries_created += 1
+                        else:
+                            # Update if rank changed
+                            entry_updated = False
+                            if timeline_obj.rank != timeline_entry['rank']:
+                                timeline_obj.rank = timeline_entry['rank']
+                                entry_updated = True
+                            if timeline_obj.weeks_on_chart != timeline_entry['weeks_on_chart']:
+                                timeline_obj.weeks_on_chart = timeline_entry['weeks_on_chart']
+                                entry_updated = True
+                            if entry_updated:
+                                timeline_obj.save()
+                                timeline_entries_updated += 1
+                
                 songs_skipped += 1
                 if songs_skipped % 100 == 0:
                     self.stdout.write(f"Processed {songs_skipped} existing songs...")
@@ -487,7 +529,7 @@ class Command(BaseCommand):
                 
                 # Create the song
                 with transaction.atomic():
-                    Song.objects.create(
+                    new_song = Song.objects.create(
                         title=song_data['title'],
                         artist=song_data['artist'],
                         year=song_data['year'],
@@ -499,6 +541,18 @@ class Command(BaseCommand):
                         review=description
                     )
                     songs_created += 1
+                    
+                    # Create timeline entries for new song
+                    if song_key in song_timeline_data:
+                        for timeline_entry in song_timeline_data[song_key]:
+                            SongTimeline.objects.create(
+                                song=new_song,
+                                chart_date=timeline_entry['chart_date'],
+                                rank=timeline_entry['rank'],
+                                peak_rank=timeline_entry['peak_rank'],
+                                weeks_on_chart=timeline_entry['weeks_on_chart']
+                            )
+                            timeline_entries_created += 1
                 
                 if songs_created % 100 == 0:
                     self.stdout.write(f"Created {songs_created} new songs...")
@@ -514,6 +568,11 @@ class Command(BaseCommand):
             f"Updated {songs_updated} existing songs. "
             f"Skipped {songs_skipped - songs_updated} unchanged songs. "
             f"New total: {new_count} songs."
+        ))
+        
+        self.stdout.write(self.style.SUCCESS(
+            f"Created {timeline_entries_created} timeline entries. "
+            f"Updated {timeline_entries_updated} existing timeline entries."
         ))
         
         if add_spotify:

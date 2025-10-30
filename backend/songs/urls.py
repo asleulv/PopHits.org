@@ -4,12 +4,14 @@ from .views import (
     UserSongRatingCreateView, UserSongCommentUpdateView, get_user_rating_for_song, 
     UserBookmarkView, UserBookmarkedSongsView, BookmarkStatusView, CommentStatusView,
     RandomSongView, TopRatedSongsView, RandomSongsByDecadeView, NumberOneSongsView,
-    SongsWithImagesView, PlaylistGeneratorView, QuizGeneratorView, CurrentHot100View, featured_artists, random_song_by_artist
+    SongsWithImagesView, PlaylistGeneratorView, QuizGeneratorView, CurrentHot100View, featured_artists, random_song_by_artist, SongTimelineView
 )
 
 urlpatterns = [
     path('', SongListCreateView.as_view(), name='song-list-create'),
     path('<int:pk>/', SongDetailView.as_view(), name='song-detail'),
+    path('<int:pk>/timeline/', SongTimelineView.as_view(), name='song-timeline'),
+    path('slug/<slug:slug>/timeline/', SongTimelineView.as_view(), name='song-timeline-slug'),
     path('bookmarked-songs/', UserBookmarkedSongsView.as_view(), name='get_bookmarked_songs'),
     path('<int:song_id>/bookmark-status/', BookmarkStatusView.as_view()),
     path('<int:song_id>/comment-status/', CommentStatusView.as_view()),

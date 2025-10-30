@@ -5,8 +5,8 @@ from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from random import randint
 
-from ..models import Song, UserSongComment
-from ..serializers import SongSerializer, UserSongCommentSerializer
+from ..models import Song, UserSongComment, SongTimeline
+from ..serializers import SongSerializer, UserSongCommentSerializer, SongTimelineSerializer
 from .pagination import CustomPagination
 
 
@@ -103,6 +103,36 @@ class SongDetailView(generics.RetrieveUpdateDestroyAPIView):
         data = serializer.data
         data['comments'] = comment_serializer.data
         return Response(data)
+    
+class SongTimelineView(APIView):
+    """
+    API view to get the chart timeline for a song by ID or slug.
+    """
+
+    def get(self, request, *args, **kwargs):
+        # Support lookup by ID or slug
+        song_id = kwargs.get('pk')
+        song_slug = kwargs.get('slug')
+
+        if song_id:
+            song = get_object_or_404(Song, pk=song_id)
+        elif song_slug:
+            song = get_object_or_404(Song, slug=song_slug)
+        else:
+            return Response({'detail': 'Song identifier (id or slug) required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        timeline_qs = SongTimeline.objects.filter(song=song).order_by('chart_date')
+        serializer = SongTimelineSerializer(timeline_qs, many=True)
+
+        return Response({
+            'song': {
+            'id': song.id,
+            'title': song.title,
+            'artist': str(song.artist),  # safer string representation
+            'slug': song.slug,
+        },
+            'timeline': serializer.data,
+        })
 
 
 class SongDetailBySlugView(generics.RetrieveUpdateDestroyAPIView):

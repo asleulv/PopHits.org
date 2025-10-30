@@ -1,6 +1,6 @@
 # songs/serializers.py
 from rest_framework import serializers
-from .models import Song, UserSongComment, UserSongRating, CurrentHot100, Artist, ArtistRelationship, ArtistTagRelation
+from .models import Song, UserSongComment, UserSongRating, CurrentHot100, Artist, ArtistRelationship, ArtistTagRelation, SongTimeline
 from django.db.models import Min, Max, Sum, Count
 
 
@@ -186,6 +186,11 @@ class SongSerializer(serializers.ModelSerializer):
             return None
         except Artist.DoesNotExist:
             return None
+        
+class SongTimelineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SongTimeline
+        fields = ['chart_date', 'rank', 'peak_rank', 'weeks_on_chart']
 
 class CurrentHot100Serializer(serializers.ModelSerializer):
     class Meta:

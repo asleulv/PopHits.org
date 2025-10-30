@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useState, useEffect } from "react"; // ← Add useState, useEffect
+import { Suspense, useState, useEffect } from "react";
 import {
   Calendar,
   TrendingUp,
@@ -11,11 +11,12 @@ import {
   SquarePlay,
 } from "lucide-react";
 import SongActions from "@/components/SongDetail/SongActions";
+import SongTimeline from "@/components/SongDetail/SongTimeline";
 import SongComments from "@/components/SongDetail/SongComments";
 import ShareButtons from "./ShareButtons";
 import { useSong } from "@/contexts/SongContext";
 
-export default function SongDetailContent() {
+export default function SongDetailContent({ initialTimeline = [] }) {
   function getTrackIdFromUrl(url) {
     if (!url) return null;
     const parts = url.split("/");
@@ -23,9 +24,10 @@ export default function SongDetailContent() {
   }
 
   const { song } = useSong();
-  const [isClient, setIsClient] = useState(false); // ← Add this
+  const [showTimeline, setShowTimeline] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-  // Only render ArtistInfo on client to avoid hydration errors
+  // Keep this client-only effect for ArtistInfo or other client-only UI parts
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -85,6 +87,30 @@ export default function SongDetailContent() {
           </div>
         </div>
       </div>
+
+      {/* Timeline toggle button above the scrollable chart */}
+      {song?.slug && initialTimeline && initialTimeline.length > 0 && (
+        <section
+          className="mb-8 bg-gray-50 rounded-xl shadow p-6"
+          aria-labelledby="timeline-label"
+        >
+          <h2 id="timeline-label" className="sr-only">
+            Chart Timeline
+          </h2>
+          <button
+            className="px-5 py-2 text-pink-700 font-medium rounded-lg border border-gray-300 shadow hover:bg-pink-50 transition mb-2"
+            onClick={() => setShowTimeline((prev) => !prev)}
+            aria-expanded={showTimeline}
+          >
+            {showTimeline ? "Hide Chart Timeline" : "Show Chart Timeline"}
+          </button>
+          {showTimeline && (
+            <div className="mt-4 max-h-96 overflow-y-auto">
+              <SongTimeline timeline={initialTimeline} />
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Audio Player */}
       <div className="mb-4">
