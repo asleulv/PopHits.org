@@ -15,6 +15,7 @@ import {
   Home,
   CircleAlert,
   ListMusic,
+  Calendar,
   TrendingUp,
   Search,
   BookOpen,
@@ -188,6 +189,19 @@ export default function Navbar() {
                     <TrendingUp size={18} />
                   </span>
                   Current Hot 100
+                </Link>
+              </li>
+
+              <li className="navbar-menu-item">
+                <Link
+                  href="/charts"
+                  className="navbar-menu-link hover:text-gray-300"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="navbar-menu-icon">
+                    <Calendar size={18} />
+                  </span>
+                  Chart Archives
                 </Link>
               </li>
 

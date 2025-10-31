@@ -13,7 +13,7 @@ from .user_interactions import (
 from .songs_library import (
     TopRatedSongsView, RandomSongsByDecadeView, NumberOneSongsView
 )
-from .charts import CurrentHot100View
+from .charts import CurrentHot100View, historic_chart, chart_dates
 from .generators import PlaylistGeneratorView, QuizGeneratorView
 from .stats import ArtistStatsView
 from .pagination import CustomPagination, ArtistPagination
@@ -46,6 +46,8 @@ __all__ = [
     'NumberOneSongsView',
     # Charts
     'CurrentHot100View',
+    'historic_chart',
+    'chart_dates',
     # Generators
     'PlaylistGeneratorView',
     'QuizGeneratorView',

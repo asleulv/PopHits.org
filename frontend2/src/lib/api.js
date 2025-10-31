@@ -37,6 +37,10 @@ export const API_ENDPOINTS = {
   generateQuiz: `${BASE_URL}/api/songs/generate-quiz/`,
   generatePlaylist: `${BASE_URL}/api/songs/generate-playlist/`,
 
+  // Historic charts
+  chartDates: `${BASE_URL}/api/songs/charts/dates/`,
+  chartByDate: (date) => `${BASE_URL}/api/songs/charts/hot-100/${date}/`,
+
   // Artist endpoints
   artistBySlug: (slug) => `${BASE_URL}/api/artists/${slug}/`,
   artists: `${BASE_URL}/api/artists/`,
@@ -356,6 +360,27 @@ export async function toggleBookmarkSong(songId, authToken) {
 export async function getUserProfile(authToken) {
   return fetchData(API_ENDPOINTS.userProfile, {
     headers: { Authorization: `Token ${authToken}` },
+  });
+}
+
+// ============================================================================
+// HISTORIC CHARTS ENDPOINTS
+// ============================================================================
+
+
+/**
+ * Fetch all available chart dates
+ */
+export async function getChartDates() {
+  return fetchData(API_ENDPOINTS.chartDates);
+}
+
+/**
+ * Fetch Billboard Hot 100 chart for a specific date
+ */
+export async function getChartByDate(date) {
+  return fetchData(API_ENDPOINTS.chartByDate(date), {
+    next: { revalidate: 3600 }, // Cache for 1 hour
   });
 }
 
