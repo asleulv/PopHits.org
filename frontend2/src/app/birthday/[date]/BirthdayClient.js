@@ -137,7 +137,7 @@ export default function BirthdayClient({ chart, requestedDate }) {
                     marginTop: "8px",
                   }}
                 >
-                  ❤️ {name}'s Birthday
+                  ❤️ {name}&apos;s Birthday
                 </div>
               )}
             </div>
