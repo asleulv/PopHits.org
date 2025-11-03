@@ -3,12 +3,26 @@
 import puppeteer from 'puppeteer';
 
 export async function generateBirthdayImage(requestedDate, name) {
+  let browser;
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    // Bruk samme pattern som api.js
+    let baseUrl = 'https://pophits.org'; // Production external
     
-    const browser = await puppeteer.launch({
+    if (process.env.NODE_ENV === 'development') {
+      baseUrl = 'http://localhost:3000'; // Lokalt
+    } else {
+      // På produksjon: bruk intern loopback URL
+      baseUrl = 'http://127.0.0.1:3000'; // Puppeteer kjørar på same maskin
+    }
+    
+    console.log('Puppeteer baseUrl:', baseUrl, '| NODE_ENV:', process.env.NODE_ENV);
+
+    browser = await puppeteer.launch({
       headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+      ],
     });
 
     const page = await browser.newPage();
@@ -20,10 +34,10 @@ export async function generateBirthdayImage(requestedDate, name) {
 
     console.log('Navigating to:', url);
 
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 15000 });
     
     // Wait for chart to render
-    await page.waitForSelector('[data-chart="birthday"]', { timeout: 5000 });
+    await page.waitForSelector('[data-chart="birthday"]', { timeout: 8000 });
 
     // Screenshot ONLY the chart element
     const chartElement = await page.$('[data-chart="birthday"]');
@@ -34,8 +48,7 @@ export async function generateBirthdayImage(requestedDate, name) {
     return screenshot;
   } catch (error) {
     console.error('Screenshot error:', error);
+    if (browser) await browser.close();
     throw error;
   }
 }
-
-
