@@ -46,7 +46,8 @@ export default function RootLayout({ children }) {
         <meta name="theme-color" content="#000000" />
         <Canonical />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${sansita.variable} ${openSans.variable} antialiased bg-gray-50`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${sansita.variable} ${openSans.variable} antialiased bg-white`}>
+
         <AuthProviderWrapper>
           {/* Google Analytics wrapped in Suspense boundary */}
           <Suspense fallback={null}>

@@ -1,8 +1,6 @@
-import { Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { notFound } from "next/navigation";
 import {
-  TrendingUp,
   ArrowUp,
   ArrowDown,
   Minus,
@@ -10,7 +8,7 @@ import {
 } from "lucide-react";
 import { getCurrentHot100 } from "@/lib/api";
 
-export const revalidate = 86400;
+export const revalidate = 3600; // Revalidate every hour
 
 export const metadata = {
   title: "Current Billboard Hot 100 Chart - Weekly Updates | PopHits.org",
@@ -46,20 +44,50 @@ export const metadata = {
   },
 };
 
-export default async function CurrentHot100Page() {
-  // Fetch current Hot 100 data
-  const currentHot100Data = await getCurrentHot100();
-  const songs = currentHot100Data.songs || [];
-  const lastUpdated =
-    currentHot100Data.last_updated || new Date().toISOString();
+function MovementBadge({ song }) {
+  if (song.position_change === null || song.position_change === undefined) {
+    return (
+      <span className="text-xs font-black text-green-700 bg-green-100 px-2 py-1 rounded">
+        ★ NEW
+      </span>
+    );
+  }
 
-  // Format the last updated date
-  const lastUpdatedDate = new Date(lastUpdated);
-  const formattedDate = lastUpdatedDate.toLocaleDateString("en-US", {
-    year: "numeric",
+  if (song.position_change > 0) {
+    return (
+      <span className="text-xs font-black text-green-700 bg-green-100 px-2 py-1 rounded">
+        ↑ {song.position_change}
+      </span>
+    );
+  } else if (song.position_change < 0) {
+    return (
+      <span className="text-xs font-black text-red-700 bg-red-100 px-2 py-1 rounded">
+        ↓ {Math.abs(song.position_change)}
+      </span>
+    );
+  }
+
+  return <span className="text-xs font-black text-gray-600 px-2 py-1">—</span>;
+}
+
+function formatChartDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
+    year: "numeric",
   });
+}
+
+export default async function CurrentHot100Page() {
+  const data = await getCurrentHot100();
+
+  if (!data || !data.songs || data.songs.length === 0) {
+    notFound();
+  }
+
+  const formattedDate = formatChartDate(data.chart_date);
 
   // JSON-LD structured data for the chart as a MusicPlaylist
   const chartJsonLd = {
@@ -68,10 +96,10 @@ export default async function CurrentHot100Page() {
     name: "Current Billboard Hot 100 Chart",
     description:
       "The current Billboard Hot 100 chart featuring the top 100 songs in the United States with weekly updates",
-    datePublished: lastUpdated,
-    numTracks: songs.length,
+    datePublished: data.chart_date,
+    numTracks: data.songs.length,
     url: "https://pophits.org/current-hot100",
-    track: songs.slice(0, 10).map((song, index) => ({
+    track: data.songs.slice(0, 10).map((song, index) => ({
       "@type": "MusicRecording",
       name: song.title,
       byArtist: {
@@ -90,326 +118,124 @@ export default async function CurrentHot100Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(chartJsonLd) }}
       />
 
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
-          <div className="flex items-center justify-center gap-2 px-1 py-1">
-            <TrendingUp className="hidden lg:block w-8 h-8 text-pink-500" />
-            <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
-              Current Billboard Hot 100
-            </span>
+      <div className="min-h-screen bg-yellow-50 p-4 md:p-8">
+        {/* Newspaper Header */}
+        <div className="max-w-6xl mx-auto mb-8 border-4 border-black bg-black text-white p-6 text-center">
+          <div className="text-sm tracking-widest mb-2">
+            POPHITS.ORG PRESENTING
           </div>
-        </h1>
-
-        <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-800 text-center">
-          Weekly Billboard Hot 100 Chart Updates with Spotify Links
-        </h2>
-
-        <div className="bg-white p-4 rounded-lg shadow-md mb-8 text-center">
-          <p className="text-gray-600">
-            Last updated: <span className="font-semibold">{formattedDate}</span>
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            The Billboard Hot 100 is updated weekly. This data represents the
-            most recent chart.
-          </p>
+          <h1 className="text-6xl md:text-7xl font-black tracking-tight mb-3">
+            HOT 100
+          </h1>
+          <div className="text-sm">
+            CURRENT CHART — {formattedDate.toUpperCase()}
+          </div>
         </div>
 
-        <Suspense
-          fallback={
-            <div className="text-center py-12">Loading current Hot 100...</div>
-          }
-        >
-          {songs.length > 0 ? (
-            <>
-              {/* Mobile view - Cards */}
-              <div className="md:hidden space-y-4">
-                {songs.map((song) => (
-                  <div
-                    key={song.id}
-                    className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
-                  >
-                    {/* Top section - Rank, Title/Artist, Movement */}
-                    <div className="flex items-center p-4 bg-gray-50">
-                      {/* Left - Rank number */}
-                      <div className="flex-shrink-0 w-10 h-10 bg-pink-500 text-white font-bold rounded-full flex items-center justify-center text-sm mr-4">
-                        {song.current_position}
-                      </div>
-
-                      {/* Center - Song info */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 truncate text-sm">
-                          <Link
-                            href={`/songs/${song.slug}`}
-                            className="hover:text-pink-600 transition-colors"
-                          >
-                            {song.title}
-                          </Link>
-                        </h3>
-                        <p className="text-gray-600 truncate text-sm">
-                          <Link
-                            href={`/artist/${song.artist_slug}`}
-                            className="hover:text-pink-600 transition-colors"
-                          >
-                            {song.artist}
-                          </Link>
-                        </p>
-                      </div>
-
-                      {/* Right - Movement indicator */}
-                      <div className="flex-shrink-0 ml-3">
-                        {song.position_change > 0 && (
-                          <div className="flex items-center text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                            <ArrowUp className="w-3 h-3" />
-                            <span className="text-xs font-medium ml-1">
-                              {song.position_change}
-                            </span>
-                          </div>
-                        )}
-                        {song.position_change < 0 && (
-                          <div className="flex items-center text-red-600 bg-red-50 px-2 py-1 rounded-full">
-                            <ArrowDown className="w-3 h-3" />
-                            <span className="text-xs font-medium ml-1">
-                              {Math.abs(song.position_change)}
-                            </span>
-                          </div>
-                        )}
-                        {song.position_change === 0 && (
-                          <div className="flex items-center text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                            <Minus className="w-3 h-3" />
-                          </div>
-                        )}
-                        {song.position_change === null && (
-                          <div className="flex items-center text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                            <Star className="w-3 h-3" />
-                            <span className="text-xs font-medium ml-1">
-                              NEW
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Chart stats section with background */}
-                    <div className="bg-white px-4 py-3 border-t border-gray-100">
-                      <div className="grid grid-cols-3 gap-4 text-center">
-                        <div>
-                          <div className="text-xs text-gray-500 mb-1">
-                            Weeks
-                          </div>
-                          <div className="text-sm font-semibold text-gray-800">
-                            {song.weeks_on_chart}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-gray-500 mb-1">Peak</div>
-                          <div className="text-sm font-semibold text-gray-800">
-                            #{song.peak_rank}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-gray-500 mb-1">
-                            Last Week
-                          </div>
-                          <div className="text-sm font-semibold text-gray-800">
-                            #{song.last_week_position || "-"}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Spotify section with distinct background */}
-                    {song.spotify_url && (
-                      <div className="bg-green-50 px-4 py-3 border-t border-green-100">
-                        <a
-                          href={song.spotify_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 text-green-700 hover:text-green-800 transition-colors text-sm font-medium"
-                        >
-                          <Image
-                            src="/icons/spotify.png"
-                            alt="Spotify"
-                            width={14}
-                            height={14}
-                          />
-                          <span>Listen on Spotify</span>
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Desktop view - Table */}
-              <div className="hidden md:block bg-white rounded-xl shadow-md overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gradient-to-r from-gray-800 to-gray-900 text-white">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider w-16">
-                          Position
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider w-16">
-                          Change
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                          Title
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                          Artist
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider w-24">
-                          Last Week
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider w-24">
-                          Peak
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider w-24">
-                          Weeks on Chart
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {songs.map((song, index) => (
-                        <tr
-                          key={song.id}
-                          className="hover:bg-gray-50 transition-colors"
-                        >
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className="font-bold text-lg">
-                              {song.current_position || index + 1}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            {song.position_change > 0 ? (
-                              <span className="flex items-center text-green-500">
-                                <ArrowUp className="w-4 h-4 mr-1" />
-                                <span>{song.position_change}</span>
-                              </span>
-                            ) : song.position_change < 0 ? (
-                              <span className="flex items-center text-red-500">
-                                <ArrowDown className="w-4 h-4 mr-1" />
-                                <span>{Math.abs(song.position_change)}</span>
-                              </span>
-                            ) : song.position_change === 0 ? (
-                              <span className="flex items-center text-gray-500">
-                                <Minus className="w-4 h-4 mr-1" />
-                                <span>-</span>
-                              </span>
-                            ) : (
-                              <span className="flex items-center text-blue-500">
-                                <Star className="w-4 h-4 mr-1" />
-                                <span>New</span>
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-4 py-4">
-                            <div className="flex flex-col">
-                              <Link
-                                href={`/songs/${song.slug}`}
-                                className="text-gray-900 font-medium hover:text-pink-600 transition-colors"
-                              >
-                                {song.title}
-                              </Link>
-                              {song.spotify_url && (
-                                <a
-                                  href={song.spotify_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-block text-xs bg-green-800 hover:text-white hover:bg-green-700 text-green-100 px-2 py-0.5 rounded-full transition-colors mt-1 w-fit"
-                                >
-                                  Listen on Spotify
-                                </a>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-4 py-4">
-                            <Link
-                              href={`/artist/${song.artist_slug}`}
-                              className="text-pink-600 hover:text-gray-900 transition-colors"
-                            >
-                              {song.artist}
-                            </Link>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full text-sm font-medium bg-gray-200 text-black">
-                              {song.last_week_position
-                                ? `#${song.last_week_position}`
-                                : "-"}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full text-sm font-medium bg-yellow-200 text-black">
-                              {song.peak_rank ? `#${song.peak_rank}` : "-"}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full text-sm font-medium bg-cyan-200 text-black">
-                              {song.weeks_on_chart
-                                ? `${song.weeks_on_chart}`
-                                : "-"}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+        {/* Chart Grid - Newspaper style 2 columns */}
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {data.songs.map((song, index) => (
+            <div
+              key={song.id || song.slug || index}
+              className="border-b-2 border-black pb-4 flex gap-3"
+            >
+              {/* Position Number - Big & Bold */}
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center font-black text-lg">
+                  {song.current_position || index + 1}
                 </div>
               </div>
-            </>
-          ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-              <TrendingUp className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-700 mb-2">
-                No Hot 100 Data Available
-              </h2>
-              <p className="text-gray-600">
-                The current Billboard Hot 100 data is not available at the
-                moment. Please check back later.
-              </p>
+
+              {/* Song Info */}
+              <div className="flex-grow min-w-0">
+                <h3 className="font-black text-sm md:text-base leading-tight tracking-tight uppercase hover:text-grey-800 hover:underline">
+                  <Link
+                    href={`/songs/${song.slug}`}
+                    className="hover:text-white"
+                  >
+                    {song.title}
+                  </Link>
+                </h3>
+                <p className="text-xs md:text-sm text-gray-700 mt-1">
+                  <Link
+                    href={`/artist/${song.artist_slug}`}
+                    className="font-bold text-gray-700 hover:text-yellow-600 hover:underline"
+                  >
+                    {song.artist}
+                  </Link>
+                </p>
+
+                {/* Movement & Stats Row */}
+                <div className="flex flex-col gap-2 mt-2">
+                  <div>
+                    <MovementBadge song={song} />
+                  </div>
+                  <p className="text-xs text-gray-600">
+                    Peak: #{song.peak_rank || "-"} • {song.weeks_on_chart || 0}{" "}
+                    wks
+                    {song.last_week_position &&
+                      ` • Prev: #${song.last_week_position}`}
+                  </p>
+                  {song.spotify_url && (
+                    <a
+                      href={song.spotify_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-bold text-green-700 hover:text-green-900 hover:underline"
+                    >
+                      ♫ Listen on Spotify
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
-        </Suspense>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="max-w-6xl mx-auto mt-12 text-center border-t-4 border-black pt-4 text-xs text-gray-600">
+          <p>Billboard Hot 100 Current Chart</p>
+        </div>
 
         {/* Internal Linking Section */}
-        <div className="mt-8 bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+        <div className="max-w-6xl mx-auto mt-12 border-4 border-black bg-white p-6 text-center">
+          <h3 className="text-lg font-black uppercase mb-4 tracking-tight">
             Explore More Chart History
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/songs?sort_by=average_user_score&order=desc"
-              className="text-pink-600 hover:text-gray-800 transition-colors font-medium"
+              className="font-bold text-gray-900 hover:text-yellow-600 hover:underline"
             >
-              Top User-Rated Billboard Hits
+              Top User-Rated Hits
             </Link>
             <Link
               href="/year/2024"
-              className="text-pink-600 hover:text-gray-800 transition-colors font-medium"
+              className="font-bold text-gray-900 hover:text-yellow-600 hover:underline"
             >
               2024 Chart Hits by Year
             </Link>
             <Link
               href="/blog"
-              className="text-pink-600 hover:text-gray-800 transition-colors font-medium"
+              className="font-bold text-gray-900 hover:text-yellow-600 hover:underline"
             >
-              Chart Analysis & Music Insights
+              Chart Analysis & Insights
             </Link>
           </div>
         </div>
 
         {/* About Section */}
-        <div className="mt-8 bg-gray-50 p-6 rounded-lg shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+        <div className="max-w-6xl mx-auto mt-8 border-2 border-black bg-white p-6">
+          <h3 className="text-lg font-black uppercase mb-4 tracking-tight">
             About the Billboard Hot 100
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-sm text-gray-700 mb-3">
             The Billboard Hot 100 is the music industry standard record chart in
             the United States for songs, published weekly by Billboard magazine.
             Chart rankings are based on sales (physical and digital), radio
             play, and online streaming in the United States.
           </p>
-          <p className="text-gray-600">
+          <p className="text-sm text-gray-700">
             A new chart is compiled and officially released to the public by
             Billboard on Tuesdays but posted on the web on Mondays. The tracking
             week for sales and streaming begins on Friday and ends on Thursday,

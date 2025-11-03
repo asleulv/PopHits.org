@@ -11,18 +11,18 @@ const AXIS_Y = CHART_HEIGHT + 48;
 const MIN_YEAR_LABEL_SPACING = 60;
 const YEAR_STEP = 1;
 
-// Color bands for ranks, 10 shades
+// Color bands for ranks - warmer, more muted palette
 const bandColors = [
-  "#ff6fce", 
-  "#f371dd", 
-  "#e567bb", 
-  "#d14faa", 
-  "#b63d93", 
-  "#a03682", 
-  "#88336e", 
-  "#6f2862",
-  "#5c2556", 
-  "#4c194a"  // Almost black purple
+  "#d4a574",  // Warm amber
+  "#c89664",  // Warm tan
+  "#ba8454",  // Softer tan
+  "#aa7244",  // Muted bronze
+  "#9a6034",  // Deeper bronze
+  "#8a5428",  // Rich brown
+  "#7a4820",  // Dark brown
+  "#6a3c18",  // Very dark brown
+  "#5a3010",  // Nearly black brown
+  "#4a2408"   // Almost black
 ];
 
 function getRankColor(rank) {
@@ -65,7 +65,7 @@ export default function SongTimeline({ timeline }) {
   const [activeDotIdx, setActiveDotIdx] = useState(null);
 
   if (!timeline || timeline.length === 0)
-    return <p>No chart timeline available for this song.</p>;
+    return <p className="text-slate-700">No chart timeline available for this song.</p>;
 
   const minRank = Math.min(...timeline.map(e => e.rank));
   const maxRank = Math.max(...timeline.map(e => e.rank));
@@ -128,21 +128,71 @@ export default function SongTimeline({ timeline }) {
   const axisSegs = axisSegments(points, gaps);
 
   return (
-    <div className="w-full overflow-x-auto py-6">
+    <div className="w-full overflow-x-auto py-6 bg-white rounded-lg border-2 border-black p-6">
       <svg width={svgWidth} height={svgHeight} style={{ minWidth: "600px" }}>
+        {/* --- Year background separators (vertical stripes) --- */}
+        {yearLabels.map((label, i) => {
+          const nextYear = i < yearLabels.length - 1 ? yearLabels[i + 1].x : svgWidth;
+          const isEvenYear = parseInt(label.year) % 2 === 0;
+          return (
+            <rect
+              key={`year-bg-${i}`}
+              x={label.x}
+              y={0}
+              width={nextYear - label.x}
+              height={svgHeight}
+              fill={isEvenYear ? "#fafafa" : "#ffffff"}
+              opacity="0.6"
+              pointerEvents="none"
+            />
+          );
+        })}
+
+        {/* --- Grid lines for rank reference --- */}
+        {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((rank) => {
+          if (rank >= minRank && rank <= maxRank) {
+            const y = getY(rank, minRank, maxRank, CHART_HEIGHT);
+            return (
+              <g key={`grid-${rank}`}>
+                <line
+                  x1={LEFT_PAD - 10}
+                  x2={svgWidth}
+                  y1={y}
+                  y2={y}
+                  stroke="#e2e8f0"
+                  strokeWidth={1}
+                  strokeDasharray="4,4"
+                  opacity="0.4"
+                />
+                <text
+                  x={LEFT_PAD - 15}
+                  y={y + 5}
+                  textAnchor="end"
+                  fontSize="11"
+                  fill="#64748b"
+                  opacity="0.6"
+                >
+                  #{rank}
+                </text>
+              </g>
+            );
+          }
+          return null;
+        })}
+
         {/* --- Performance bands --- */}
         <rect x="0" y={getY(10, minRank, maxRank, CHART_HEIGHT) - 10} width={svgWidth}
           height={getY(minRank, minRank, maxRank, CHART_HEIGHT) - getY(10, minRank, maxRank, CHART_HEIGHT) + 20}
-          fill="#fffbe5" opacity="0.0" />
+          fill="#10b981" opacity="0.08" />
         <rect x="0" y={getY(40, minRank, maxRank, CHART_HEIGHT) - 10} width={svgWidth}
           height={getY(10, minRank, maxRank, CHART_HEIGHT) - getY(40, minRank, maxRank, CHART_HEIGHT)}
-          fill="#ffe5f2" opacity="0.5" />
+          fill="#f59e0b" opacity="0.08" />
         <rect x="0" y={getY(maxRank, minRank, maxRank, CHART_HEIGHT) - 10} width={svgWidth}
           height={getY(40, minRank, maxRank, CHART_HEIGHT) - getY(maxRank, minRank, maxRank, CHART_HEIGHT) + 20}
-          fill="#efebff" opacity="0.4" />
+          fill="#ef4444" opacity="0.08" />
 
-        {/* --- Chart line --- */}
-        <path d={smoothPath(points)} stroke="#888" strokeWidth={2} fill="none" opacity="0.55" />
+        {/* --- Chart line (thicker & darker) --- */}
+        <path d={smoothPath(points)} stroke="#1e293b" strokeWidth={3} fill="none" opacity="0.9" />
 
         {/* --- Chart dots with mouseover tooltip --- */}
         {points.map((p, idx) => (
@@ -152,8 +202,8 @@ export default function SongTimeline({ timeline }) {
               cy={p.y}
               r={18}
               fill={getRankColor(p.rank)}
-              stroke="#fff"
-              strokeWidth={3}
+              stroke="#000000"
+              strokeWidth={2}
               style={{ cursor: "pointer" }}
               onMouseOver={() => setActiveDotIdx(idx)}
               onMouseOut={() => setActiveDotIdx(null)}
@@ -164,21 +214,29 @@ export default function SongTimeline({ timeline }) {
               textAnchor="middle"
               fontWeight="bold"
               fontSize="16"
-              fill={p.rank <= 10 ? "#fffdfd" : "#ffffff"}
+              fill="#ffffff"
               style={{ pointerEvents: "none", userSelect: "none" }}
             >
               {p.rank}
             </text>
             {activeDotIdx === idx && (
               <>
+                <rect
+                  x={p.x - 60}
+                  y={p.y + 20}
+                  width="120"
+                  height="24"
+                  fill="#000000"
+                  rx="4"
+                  opacity="0.9"
+                />
                 <text
                   x={p.x}
-                  y={p.y + 34}
+                  y={p.y + 36}
                   textAnchor="middle"
                   fontWeight="bold"
-                  fontSize="14"
-                  fill="#e75480"
-                  
+                  fontSize="13"
+                  fill="#fef3c7"
                 >
                   {p.chart_date}
                 </text>
@@ -189,11 +247,11 @@ export default function SongTimeline({ timeline }) {
                 x={p.x}
                 y={p.y - 26}
                 textAnchor="middle"
-                fontSize="13"
+                fontSize="14"
                 fontWeight="bold"
-                fill="#fd76a1"
-                stroke="#fde066"
-                strokeWidth={0.6}
+                fill="#ffffff"
+                stroke="#000000"
+                strokeWidth={1}
               >
                 ★ Peak #{p.rank}
               </text>
@@ -209,8 +267,8 @@ export default function SongTimeline({ timeline }) {
             y1={AXIS_Y}
             x2={x2}
             y2={AXIS_Y}
-            stroke="#000"
-            strokeWidth={1}
+            stroke="#000000"
+            strokeWidth={2}
           />
         ))}
 
@@ -229,14 +287,24 @@ export default function SongTimeline({ timeline }) {
               😴
             </text>
             {activeGapIdx === i && (
+              <rect
+                x={b.x - 55}
+                y={AXIS_Y + 20}
+                width="110"
+                height="24"
+                fill="#000000"
+                rx="4"
+                opacity="0.9"
+              />
+            )}
+            {activeGapIdx === i && (
               <text
                 x={b.x}
-                y={AXIS_Y + 38}
+                y={AXIS_Y + 36}
                 textAnchor="middle"
-                fontSize="15"
-                fill="#e75480"
+                fontSize="13"
+                fill="#fef3c7"
                 fontWeight="bold"
-                opacity="0.88"
                 style={{ userSelect: "none" }}
               >
                 {b.label}
@@ -252,19 +320,19 @@ export default function SongTimeline({ timeline }) {
               x1={label.x}
               x2={label.x}
               y1={AXIS_Y}
-              y2={AXIS_Y - 18}
-              stroke="#000"
-              strokeWidth={1}
+              y2={AXIS_Y - 20}
+              stroke="#000000"
+              strokeWidth={2}
               strokeLinecap="round"
             />
             <text
               x={label.x}
-              y={AXIS_Y + 30}
+              y={AXIS_Y + 32}
               textAnchor="middle"
               fontSize="18"
-              fill="#e75480"
+              fill="#000000"
               fontWeight="bold"
-              opacity="0.7"
+              opacity="1"
               style={{ fontFamily: "inherit, sans-serif" }}
             >
               {label.year}

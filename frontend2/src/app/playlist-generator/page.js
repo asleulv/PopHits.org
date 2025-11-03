@@ -28,8 +28,8 @@ export default function PlaylistGeneratorPage() {
     <div className="p-4 min-h-screen">
       <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
         <div className="flex items-center justify-center gap-2 px-1 py-1">
-          <Music className="w-8 h-8 text-pink-500" />
-          <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
+          <Music className="w-8 h-8 text-black" />
+          <span className="text-black">
             Hit Song Playlist Generator
           </span>
         </div>

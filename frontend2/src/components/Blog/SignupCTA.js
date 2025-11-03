@@ -5,22 +5,21 @@ import Image from "next/image";
 import { Music, TrendingUp, BarChart3 } from "lucide-react";
 
 const SignupCTA = ({ isLoggedIn }) => {
-  // Don't render anything if user is logged in
   if (isLoggedIn) return null;
 
   return (
-    <div className="mb-8 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white p-8 w-full lg:rounded-xl shadow-lg">
+    <div className="mb-8 bg-yellow-50 text-slate-900 p-8 w-full lg:rounded-xl shadow-lg border border-slate-300">
       <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-6">
-        <h3 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-white">
-          <Music className="hidden lg:block w-8 h-8 text-pink-500" />
-          <span className="bg-gradient-to-r from-pink-500 via-pink-300 to-pink-400 bg-clip-text text-transparent">
+        <h3 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3">
+          <Music className="hidden lg:block w-8 h-8 text-amber-600" />
+          <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
             Start Your Hit Song Journey
           </span>
         </h3>
       </div>
 
       <div className="text-center mb-6">
-        <p className="text-gray-300 text-lg">
+        <p className="text-slate-700 text-lg">
           Rate your favorite songs and discover your music taste patterns with
           detailed analytics that go beyond what you just read.
         </p>
@@ -29,7 +28,7 @@ const SignupCTA = ({ isLoggedIn }) => {
       {/* Screenshots Section */}
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         <div className="relative">
-          <div className="relative h-64 md:h-80 rounded-lg overflow-hidden border border-white/20 shadow-lg group cursor-pointer">
+          <div className="relative h-64 md:h-80 rounded-lg overflow-hidden border border-slate-400 shadow-lg group cursor-pointer">
             <Image
               src="/screenshots/screenshot1.png"
               alt="Song rating page showing detailed song information and rating interface"
@@ -55,17 +54,17 @@ const SignupCTA = ({ isLoggedIn }) => {
             </div>
           </div>
           <div className="mt-3 text-center">
-            <h4 className="font-semibold text-white mb-1">
+            <h4 className="font-semibold text-slate-900 mb-1">
               Rate & Review Songs
             </h4>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-slate-700">
               Give your personal ratings to chart hits
             </p>
           </div>
         </div>
 
         <div className="relative">
-          <div className="relative h-64 md:h-80 rounded-lg overflow-hidden border border-white/20 shadow-lg group cursor-pointer">
+          <div className="relative h-64 md:h-80 rounded-lg overflow-hidden border border-slate-400 shadow-lg group cursor-pointer">
             <Image
               src="/screenshots/screenshot2.png"
               alt="Song rating page showing detailed song information and rating interface"
@@ -91,10 +90,10 @@ const SignupCTA = ({ isLoggedIn }) => {
             </div>
           </div>
           <div className="mt-3 text-center">
-            <h4 className="font-semibold text-white mb-1">
+            <h4 className="font-semibold text-slate-900 mb-1">
               Personal Music Stats
             </h4>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-slate-700">
               See your rating patterns by decade
             </p>
           </div>
@@ -104,13 +103,13 @@ const SignupCTA = ({ isLoggedIn }) => {
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link
           href="/register"
-          className="bg-gradient-to-r from-pink-500 to-pink-600 text-white hover:text-white px-8 py-3 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-center font-medium"
+          className="bg-slate-900 text-white hover:bg-slate-700 px-8 py-3 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-center font-medium"
         >
           Join Free Today
         </Link>
         <Link
           href="/about"
-          className="border border-pink-400 text-pink-400 px-8 py-3 rounded-lg hover:bg-pink-400/10 transition-all duration-300 text-center font-medium"
+          className="border border-slate-400 text-slate-900 px-8 py-3 rounded-lg hover:bg-slate-100 transition-all duration-300 text-center font-medium"
         >
           Learn More
         </Link>

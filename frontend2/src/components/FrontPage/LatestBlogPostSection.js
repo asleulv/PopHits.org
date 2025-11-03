@@ -18,13 +18,13 @@ export default function LatestBlogPostSection({ latestBlogPost }) {
   });
 
   return (
-    <section className="mb-8 text-black p-6 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-sm">
+    <section className="mb-8 text-slate-900 p-6 w-full bg-yellow-50 rounded-xl shadow-sm">
       <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-        <FileText className="hidden lg:block w-8 h-8 text-pink-500" />
-        <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">Latest Music Posts and Billboard Updates</span>
+        <FileText className="hidden lg:block w-8 h-8 text-amber-600" />
+        <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">Latest Music Posts and Billboard Updates</span>
       </h2>
       
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg">
+      <div className="max-w-4xl mx-auto bg-white border border-slate-400 rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg">
         <Link href={`/blog/${latestBlogPost.slug}`} className="block">
           <div className="md:flex">
             {latestBlogPost.featured_image && (
@@ -39,13 +39,13 @@ export default function LatestBlogPostSection({ latestBlogPost }) {
               </div>
             )}
             <div className="p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2 font-sansita">{latestBlogPost.title}</h3>
-              <p className="text-gray-600 mb-4 font-opensans">{latestBlogPost.meta_description}</p>
-              <div className="flex text-sm text-gray-500">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2 font-cherry">{latestBlogPost.title}</h3>
+              <p className="text-slate-700 mb-4 font-cherry">{latestBlogPost.meta_description}</p>
+              <div className="flex text-sm text-slate-600">
                 <span>{formattedDate}</span>
               </div>
               <div className="mt-4">
-                <span className="inline-block bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-semibold">
+                <span className="inline-block bg-amber-100 text-amber-900 px-3 py-1 rounded-full text-sm font-semibold hover:bg-amber-200 transition-colors">
                   Read More →
                 </span>
               </div>
@@ -57,7 +57,7 @@ export default function LatestBlogPostSection({ latestBlogPost }) {
       <div className="text-center mt-6">
         <Link 
           href="/blog" 
-          className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-full shadow-md hover:from-pink-600 hover:to-pink-700 transition-all hover:text-white duration-300 transform"
+          className="inline-block px-6 py-2 bg-slate-900 text-gray-200 hover:text-white font-cherry font-semibold rounded-full shadow-md hover:bg-slate-700 transition-all duration-300"
         >
           View All Blog Posts
         </Link>

@@ -39,7 +39,7 @@ const linkifyText = (text) => {
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-800 underline break-all"
+          className="text-amber-700 hover:text-amber-900 underline break-all"
         >
           {url}
         </a>
@@ -47,7 +47,7 @@ const linkifyText = (text) => {
     } else if (part.startsWith("<HASHTAG>") && part.endsWith("</HASHTAG>")) {
       const hashtag = part.slice(9, -10);
       return (
-        <span key={index} className="text-pink-600 font-medium">
+        <span key={index} className="text-amber-600 font-medium">
           {hashtag}
         </span>
       );
@@ -65,11 +65,11 @@ export default function BlueskyDiscoverySection({ posts }) {
   const postsToShow = posts.slice(0, 3);
 
   return (
-    <section className="mb-8 bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm">
+    <section className="mb-8 bg-yellow-50 p-6 rounded-xl shadow-sm">
       <div className="flex items-center gap-3 mb-6">
         <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-          <MessageCircleHeart className="hidden lg:block w-8 h-8 text-blue-600" />
-          <span className="bg-gradient-to-r from-blue-700 to-blue-600 bg-clip-text text-transparent">
+          <MessageCircleHeart className="hidden lg:block w-8 h-8 text-slate-700" />
+          <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
             From our Bluesky Feed
           </span>
         </h2>
@@ -80,35 +80,7 @@ export default function BlueskyDiscoverySection({ posts }) {
         {postsToShow.slice(0, 1).map((post, index) => (
           <div
             key={post.uri || index}
-            className="bg-white p-4 rounded-xl shadow-sm relative"
-          >
-            {post.image && (
-              <div className="mb-3">
-                <Image
-                  src={post.image}
-                  alt="Album cover"
-                  width={400}
-                  height={400}
-                  className="w-full rounded-lg shadow-md object-cover" // Remove h-32
-                />
-              </div>
-            )}
-            <p className="text-sm text-gray-700 mb-6 leading-relaxed">
-              {linkifyText(post.text)}
-            </p>
-            <div className="absolute bottom-3 right-3 text-xs text-gray-400">
-              Posted {formatDate(post.createdAt)}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Tablet and Desktop: Show 2-3 posts */}
-      <div className="hidden md:grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {postsToShow.map((post, index) => (
-          <div
-            key={post.uri || index}
-            className="bg-white p-4 rounded-xl shadow-sm relative"
+            className="bg-white border border-slate-400 p-4 rounded-xl shadow-sm relative"
           >
             {post.image && (
               <div className="mb-3">
@@ -121,10 +93,38 @@ export default function BlueskyDiscoverySection({ posts }) {
                 />
               </div>
             )}
-            <p className="text-sm text-gray-700 mb-6 leading-relaxed">
+            <p className="text-sm text-slate-700 mb-6 leading-relaxed">
               {linkifyText(post.text)}
             </p>
-            <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+            <div className="absolute bottom-3 right-3 text-xs text-slate-500">
+              Posted {formatDate(post.createdAt)}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tablet and Desktop: Show 2-3 posts */}
+      <div className="hidden md:grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {postsToShow.map((post, index) => (
+          <div
+            key={post.uri || index}
+            className="bg-white border border-slate-400 p-4 rounded-xl shadow-sm relative"
+          >
+            {post.image && (
+              <div className="mb-3">
+                <Image
+                  src={post.image}
+                  alt="Album cover"
+                  width={400}
+                  height={400}
+                  className="w-full rounded-lg shadow-md object-cover"
+                />
+              </div>
+            )}
+            <p className="text-sm text-slate-700 mb-6 leading-relaxed">
+              {linkifyText(post.text)}
+            </p>
+            <div className="absolute bottom-3 right-3 text-xs text-slate-500">
               Posted {formatDate(post.createdAt)}
             </div>
           </div>
@@ -137,7 +137,7 @@ export default function BlueskyDiscoverySection({ posts }) {
             href="https://bsky.app/profile/pophits.bsky.social"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-800 font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2 text-amber-700 hover:text-amber-900 font-medium font-cherry transition-colors"
           >
             View more on Bluesky <ExternalLink className="w-4 h-4" />
           </a>

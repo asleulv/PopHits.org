@@ -27,7 +27,6 @@ export default function SongDetailContent({ initialTimeline = [] }) {
   const [showTimeline, setShowTimeline] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
-  // Keep this client-only effect for ArtistInfo or other client-only UI parts
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -35,14 +34,14 @@ export default function SongDetailContent({ initialTimeline = [] }) {
   return (
     <div className="container mx-auto px-4 py-8 animate-fadeIn">
       {/* Enhanced Song Title Section */}
-      <div className="flex flex-col items-center justify-center mb-6 bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl shadow-sm">
-        <h1 className="text-3xl md:text-5xl px-1 py-1 font-cherry font-bold mb-2 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+      <div className="flex flex-col items-center justify-center mb-6 bg-yellow-50 p-4 rounded-xl shadow-sm border border-slate-300">
+        <h1 className="text-3xl md:text-5xl px-1 py-1 font-cherry font-bold mb-2 text-center bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
           {song.title}
-          <span className="block text-xl md:text-2xl font-medium text-gray-500">
+          <span className="block text-xl md:text-2xl font-medium text-slate-600">
             by{" "}
             <Link
               href={`/artist/${song.artist_slug}`}
-              className="text-black hover:text-pink-600 transition-colors"
+              className="text-slate-900 hover:text-amber-700 transition-colors"
             >
               {song.artist}
             </Link>
@@ -54,34 +53,34 @@ export default function SongDetailContent({ initialTimeline = [] }) {
 
       {/* Song Information Box with Lucide icons */}
       <h2 className="sr-only">Song Information</h2>
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-3 rounded-xl shadow-lg mb-6">
+      <div className="bg-slate-900 text-white p-3 rounded-xl shadow-lg mb-6 border border-slate-700">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-gray-700 p-4 rounded-lg text-center">
-            <Calendar className="w-6 h-6 text-white mx-auto mb-1" />
-            <div className="text-white text-sm">Year</div>
-            <div className="font-bold text-pink-400 text-2xl">{song.year}</div>
+          <div className="bg-slate-800 p-4 rounded-lg text-center">
+            <Calendar className="w-6 h-6 text-amber-400 mx-auto mb-1" />
+            <div className="text-slate-200 text-sm">Year</div>
+            <div className="font-bold text-amber-400 text-2xl">{song.year}</div>
           </div>
 
-          <div className="bg-gray-700 p-4 rounded-lg text-center">
-            <TrendingUp className="w-6 h-6 text-white mx-auto mb-1" />
-            <div className="text-white text-sm">Peak Position</div>
-            <div className="font-bold text-pink-400 text-2xl">
+          <div className="bg-slate-800 p-4 rounded-lg text-center">
+            <TrendingUp className="w-6 h-6 text-amber-400 mx-auto mb-1" />
+            <div className="text-slate-200 text-sm">Peak Position</div>
+            <div className="font-bold text-amber-400 text-2xl">
               #{song.peak_rank}
             </div>
           </div>
 
-          <div className="bg-gray-700 p-4 rounded-lg text-center">
-            <Clock className="w-6 h-6 text-white mx-auto mb-1" />
-            <div className="text-white text-sm">Weeks on Chart</div>
-            <div className="font-bold text-pink-400 text-2xl">
+          <div className="bg-slate-800 p-4 rounded-lg text-center">
+            <Clock className="w-6 h-6 text-amber-400 mx-auto mb-1" />
+            <div className="text-slate-200 text-sm">Weeks on Chart</div>
+            <div className="font-bold text-amber-400 text-2xl">
               {song.weeks_on_chart}
             </div>
           </div>
 
-          <div className="bg-gray-700 p-4 rounded-lg text-center">
-            <Star className="w-6 h-6 text-white mx-auto mb-1" />
-            <div className="text-white text-sm">Total Ratings</div>
-            <div className="font-bold text-pink-400 text-2xl">
+          <div className="bg-slate-800 p-4 rounded-lg text-center">
+            <Star className="w-6 h-6 text-amber-400 mx-auto mb-1" />
+            <div className="text-slate-200 text-sm">Total Ratings</div>
+            <div className="font-bold text-amber-400 text-2xl">
               {song.total_ratings}
             </div>
           </div>
@@ -91,14 +90,14 @@ export default function SongDetailContent({ initialTimeline = [] }) {
       {/* Timeline toggle button above the scrollable chart */}
       {song?.slug && initialTimeline && initialTimeline.length > 0 && (
         <section
-          className="mb-8 bg-gray-50 rounded-xl shadow p-6"
+          className="mb-8 bg-yellow-50 rounded-xl shadow p-6 border border-slate-300"
           aria-labelledby="timeline-label"
         >
           <h2 id="timeline-label" className="sr-only">
             Chart Timeline
           </h2>
           <button
-            className="px-5 py-2 text-pink-700 font-medium rounded-lg border border-gray-300 shadow hover:bg-pink-50 transition mb-2"
+            className="px-5 py-2 text-slate-900 font-medium rounded-lg border border-slate-400 bg-white shadow hover:bg-slate-50 transition mb-2"
             onClick={() => setShowTimeline((prev) => !prev)}
             aria-expanded={showTimeline}
           >
@@ -131,7 +130,7 @@ export default function SongDetailContent({ initialTimeline = [] }) {
             ></iframe>
           </div>
         ) : (
-          <div className="bg-gradient-to-br from-gray-700 to-gray-800 text-white p-6 rounded-xl shadow-lg">
+          <div className="bg-slate-900 text-white p-6 rounded-xl shadow-lg border border-slate-700">
             <p className="text-center text-lg font-semibold mb-4">
               No audio link available
             </p>
@@ -142,7 +141,7 @@ export default function SongDetailContent({ initialTimeline = [] }) {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2"
+                className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2"
               >
                 <Music className="w-4 h-4" /> Search Spotify
               </a>
@@ -152,7 +151,7 @@ export default function SongDetailContent({ initialTimeline = [] }) {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2"
+                className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2"
               >
                 <SquarePlay className="w-4 h-4" /> Search YouTube
               </a>
@@ -172,9 +171,9 @@ export default function SongDetailContent({ initialTimeline = [] }) {
       {/* Review Section */}
       <div className="mb-8">
         <h2 className="sr-only">Artist Bio</h2>
-        <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <div className="bg-white p-6 rounded-xl border border-slate-400">
           <div
-            className="prose max-w-none"
+            className="prose max-w-none text-slate-800"
             dangerouslySetInnerHTML={{ __html: song.review }}
           />
         </div>

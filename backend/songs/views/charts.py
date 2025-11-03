@@ -56,11 +56,18 @@ def historic_chart(request, date_str):
         return JsonResponse({'error': 'No chart found'}, status=404)
     
     # Get previous week's chart for comparison
-    previous_week_date = chart_date_obj - timedelta(days=7)
-    previous_entries = {
-        entry.song_id: entry.rank 
-        for entry in SongTimeline.objects.filter(chart_date=previous_week_date)
-    }
+    # Get the previous chart that actually exists (not exactly 7 days ago)
+    previous_week_date = SongTimeline.objects.filter(
+        chart_date__lt=chart_date_obj
+    ).values_list('chart_date', flat=True).order_by('-chart_date').first()
+
+    previous_entries = {}
+    if previous_week_date:
+        previous_entries = {
+            entry.song_id: entry.rank 
+            for entry in SongTimeline.objects.filter(chart_date=previous_week_date)
+        }
+
     
     # Serialize the data with movement info
     entries_data = []

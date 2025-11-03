@@ -18,30 +18,30 @@ export default function NumberOneHitsSection({ numberOneHits }) {
 
   if (!numberOneHits || numberOneHits.length === 0) {
     return (
-      <section className="mb-12 p-8 w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 lg:rounded-xl shadow-xl text-white">
+      <section className="mb-12 p-8 w-full bg-yellow-50 lg:rounded-xl shadow-xl text-slate-900">
         <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-8">
           <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-center">
-            <Trophy className="hidden lg:block w-8 h-8 text-yellow-400" />
-            <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">The Number Ones: Billboard Hot 100 Chart Toppers</span>
+            <Trophy className="hidden lg:block w-8 h-8 text-amber-500" />
+            <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">The Number Ones: Billboard Hot 100 Chart Toppers</span>
           </h2>
         </div>
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400"></div>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="mb-12 p-8 w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 lg:rounded-xl shadow-xl text-white">
+    <section className="mb-12 p-8 w-full bg-yellow-50 lg:rounded-xl shadow-xl text-slate-900">
       <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-8">
         <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-center">
-          <Trophy className="hidden lg:block w-8 h-8 text-yellow-400" />
-          <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">The Number Ones: Billboard Hot 100 Chart Toppers</span>
+          <Trophy className="hidden lg:block w-8 h-8 text-amber-500" />
+          <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">The Number Ones: Billboard Hot 100 Chart Toppers</span>
         </h2>
         <Link
           href="/songs?filter=number-one"
-          className="ml-3 px-4 py-2 rounded-full bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-semibold text-sm shadow-md transform transition-all duration-300 hover:text-white"
+          className="ml-3 px-4 py-2 rounded-full font-cherry bg-slate-900 hover:bg-slate-700 text-gray-200 hover:text-white font-semibold text-sm shadow-md transform transition-all duration-300"
         >
           View Full List
         </Link>
@@ -52,43 +52,43 @@ export default function NumberOneHitsSection({ numberOneHits }) {
           randomHits.map((song) => (
             <div
               key={song.id}
-              className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg p-5 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col justify-between hover:from-gray-700 hover:to-gray-750"
+              className="bg-white border border-slate-400 rounded-lg p-5 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col justify-between hover:border-slate-500"
             >
               <div className="text-center">
-                <h3 className="text-lg md:text-xl font-semibold mb-2">
+                <h3 className="text-lg md:text-xl font-cherry font-semibold mb-2">
                   <Link
                     href={`/songs/${song.slug}`}
-                    className="text-gray-100 hover:text-pink-400 transition-colors"
+                    className="text-slate-900 font-cherry hover:text-amber-600 transition-colors"
                   >
                     {song.title}
                   </Link>
                 </h3>
                 
                 <p className="text-md mb-3">
-                  <span className="text-gray-300">by</span>{" "}
+                  <span className="text-slate-600">by</span>{" "}
                   <Link
                     href={`/artist/${song.artist_slug}`}
-                    className="text-pink-400 hover:text-pink-200 transition-colors font-medium"
+                    className="text-amber-700 font-cherry hover:text-amber-600 transition-colors font-medium"
                   >
                     {song.artist}
                   </Link>
                 </p>
                 
-                <div className="flex items-center justify-center gap-2 text-sm text-gray-300 mb-2">
-                  <Calendar className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                <div className="flex items-center justify-center gap-2 text-sm text-slate-600 mb-2">
+                  <Calendar className="w-4 h-4 text-slate-700 flex-shrink-0" />
                   <Link
                     href={`/year/${song.year}`}
-                    className="text-cyan-300 hover:text-cyan-200 transition-colors"
+                    className="text-slate-700 hover:text-slate-900 transition-colors font-medium"
                   >
                     {song.year}
                   </Link>
                 </div>
               </div>
               
-              <div className="mt-4 pt-3 border-t border-gray-600 flex items-center justify-center gap-2">
-                <Clock className="w-4 h-4 text-white" />
-                <p className="text-sm font-medium text-gray-200">
-                  <span className="text-gray-100 font-bold">{song.weeks_on_chart}</span> weeks on chart
+              <div className="mt-4 pt-3 border-t border-slate-300 flex items-center justify-center gap-2">
+                <Clock className="w-4 h-4 text-slate-700" />
+                <p className="text-sm font-medium text-slate-700">
+                  <span className="text-slate-900 font-bold">{song.weeks_on_chart}</span> weeks on chart
                 </p>
               </div>
               
@@ -98,7 +98,7 @@ export default function NumberOneHitsSection({ numberOneHits }) {
                     href={song.spotify_url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-block text-xs bg-green-800 hover:text-white hover:bg-green-700 text-green-100 px-3 py-1 rounded-full transition-colors"
+                    className="inline-block text-xs bg-amber-400 hover:bg-amber-500 text-slate-900 font-semibold px-3 py-1 rounded-full transition-colors"
                   >
                     Listen on Spotify
                   </a>
@@ -107,7 +107,7 @@ export default function NumberOneHitsSection({ numberOneHits }) {
             </div>
           ))
         ) : (
-          <p className="text-center text-pink-300 col-span-4 p-6 bg-gray-800 rounded-lg">
+          <p className="text-center text-slate-700 col-span-4 p-6 bg-white border border-slate-400 rounded-lg">
             No number one hits available.
           </p>
         )}

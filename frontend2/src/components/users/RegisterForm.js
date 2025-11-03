@@ -115,7 +115,7 @@ export default function RegisterForm() {
             name="username"
             value={formData.username}
             onChange={handleInputChange}
-            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             required
           />
         </div>
@@ -127,7 +127,7 @@ export default function RegisterForm() {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             required
           />
         </div>
@@ -139,7 +139,7 @@ export default function RegisterForm() {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             required
           />
         </div>
@@ -151,7 +151,7 @@ export default function RegisterForm() {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleInputChange}
-            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             required
           />
         </div>
@@ -165,7 +165,7 @@ export default function RegisterForm() {
             name="verification"
             value={formData.verification}
             onChange={handleInputChange}
-            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             required
           />
         </div>
@@ -173,14 +173,14 @@ export default function RegisterForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Registering...' : 'Register'}
         </button>
       </form>
       
       <p className="mt-4 text-gray-700">
-        Already have an account? <Link href="/login" className="text-pink-500 hover:text-pink-700 transition-colors duration-300">Login here</Link>
+        Already have an account? <Link href="/login" className="text-amber-500 hover:text-amber-700 transition-colors duration-300">Login here</Link>
       </p>
     </div>
   );

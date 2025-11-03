@@ -59,28 +59,28 @@ export default function SongListPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-black via-slate-700 to-slate-900 bg-clip-text text-transparent">
         <div className="flex items-center justify-center gap-2 px-1 py-1">
           {unrated ? (
-            <Star className="w-8 h-8 text-pink-500" />
+            <Star className="w-8 h-8 text-black" />
           ) : filter === 'number-one' ? (
-            <Award className="w-8 h-8 text-pink-500" />
+            <Award className="w-8 h-8 text-black" />
           ) : query ? (
-            <Search className="w-8 h-8 text-pink-500" />
+            <Search className="w-8 h-8 text-black" />
           ) : decade ? (
-            <Calendar className="w-8 h-8 text-pink-500" />
+            <Calendar className="w-8 h-8 text-black" />
           ) : artistName ? (
-            <Music className="w-8 h-8 text-pink-500" />
+            <Music className="w-8 h-8 text-black" />
           ) : (
-            <Filter className="w-8 h-8 text-pink-500" />
+            <Filter className="w-8 h-8 text-black" />
           )}
-          <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
             {pageTitle}
           </span>
         </div>
       </h1>
 
-      <Suspense fallback={<div className="text-center py-12">Loading songs...</div>}>
+      <Suspense fallback={<div className="text-center py-12 text-slate-700">Loading songs...</div>}>
         <SongListClient 
           initialSongs={initialSongs}
           totalSongs={totalSongs}

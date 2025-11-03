@@ -27,7 +27,7 @@ const decadeColors = {
   1980: "border-4 border-purple-200 text-purple-600 px-2 py-1 rounded",
   1990: "border-4 border-red-200 text-red-600 px-2 py-1 rounded",
   2000: "border-4 border-indigo-200 text-indigo-600 px-2 py-1 rounded",
-  2010: "border-4 border-pink-200 text-pink-600 px-2 py-1 rounded",
+  2010: "border-4 border-amber-200 text-amber-600 px-2 py-1 rounded",
   2020: "border-4 border-cyan-200 text-cyan-600 px-2 py-1 rounded",
 };
 
@@ -63,12 +63,12 @@ const RatedSongsList = ({ title, songs }) => {
           <li key={item.song.id} className="mb-1">
             <Link
               href={`/songs/${item.song.id}`}
-              className="text-blue-600 hover:text-pink-600 font-medium"
+              className="text-blue-600 hover:text-amber-600 font-medium"
             >
               {item.song.title}
             </Link>{" "}
             by {item.song.artist} ({item.song.year}) —{" "}
-            <span className="text-pink-600 font-bold">{item.score}</span>
+            <span className="text-amber-600 font-bold">{item.score}</span>
           </li>
         ))}
       </ul>
@@ -123,7 +123,7 @@ const PaginationControls = ({
               className={`px-3 py-2 ml-0 leading-tight rounded-l-md border ${
                 currentPage === 1
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-100 hover:text-pink-600"
+                  : "bg-white text-gray-700 hover:bg-gray-100 hover:text-amber-600"
               } border-gray-300`}
               aria-label="Previous page"
             >
@@ -141,8 +141,8 @@ const PaginationControls = ({
                   onClick={() => onPageChange(pageNumber)}
                   className={`px-3 py-2 leading-tight border ${
                     currentPage === pageNumber
-                      ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium"
-                      : "bg-white text-gray-700 hover:bg-gray-100 hover:text-pink-600"
+                      ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium"
+                      : "bg-white text-gray-700 hover:bg-gray-100 hover:text-amber-600"
                   } border-gray-300`}
                   aria-label={`Go to page ${pageNumber}`}
                   aria-current={currentPage === pageNumber ? "page" : undefined}
@@ -161,7 +161,7 @@ const PaginationControls = ({
               className={`px-3 py-2 leading-tight rounded-r-md border ${
                 currentPage === totalPages
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-100 hover:text-pink-600"
+                  : "bg-white text-gray-700 hover:bg-gray-100 hover:text-amber-600"
               } border-gray-300`}
               aria-label="Next page"
             >
@@ -432,10 +432,10 @@ export default function ProfileClient() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-amber-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
         <div className="flex items-center justify-center gap-2 px-1 py-1">
-          <CircleUserRound className="w-8 h-8 text-pink-500" />
-          <span className="bg-gradient-to-r from-pink-500 to-purple-700 bg-clip-text text-transparent">
+          <CircleUserRound className="w-8 h-8 text-black" />
+          <span className="bg-gradient-to-r from-gray-700 to-black bg-clip-text text-transparent">
             User Profile
           </span>
         </div>
@@ -444,7 +444,7 @@ export default function ProfileClient() {
       {userProfile ? (
         <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm mb-8">
           <div className="flex items-center justify-center mb-4">
-            <User className="w-8 h-8 text-pink-500 mr-2" />
+            <User className="w-8 h-8 text-amber-500 mr-2" />
             <h3 className="text-xl font-semibold text-gray-700">
               Account Information
             </h3>
@@ -459,7 +459,7 @@ export default function ProfileClient() {
             </p>
             <Link
               href="/profile/update"
-              className="mt-2 text-pink-600 hover:text-pink-700 transition-colors font-medium"
+              className="mt-2 text-amber-600 hover:text-amber-700 transition-colors font-medium"
             >
               Update Account Info
             </Link>
@@ -475,7 +475,7 @@ export default function ProfileClient() {
       {userProfile && userStats && (
         <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm mb-8">
           <div className="flex items-center justify-center mb-4">
-            <Award className="w-8 h-8 text-pink-500 mr-2" />
+            <Award className="w-8 h-8 text-amber-500 mr-2" />
             <h3 className="text-xl font-semibold text-gray-700">
               Rating Progress
             </h3>
@@ -483,7 +483,7 @@ export default function ProfileClient() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-4">
             <div className="flex flex-col items-center mb-4 md:mb-0">
               <p className="text-gray-500 text-sm">Songs Rated</p>
-              <p className="text-3xl font-bold text-pink-600 ml-1">
+              <p className="text-3xl font-bold text-amber-600 ml-1">
                 {userStats.songs_rated}
               </p>
             </div>
@@ -503,7 +503,7 @@ export default function ProfileClient() {
           {/* Progress Bar */}
           <div className="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-pink-500 to-blue-500 h-4 transition-all duration-500"
+              className="bg-gradient-to-r from-amber-500 to-blue-500 h-4 transition-all duration-500"
               style={{
                 width: `${Math.min(100, userStats.percent_rated)}%`,
                 minWidth: userStats.songs_rated > 0 ? "4px" : "0",
@@ -579,7 +579,7 @@ export default function ProfileClient() {
           <button
             className={`px-4 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ${
               tab === "rating"
-                ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium"
+                ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium"
                 : "text-gray-700 hover:bg-gray-100"
             }`}
             onClick={() => setTab("rating")}
@@ -590,7 +590,7 @@ export default function ProfileClient() {
           <button
             className={`px-4 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ${
               tab === "bookmarks"
-                ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-medium"
+                ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium"
                 : "text-gray-700 hover:bg-gray-100"
             }`}
             onClick={() => setTab("bookmarks")}
@@ -607,7 +607,7 @@ export default function ProfileClient() {
             <div className="text-center mb-4">
               <p className="text-lg font-medium text-gray-700">
                 Display songs with minimum rating of:{" "}
-                <span className="font-bold text-pink-600">{filterScore}</span>
+                <span className="font-bold text-amber-600">{filterScore}</span>
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-2 mb-2">
@@ -617,7 +617,7 @@ export default function ProfileClient() {
                   onClick={() => setFilterScore(index + 1)}
                   className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full shadow-md transition-all duration-300 ${
                     filterScore === index + 1
-                      ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold"
+                      ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold"
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                   aria-label={`Filter by minimum rating of ${index + 1}`}
@@ -653,19 +653,19 @@ export default function ProfileClient() {
                         key={`rating-${rating.song_slug}-${index}`}
                         className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="px-4 py-3 text-sm text-pink-600 break-words">
+                        <td className="px-4 py-3 text-sm text-amber-600 break-words">
                           {rating.song_artist}
                         </td>
                         <td className="px-4 py-3 text-sm break-words">
                           <Link
                             href={`/songs/${rating.song_slug}`}
-                            className="text-black hover:text-pink-600 transition-colors"
+                            className="text-black hover:text-amber-600 transition-colors"
                           >
                             {rating.song_title}
                           </Link>
                         </td>
                         <td className="px-4 py-3 text-right text-sm">
-                          <span className="bg-pink-100 text-pink-800 font-medium px-2.5 py-0.5 rounded-full">
+                          <span className="bg-amber-100 text-amber-800 font-medium px-2.5 py-0.5 rounded-full">
                             {rating.score}
                           </span>
                         </td>
@@ -723,7 +723,7 @@ export default function ProfileClient() {
                         <td className="px-4 py-3 text-sm break-words">
                           <Link
                             href={`/songs/${song.slug}`}
-                            className="text-blue-600 hover:text-pink-600 transition-colors"
+                            className="text-blue-600 hover:text-amber-600 transition-colors"
                           >
                             {song.title}
                           </Link>
@@ -769,7 +769,7 @@ export default function ProfileClient() {
 
       <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-sm mt-8 mb-6">
         <div className="flex items-center justify-center mb-4">
-          <Clipboard className="w-6 h-6 text-pink-500 mr-2" />
+          <Clipboard className="w-6 h-6 text-amber-500 mr-2" />
           <h3 className="text-xl font-semibold text-gray-700">
             Spotify Playlist Creation
           </h3>
@@ -804,7 +804,7 @@ export default function ProfileClient() {
               ? setSongsPerPageRating(value)
               : setSongsPerPageBookmarks(value);
           }}
-          className="bg-gray-50 border border-gray-300 text-gray-700 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
+          className="bg-gray-50 border border-gray-300 text-gray-700 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           {availableSongsPerPage.map((option) => (
             <option key={option} value={option}>

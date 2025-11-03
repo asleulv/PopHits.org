@@ -93,7 +93,7 @@ export default async function BlogPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl md:text-4xl text-center font-bold mb-2 pb-2 bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent font-sansita">
+        <h1 className="text-3xl md:text-4xl text-center font-bold mb-2 pb-2 bg-gradient-to-r from-black to-black bg-clip-text text-transparent font-sansita">
           The Hit Music Blog
         </h1>
 
@@ -142,7 +142,7 @@ export default async function BlogPage() {
                           </span>
                         </div>
                         <div className="mt-4">
-                          <span className="inline-block bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-semibold">
+                          <span className="inline-block bg-amber-400 text-amber-800 px-3 py-1 rounded-full text-sm font-semibold">
                             Read More →
                           </span>
                         </div>

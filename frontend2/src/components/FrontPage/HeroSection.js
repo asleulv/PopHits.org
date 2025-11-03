@@ -12,60 +12,60 @@ import {
 
 export default function HeroSection({ songWithImage }) {
   return (
-    <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-8 rounded-2xl shadow-lg animate-fadeIn">
+    <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-yellow-50 p-8 rounded-2xl shadow-lg animate-fadeIn">
       <div className="flex-1 mb-8 md:mb-0">
         <div className="mb-4 text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-pink-100 text-pink-800 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-black text-yellow-400 rounded-full text-sm font-medium">
             <Heart className="w-4 h-4" />
-            By a hit music nerd, for hit music nerds
+            For the love of hit music
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-cherry font-bold mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent leading-normal pb-2 text-center">
+        <h1 className="text-4xl md:text-5xl font-cherry font-bold mb-6 bg-gradient-to-r from-slate-600 via-slate-700 to-slate-900 bg-clip-text text-transparent leading-normal pb-2 text-center">
           Every Hit Song Ever
         </h1>
 
-        <p className="text-xl md:text-2xl text-gray-700 mb-4 font-medium">
+        <p className="text-xl md:text-2xl text-slate-800 mb-4 font-medium">
           The complete database of every Billboard Hot 100 hit from 1958 to
           today. Updated weekly with the latest chart data.
         </p>
 
-        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+        <p className="text-lg text-slate-700 mb-8 leading-relaxed">
           Over{" "}
-          <span className="text-purple-700 font-semibold">30,000 songs</span>{" "}
+          <span className="text-slate-900 font-semibold">30,000 songs</span>{" "}
           spanning 67 years of chart history. Create custom playlists, discover
           forgotten gems, test your music knowledge, and explore the definitive
           archive of hit music.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="flex items-start gap-3 p-4 bg-white/70 rounded-xl">
-            <Sparkles className="w-6 h-6 text-amber-500 mt-1 flex-shrink-0" />
+          <div className="flex items-start gap-3 p-4 bg-white/70 border border-slate-400 rounded-xl">
+            <Sparkles className="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-gray-800 mb-1">
+              <h3 className="font-cherry font-semibold text-slate-900 mb-1">
                 Create Playlists
               </h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-slate-700 text-sm">
                 Generate custom playlists from any decade
               </p>
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-4 bg-white/70 rounded-xl">
-            <Zap className="w-6 h-6 text-purple-500 mt-1 flex-shrink-0" />
+          <div className="flex items-start gap-3 p-4 bg-white/70 border border-slate-400 rounded-xl">
+            <Zap className="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-gray-800 mb-1">Take Quizzes</h3>
-              <p className="text-gray-600 text-sm">Test your chart knowledge</p>
+              <h3 className="font-cherry font-semibold text-slate-900 mb-1">Take Quizzes</h3>
+              <p className="text-slate-700 text-sm">Test your chart knowledge</p>
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-4 bg-white/70 rounded-xl">
-            <Users className="w-6 h-6 text-green-500 mt-1 flex-shrink-0" />
+          <div className="flex items-start gap-3 p-4 bg-white/70 border border-slate-400 rounded-xl">
+            <Users className="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-gray-800 mb-1">
+              <h3 className="font-cherry font-semibold text-slate-900 mb-1">
                 Rate & Comment
               </h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-slate-700 text-sm">
                 Free account to rate songs
               </p>
             </div>
@@ -75,7 +75,7 @@ export default function HeroSection({ songWithImage }) {
         <div className="flex flex-wrap gap-3 items-center justify-center">
           <Link
             href="/songs"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-pink-700 hover:text-white transition-all duration-300 transform hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-gray-200 hover:text-white font-semibold rounded-full hover:bg-slate-700 transition-all duration-300 shadow-lg"
           >
             <Music className="w-5 h-5" />
             Start Discovering
@@ -83,7 +83,7 @@ export default function HeroSection({ songWithImage }) {
 
           <Link
             href="/quiz-generator"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 text-purple-700 font-semibold rounded-full hover:bg-white hover:text-purple-800 transition-all duration-300 shadow-md"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 text-slate-900 font-semibold rounded-full hover:bg-white hover:text-slate-800 transition-all duration-300 shadow-md border border-slate-400"
           >
             <Sparkles className="w-5 h-5" />
             Test Your Knowledge
@@ -93,13 +93,14 @@ export default function HeroSection({ songWithImage }) {
 
       {songWithImage && (
         <div className="flex-1 max-w-md mx-auto md:mx-0">
-          <div className="bg-gradient-to-br from-black via-gray-700 to-black text-white p-6 rounded-2xl shadow-xl">
+          <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl border border-slate-700">
+
             <div className="flex items-center gap-2 mb-4">
-              <Disc className="w-6 h-6 text-pink-400" />
-              <h2 className="text-lg font-semibold">Featured Hit</h2>
+              <Disc className="w-6 h-6 text-amber-400" />
+              <h2 className="text-lg font-cherry font-semibold">Featured Hit</h2>
             </div>
 
-            <div className="relative rounded-xl overflow-hidden shadow-lg mb-4">
+            <div className="relative rounded-xl overflow-hidden shadow-lg mb-4 border border-slate-600">
               <Image
                 src={songWithImage.image_upload}
                 alt={`${songWithImage.title} by ${songWithImage.artist} - Album cover from ${songWithImage.year}`}
@@ -113,7 +114,7 @@ export default function HeroSection({ songWithImage }) {
               <div className="text-xl font-bold">
                 <Link
                   href={`/artist/${songWithImage.artist_slug}`}
-                  className="text-pink-300 hover:text-white transition-colors"
+                  className="text-amber-400 hover:text-amber-300 transition-colors"
                 >
                   {songWithImage.artist}
                 </Link>
@@ -121,15 +122,15 @@ export default function HeroSection({ songWithImage }) {
               <div className="text-xl">
                 <Link
                   href={`/songs/${songWithImage.slug}`}
-                  className="text-blue-200 hover:text-white transition-colors"
+                  className="text-white hover:text-amber-400 transition-colors"
                 >
                   &ldquo;{songWithImage.title}&rdquo;
                 </Link>
               </div>
-              <div className="text-purple-300 text-sm">
+              <div className="text-slate-300 text-sm">
                 <Link
                   href={`/year/${songWithImage.year}`}
-                  className="text-white hover:text-pink transition-colors"
+                  className="text-slate-200 hover:text-amber-400 transition-colors"
                 >
                   {songWithImage.year}
                 </Link>
@@ -137,7 +138,7 @@ export default function HeroSection({ songWithImage }) {
 
               {songWithImage.average_user_score > 0 && (
                 <div className="pt-2">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-pink-500/20 text-pink-200 rounded-full text-sm">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full text-sm border border-amber-400/30">
                     <Heart className="w-3 h-3 fill-current" />
                     PopHits.org rating:{" "}
                     {songWithImage.average_user_score.toFixed(1)}
@@ -148,7 +149,7 @@ export default function HeroSection({ songWithImage }) {
               <div className="pt-3">
                 <Link
                   href={`/songs/${songWithImage.slug}`}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-pink-600 text-white hover:text-white rounded-full font-medium hover:bg-pink-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-amber-400 text-slate-900 hover:bg-amber-300 rounded-full font-medium transition-colors"
                 >
                   <Headphones className="w-4 h-4" />
                   Listen Now

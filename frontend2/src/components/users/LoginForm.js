@@ -59,7 +59,7 @@ export default function LoginForm() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             required
           />
         </div>
@@ -69,23 +69,23 @@ export default function LoginForm() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             required
           />
         </div>
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold py-2 px-4 rounded-md mr-2 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-2 px-4 rounded-md mr-2 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Logging in...' : 'Login'}
         </button>
-        <Link href="/reset-password" className="text-pink-500 hover:text-pink-700 transition-colors duration-300">
+        <Link href="/reset-password" className="text-amber-700 hover:amber-900 font-medium transition-colors duration-300">
           Forgot Password?
         </Link>
       </form>
       <p className="mt-4 text-gray-700">
-        No account yet? <Link href="/register" className="text-pink-500 hover:text-pink-700 transition-colors duration-300">Register here</Link>
+        No account yet? <Link href="/register" className="text-amber-700 hover:amber-900 font-medium transition-colors duration-300">Register here</Link>
       </p>
     </div>
   );

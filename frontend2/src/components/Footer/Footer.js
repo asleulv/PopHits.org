@@ -1,30 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
-import { ScrollText, Music, Home, Info, List, HelpCircle, Mail } from "lucide-react";
+import Logo from "@/components/Logo";
+import {
+  ScrollText,
+  Music,
+  Home,
+  Info,
+  List,
+  HelpCircle,
+  Mail,
+} from "lucide-react";
 
 export default function Footer() {
   const { isAuthenticated } = useAuth();
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-br from-gray-800 via-gray-900 to-black text-gray-300 py-10 mt-16 shadow-lg">
+    <footer className="bg-black text-slate-300 py-10 mt-16 shadow-lg border-t border-slate-700">
       <div className="container mx-auto">
         {/* Top section with logo and description */}
         <div className="flex flex-col items-center mb-8">
-          <Image
-            src="/gfx/oldhits_logo.png"
-            alt="PopHits.org Logo"
-            width={64}
-            height={64}
-            className="object-contain mb-4 animate-pulse drop-shadow-[0_0_8px_white]"
-          />
-          <h3 className="text-xl font-cherry mb-2 bg-gradient-to-r from-white to-white bg-clip-text text-transparent">
-            PopHits.org
-          </h3>
-          <p className="text-center text-gray-400 max-w-lg mx-auto px-4 text-sm md:text-base">
+          {/* Logo Component - Smaller version for footer */}
+          <div className="mb-6">
+            <Logo showLink={true} className="text-lg md:text-xl" />
+          </div>
+
+          <p className="text-center text-slate-400 max-w-lg mx-auto px-4 text-sm md:text-base">
             A website made by a hit music nerd while listening to Brian Eno, for
             other hit music nerds who love discovering and enjoying great hits.
           </p>
@@ -33,70 +36,70 @@ export default function Footer() {
         {/* Middle section with navigation links */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-6 mb-8 px-4">
           <div className="flex flex-col items-center">
-            <Home className="w-5 h-5 text-pink-400 mb-2" />
+            <Home className="w-5 h-5 text-amber-400 mb-2" />
             <Link
               href="/"
-              className="text-gray-300 hover:text-pink-300 transition-colors text-sm md:text-base"
+              className="text-slate-300 hover:text-amber-300 transition-colors text-sm md:text-base"
             >
               Home
             </Link>
           </div>
 
           <div className="flex flex-col items-center">
-            <Music className="w-5 h-5 text-blue-400 mb-2" />
+            <Music className="w-5 h-5 text-amber-400 mb-2" />
             <Link
               href="/songs"
-              className="text-gray-300 hover:text-blue-300 transition-colors text-sm md:text-base"
+              className="text-slate-300 hover:text-amber-300 transition-colors text-sm md:text-base"
             >
               Songs Database
             </Link>
           </div>
 
           <div className="flex flex-col items-center">
-            <List className="w-5 h-5 text-green-400 mb-2" />
+            <List className="w-5 h-5 text-amber-400 mb-2" />
             <Link
               href="/playlist-generator"
-              className="text-gray-300 hover:text-green-300 transition-colors text-sm md:text-base"
+              className="text-slate-300 hover:text-amber-300 transition-colors text-sm md:text-base"
             >
               Playlist Generator
             </Link>
           </div>
 
           <div className="flex flex-col items-center">
-            <HelpCircle className="w-5 h-5 text-yellow-400 mb-2" />
+            <HelpCircle className="w-5 h-5 text-amber-400 mb-2" />
             <Link
               href="/quiz-generator"
-              className="text-gray-300 hover:text-yellow-300 transition-colors text-sm md:text-base"
+              className="text-slate-300 hover:text-amber-300 transition-colors text-sm md:text-base"
             >
               Quiz Generator
             </Link>
           </div>
 
           <div className="flex flex-col items-center">
-            <Info className="w-5 h-5 text-purple-400 mb-2" />
+            <Info className="w-5 h-5 text-amber-400 mb-2" />
             <Link
               href="/about"
-              className="text-gray-300 hover:text-purple-300 transition-colors text-sm md:text-base"
+              className="text-slate-300 hover:text-amber-300 transition-colors text-sm md:text-base"
             >
               About
             </Link>
           </div>
 
           <div className="flex flex-col items-center">
-            <ScrollText className="w-5 h-5 text-red-400 mb-2" />
+            <ScrollText className="w-5 h-5 text-amber-400 mb-2" />
             <Link
               href="/blog"
-              className="text-gray-300 hover:text-red-300 transition-colors text-sm md:text-base"
+              className="text-slate-300 hover:text-amber-300 transition-colors text-sm md:text-base"
             >
               Blog
             </Link>
           </div>
 
           <div className="flex flex-col items-center">
-            <Mail className="w-5 h-5 text-orange-400 mb-2" />
+            <Mail className="w-5 h-5 text-amber-400 mb-2" />
             <Link
               href="/contact"
-              className="text-gray-300 hover:text-orange-300 transition-colors text-sm md:text-base"
+              className="text-slate-300 hover:text-amber-300 transition-colors text-sm md:text-base"
             >
               Contact
             </Link>
@@ -105,7 +108,7 @@ export default function Footer() {
           {/* Bluesky as the 8th item */}
           <div className="flex flex-col items-center">
             <svg
-              className="w-5 h-5 text-cyan-400 mb-2"
+              className="w-5 h-5 text-amber-400 mb-2"
               viewBox="0 0 568 501"
               fill="currentColor"
             >
@@ -115,7 +118,7 @@ export default function Footer() {
               href="https://bsky.app/profile/pophits.bsky.social"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-300 hover:text-cyan-300 transition-colors text-sm md:text-base"
+              className="text-slate-300 hover:text-amber-300 transition-colors text-sm md:text-base"
             >
               Bluesky
             </a>
@@ -123,35 +126,50 @@ export default function Footer() {
         </div>
 
         {/* Bottom section with copyright and legal links */}
-        <div className="border-t border-gray-700 pt-6 text-center px-4">
-          <p className="text-sm text-gray-500">
+        <div className="border-t border-slate-700 pt-6 text-center px-4">
+          <p className="text-sm text-slate-500">
             © {currentYear} PopHits.org by Asle. All rights reserved.
           </p>
-          <div className="mt-4 flex justify-center space-x-6">
+          <div className="mt-4 flex justify-center space-x-6 flex-wrap">
             <Link
               href="/legal/privacy"
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
             >
               Privacy Policy
             </Link>
             <Link
               href="/legal/terms"
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
             >
               Terms of Use
             </Link>
             <Link
               href="/legal/cookies"
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
             >
               Cookie Policy
             </Link>
             <Link
               href="/legal"
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
             >
               Legal Info
             </Link>
+            <Link
+              href="/legal/attribution"
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              Data Attribution
+            </Link>
+          </div>
+
+          <div className="mt-6 pt-4 border-t border-slate-700 text-xs text-slate-400 max-w-2xl mx-auto">
+            <p>
+              This site displays historical Billboard Hot 100 chart data for
+              educational and archival purposes. Data sourced from Billboard.
+              pophits.org is <strong>not affiliated with</strong> Billboard,
+              Penske Media Corporation, or any related entities.
+            </p>
           </div>
         </div>
       </div>

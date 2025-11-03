@@ -121,7 +121,7 @@ const CurrentHot100 = () => {
       </Helmet>
 
       <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-cherry font-bold mb-4 bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
+        <h1 className="text-3xl md:text-4xl font-cherry font-bold mb-4   bg-clip-text text-transparent">
           Current Billboard Hot 100
         </h1>
         <div className="flex items-center justify-center gap-2 text-gray-600">

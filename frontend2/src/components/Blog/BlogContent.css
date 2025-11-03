@@ -10,6 +10,7 @@
 .blog-content blockquote {
   font-family: 'Open Sans', sans-serif !important;
   font-size: 1.125rem;
+  color: #1e293b;
 }
 
 .blog-content h1,
@@ -20,6 +21,7 @@
 .blog-content h6 {
   font-family: 'Sansita', sans-serif !important;
   font-size: 1.125rem;
+  color: #1e293b;
 }
 
 .blog-content h1,
@@ -37,30 +39,38 @@
 }
 
 .blog-content a {
-  color: #d74d82;
+  color: #b45309;
   text-decoration: none;
+  font-weight: 500;
 }
 
 .blog-content a:hover {
+  color: #92400e;
   text-decoration: underline;
 }
 
 .blog-content img {
   border-radius: 0.5rem;
   margin: 1.5rem 0;
+  border: 1px solid #cbd5e1;
 }
 
 .blog-content blockquote {
-  border-left: 4px solid #e2759e;
+  border-left: 4px solid #b45309;
   padding-left: 1rem;
   font-style: italic;
   margin: 1.5rem 0;
+  color: #475569;
+  background-color: #fef3c7;
+  padding: 1rem;
+  border-radius: 0.375rem;
 }
 
 .blog-content ul,
 .blog-content ol {
   margin-left: 1.5rem;
   margin-bottom: 1.5rem;
+  color: #1e293b;
 }
 
 .blog-content li {

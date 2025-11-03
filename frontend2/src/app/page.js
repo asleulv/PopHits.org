@@ -17,9 +17,11 @@ import YearBrowserSection from "@/components/FrontPage/YearBrowserSection";
 import TopRatedSongsSection from "@/components/FrontPage/TopRatedSongsSection";
 import CurrentHot100Section from "@/components/FrontPage/CurrentHot100Section";
 import NumberOneHitsSection from "@/components/FrontPage/NumberOneHitsSection";
-import RandomHitsByDecadeClient from "@/components/FrontPage/RandomHitsByDecadeClient";
+import RandomHitsByDecadeSection from "@/components/FrontPage/RandomHitsByDecadeSection";
 import BlueskyDiscoverySection from "@/components/FrontPage/BlueskyDiscoverySection";
 import FeaturedArtists from "@/components/FrontPage/FeaturedArtists";
+import BirthdayWidget from "@/components/FrontPage/BirthdayWidget";
+
 
 // Helper function to get decade from year
 function getDecade(year) {
@@ -139,36 +141,18 @@ async function RandomHitsWrapper() {
       return acc;
     }, {});
 
-    return randomHitsByDecade.length > 0 ? (
-      <section className="mb-8 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white p-8 w-full lg:rounded-xl shadow-lg">
-        <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-6">
-          <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3 text-white">
-            <Shuffle className="hidden lg:block w-8 h-8 text-yellow-400" />
-            <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">
-              Explore Chart-Topping Songs and Hidden Gems by Decade
-            </span>
-          </h2>
-        </div>
+    const initialDecade =
+      Object.keys(groupedByDecade).length > 0
+        ? Object.keys(groupedByDecade)[
+            Math.floor(Math.random() * Object.keys(groupedByDecade).length)
+          ]
+        : null;
 
-        <RandomHitsByDecadeClient
-          groupedByDecade={groupedByDecade}
-          initialDecade={
-            Object.keys(groupedByDecade).length > 0
-              ? Object.keys(groupedByDecade)[
-                  Math.floor(
-                    Math.random() * Object.keys(groupedByDecade).length
-                  )
-                ]
-              : null
-          }
-        />
-      </section>
-    ) : (
-      <section className="mb-8 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white p-8 w-full lg:rounded-xl shadow-lg">
-        <div className="flex justify-center items-center py-12">
-          <p className="text-xl">Loading random hits by decade...</p>
-        </div>
-      </section>
+    return (
+      <RandomHitsByDecadeSection
+        groupedByDecade={groupedByDecade}
+        initialDecade={initialDecade}
+      />
     );
   } catch (error) {
     return <div>Loading random hits...</div>;
@@ -277,6 +261,8 @@ export default async function FrontPage() {
         >
           <HeroSectionWrapper />
         </Suspense>
+
+        <BirthdayWidget />
 
         {/* 2. Current Hot 100 */}
         <Suspense

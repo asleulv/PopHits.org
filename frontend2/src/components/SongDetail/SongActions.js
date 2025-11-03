@@ -131,15 +131,15 @@ export default function SongActions({ showRatingOnly = false }) {
             <button
               className={`transform transition-transform hover:scale-110 p-3 w-12 h-12 rounded-full shadow-md ${
                 isBookmarked
-                  ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white"
-                  : "bg-white text-gray-400 hover:bg-gray-100"
+                  ? "bg-amber-400 text-slate-900"
+                  : "bg-white text-slate-400 hover:bg-slate-100 border border-slate-300"
               }`}
               onClick={handleBookmarkToggle}
               aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
             >
               <Bookmark
                 className={`w-5 h-5 ${
-                  isBookmarked ? "text-white" : "text-gray-400"
+                  isBookmarked ? "text-slate-900" : "text-slate-400"
                 }`}
                 fill={isBookmarked ? "currentColor" : "none"}
               />
@@ -147,7 +147,7 @@ export default function SongActions({ showRatingOnly = false }) {
           )}
           
           {averageScore !== null && (
-            <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-md">
+            <div className="bg-slate-900 text-amber-400 font-bold w-12 h-12 flex items-center justify-center rounded-full shadow-md border border-slate-700">
               <span className="text-lg">
                 {averageScore === 0
                   ? "-"
@@ -161,8 +161,8 @@ export default function SongActions({ showRatingOnly = false }) {
           )}
           
           {!isAuthenticated && (
-            <div className="text-sm text-gray-500">
-              <Link href="/login" className="text-blue-600 hover:underline">
+            <div className="text-sm text-slate-600">
+              <Link href="/login" className="text-amber-700 hover:text-amber-900 font-medium">
                 Login
               </Link> to bookmark and rate
             </div>
@@ -170,10 +170,9 @@ export default function SongActions({ showRatingOnly = false }) {
         </div>
       )}
       
-      
       {/* Rating UI */}
       {showRatingOnly && isAuthenticated && (
-        <div className="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-xl shadow-sm mb-4">
+        <div className="bg-slate-900 p-6 rounded-xl shadow-sm mb-4 border border-slate-700">
           <div className="flex flex-col items-center">
             <p className="text-lg font-medium text-white mb-3 text-center">
               Your Score:
@@ -186,8 +185,8 @@ export default function SongActions({ showRatingOnly = false }) {
                   key={index}
                   className={`w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full shadow-md transition-all duration-300 cursor-pointer transform hover:scale-110 ${
                     userScore === index + 1
-                      ? "bg-gradient-to-r from-pink-500 to-pink-700 text-white font-bold"
-                      : "bg-white text-gray-700 font-semibold hover:bg-gray-100"
+                      ? "bg-amber-400 text-slate-900 font-bold"
+                      : "bg-white text-slate-700 font-semibold hover:bg-slate-100 border border-slate-300"
                   }`}
                   onClick={() => handleScoreChange(index + 1)}
                 >
@@ -196,7 +195,7 @@ export default function SongActions({ showRatingOnly = false }) {
               ))}
             </div>
 
-            <p className="text-sm text-gray-400 italic text-center mt-3">
+            <p className="text-sm text-slate-400 italic text-center mt-3">
               Click a number to rate, click again to remove your rating
             </p>
           </div>

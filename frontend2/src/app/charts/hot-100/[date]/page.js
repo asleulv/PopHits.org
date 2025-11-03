@@ -116,7 +116,7 @@ export default async function ChartPage({ params }) {
 
             {/* Song Info */}
             <div className="flex-grow min-w-0">
-              <h3 className="font-black text-sm md:text-base leading-tight tracking-tight uppercase hover:underline">
+              <h3 className="font-black text-sm md:text-base leading-tight tracking-tight uppercase hover:underline hover:text-white ">
                 <Link href={`/songs/${song.slug}`}>{song.title}</Link>
               </h3>
               <p className="text-xs md:text-sm text-gray-700 mt-1">
@@ -124,7 +124,7 @@ export default async function ChartPage({ params }) {
                   href={`/artists/${song.artist
                     .toLowerCase()
                     .replace(/\s+/g, "-")}`}
-                  className="font-bold text-gray-700 hover:text-blue-600 hover:underline"
+                  className="font-bold text-gray-700 hover:text-yellow-600 hover:underline"
                 >
                   {song.artist}
                 </Link>

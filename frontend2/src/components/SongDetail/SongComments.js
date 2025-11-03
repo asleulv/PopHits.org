@@ -17,12 +17,10 @@ export default function SongComments({ song }) {
   const [hasCommented, setHasCommented] = useState(false);
   const [comments, setComments] = useState(song.comments || []);
 
-  // Check authentication status on component mount
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
     setIsAuthenticated(!!authToken);
     
-    // Try to get user ID from localStorage
     try {
       const userData = JSON.parse(localStorage.getItem('userData'));
       if (userData && userData.id) {
@@ -32,16 +30,13 @@ export default function SongComments({ song }) {
       console.error('Error parsing user data:', error);
     }
     
-    // Check if song exists and has comments
     if (!song) {
       console.error('Song object is null or undefined');
       return;
     }
     
-    // Initialize comments from song
     setComments(song.comments || []);
     
-    // Check if user has already commented
     if (song.comments && isAuthenticated && userId) {
       const userComment = song.comments.find(
         (comment) => comment.user_id === userId
@@ -52,7 +47,6 @@ export default function SongComments({ song }) {
 
   const handleCommentChange = (event) => {
     setCommentText(event.target.value);
-    // Clear any previous error/success messages when user starts typing
     setCommentError(null);
     setCommentSuccess(false);
   };
@@ -69,13 +63,11 @@ export default function SongComments({ song }) {
         return;
       }
 
-      // Check if the user has already commented
       if (hasCommented) {
         setCommentError("😩 You have already commented on this song");
         return;
       }
 
-      // Check if song exists and has an id
       if (!song || !song.id) {
         setCommentError("😱 Error: Cannot submit comment for this song");
         console.error('Song object is null or missing id:', song);
@@ -85,7 +77,6 @@ export default function SongComments({ song }) {
       const authToken = localStorage.getItem('authToken');
       await submitUserComment(song.id, commentText, authToken);
       
-      // Optimistically update the UI
       let userData;
       try {
         userData = JSON.parse(localStorage.getItem('userData'));
@@ -93,10 +84,8 @@ export default function SongComments({ song }) {
         console.error('Error parsing user data:', error);
       }
       
-      // If we can't get user data, just use placeholder values
-      // The real data will be loaded when the page refreshes
       const newComment = {
-        id: Date.now(), // Temporary ID until we refresh
+        id: Date.now(),
         text: commentText,
         user_id: userData?.id || 0,
         username: userData?.username || 'You',
@@ -116,7 +105,6 @@ export default function SongComments({ song }) {
   const handleDeleteComment = async (commentId) => {
     if (!isAuthenticated) return;
     
-    // Check if commentId is valid
     if (!commentId) {
       console.error('Invalid comment ID:', commentId);
       return;
@@ -131,7 +119,6 @@ export default function SongComments({ song }) {
         const authToken = localStorage.getItem('authToken');
         await deleteUserComment(commentId, authToken);
         
-        // Update comments list
         setComments(comments.filter(comment => comment.id !== commentId));
         setHasCommented(false);
       }
@@ -149,7 +136,6 @@ export default function SongComments({ song }) {
     if (!isAuthenticated || !editCommentId) return;
     
     try {
-      // Check if song exists and has an id
       if (!song || !song.id) {
         console.error('Song object is null or missing id:', song);
         return;
@@ -157,28 +143,20 @@ export default function SongComments({ song }) {
       
       const authToken = localStorage.getItem('authToken');
       
-      // Instead of trying to edit the comment, we'll delete it and create a new one
-      // First, delete the old comment
       await deleteUserComment(editCommentId, authToken);
-      
-      // Then create a new comment with the updated text
       await submitUserComment(song.id, editCommentText, authToken);
       
-      // Update comments list optimistically
-      // Remove the old comment
       const updatedComments = comments.filter(comment => comment.id !== editCommentId);
       
-      // Add a new comment with the updated text
       const userData = JSON.parse(localStorage.getItem('userData'));
       const newComment = {
-        id: Date.now(), // Temporary ID until we refresh
+        id: Date.now(),
         text: editCommentText,
         user_id: userData?.id || 0,
         username: userData?.username || 'You',
         created_at: new Date().toISOString(),
       };
       
-      // Add the new comment to the top of the list
       setComments([newComment, ...updatedComments]);
       
       setEditCommentId(null);
@@ -196,16 +174,16 @@ export default function SongComments({ song }) {
     <div className="mb-8">
       <h2 className="sr-only">User Comments</h2>
       {isAuthenticated && (
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
+        <div className="bg-white p-6 rounded-xl shadow-md border border-slate-400 mb-6">
           <form className="w-full">
             <label className="block mb-2">
-              <p className="font-bold text-gray-700 mb-2">
+              <p className="font-bold text-slate-900 mb-2">
                 Add Your Comment:
               </p>
               <textarea
                 value={commentText}
                 onChange={handleCommentChange}
-                className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+                className="block w-full p-3 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all duration-300 text-slate-900"
                 rows="3"
                 placeholder="Share your thoughts about this song..."
               />
@@ -214,17 +192,17 @@ export default function SongComments({ song }) {
               <button
                 type="button"
                 onClick={handleCommentSubmit}
-                className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-lg shadow-md hover:from-pink-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
+                className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-md hover:bg-slate-700 transition-all duration-300 transform hover:scale-105"
               >
                 Post Comment
               </button>
               
               <div className="w-full mt-2">
                 {commentError && (
-                  <p className="text-red-500 text-sm text-center">{commentError}</p>
+                  <p className="text-red-600 text-sm text-center font-medium">{commentError}</p>
                 )}
                 {commentSuccess && (
-                  <p className="text-green-500 text-sm text-center">
+                  <p className="text-green-600 text-sm text-center font-medium">
                     Comment submitted successfully!
                   </p>
                 )}
@@ -241,26 +219,26 @@ export default function SongComments({ song }) {
             .map((comment) => (
               <div
                 key={comment.id}
-                className="bg-white p-4 rounded-xl shadow-md border border-gray-200 transition-all duration-300 hover:shadow-lg"
+                className="bg-white p-4 rounded-xl shadow-md border border-slate-400 transition-all duration-300 hover:shadow-lg"
               >
                 {editCommentId === comment.id ? (
                   <div className="space-y-3">
                     <textarea
                       value={editCommentText}
                       onChange={(e) => setEditCommentText(e.target.value)}
-                      className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className="block w-full p-3 border border-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-slate-900"
                       rows="3"
                     />
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-2">
                       <button
                         onClick={() => setEditCommentId(null)}
-                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded-lg mr-2 hover:bg-gray-400 transition-colors"
+                        className="bg-slate-300 text-slate-900 px-3 py-1 rounded-lg hover:bg-slate-400 transition-colors font-medium"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleSaveEditComment}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
+                        className="bg-slate-900 text-white px-3 py-1 rounded-lg hover:bg-slate-700 transition-colors font-medium"
                       >
                         Save Changes
                       </button>
@@ -268,36 +246,36 @@ export default function SongComments({ song }) {
                   </div>
                 ) : (
                   <>
-                    <div className="bg-gray-50 p-2 rounded-t-lg mb-3">
-                      <p className="text-gray-700 font-medium">
+                    <div className="bg-slate-50 p-3 rounded-lg mb-3 border-l-4 border-amber-400">
+                      <p className="text-slate-900 font-semibold">
                         {comment.username || "Unknown User"}
-                        <span className="ml-2 text-xs text-gray-500">
+                        <span className="ml-2 text-xs text-slate-600 font-normal">
                           {formatDateTime(comment.created_at)}
                         </span>
                       </p>
                     </div>
                     
-                    <p className="text-gray-800 px-2 mb-4">{comment.text}</p>
+                    <p className="text-slate-800 px-2 mb-4">{comment.text}</p>
                     
                     {isAuthenticated && (
-                      <div className="flex justify-end space-x-3 mt-2 border-t border-gray-100 pt-2">
+                      <div className="flex justify-end gap-3 mt-3 border-t border-slate-200 pt-3">
                         <button
                           onClick={() => handleEditComment(comment.id, comment.text)}
-                          className="text-blue-500 hover:text-blue-700 transition-colors flex items-center"
+                          className="text-amber-700 hover:text-amber-900 transition-colors flex items-center font-medium text-sm"
                           aria-label="Edit comment"
                           title="Edit comment"
                         >
                           <Edit className="w-4 h-4 mr-1" />
-                          <span className="text-xs">Edit</span>
+                          Edit
                         </button>
                         <button
                           onClick={() => handleDeleteComment(comment.id)}
-                          className="text-red-500 hover:text-red-700 transition-colors flex items-center"
+                          className="text-red-600 hover:text-red-800 transition-colors flex items-center font-medium text-sm"
                           aria-label="Delete comment"
                           title="Delete comment"
                         >
                           <Trash2 className="w-4 h-4 mr-1" />
-                          <span className="text-xs">Delete</span>
+                          Delete
                         </button>
                       </div>
                     )}
@@ -307,11 +285,11 @@ export default function SongComments({ song }) {
             ))}
         </div>
       ) : (
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 text-center">
-          <p className="text-gray-500">
+        <div className="bg-white p-6 rounded-xl shadow-md border border-slate-400 text-center">
+          <p className="text-slate-700 font-medium">
             No comments yet. {isAuthenticated ? "Be the first to share your thoughts!" : (
               <>
-                <Link href="/login" className="text-blue-600 hover:underline">
+                <Link href="/login" className="text-amber-700 hover:text-amber-900 font-semibold">
                   Login
                 </Link> to share your thoughts!
               </>

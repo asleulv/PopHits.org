@@ -21,7 +21,7 @@ a {
 }
 
 a:hover {
-  color: #cb1c6e; /* Change to the hover color you desire */
+  color: #2a2a2a; /* Change to the hover color you desire */
 }
 
 .navbar, .footer {
@@ -669,7 +669,7 @@ textarea {
 }
 
 .scrolled .bm-burger-bars {
-  background: #d74d82; /* Change the color as desired */
+  background: #c98d0c; /* Change the color as desired */
 }
 
 .bm-burger-bars-hover {
@@ -694,7 +694,8 @@ textarea {
 }
 
 .bm-item-list {
-  color: #b8b7ad;
+  color: #d2d2d2;
+  background-color:#464646;
   padding: 1.8em;
 }
 

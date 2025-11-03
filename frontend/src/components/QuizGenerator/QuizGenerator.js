@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Button, Select, Spin } from "antd";
 import { generateQuiz } from "../../services/api";
-import { HelpCircle, RefreshCw, Calendar, BarChart2, Eye, EyeOff } from "lucide-react";
+import {
+  HelpCircle,
+  RefreshCw,
+  Calendar,
+  BarChart2,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 
 const { Option } = Select;
 
@@ -71,16 +78,16 @@ const QuizGenerator = () => {
 
   return (
     <div className="p-4 min-h-screen">
-      <h1 className="text-2xl md:text-4xl px-1 py-1 font-cherry font-bold mb-6 text-center text-pink-500 flex items-center justify-center gap-3">
-  <HelpCircle className="w-8 h-8" />
-  <span>Hit Song Quiz Generator</span>
-</h1>
-
+      <h1 className="text-2xl md:text-4xl px-1 py-1 font-cherry font-bold mb-6 text-center flex items-center justify-center gap-3">
+        <HelpCircle className="fill-black w-8 h-8" />
+        <span className="text-black">Hit Sonsg Quiz Generator</span>
+      </h1>
 
       <div className="mb-8">
         <p className="text-center text-gray-700 text-lg max-w-3xl mx-auto">
-          Test your music knowledge with custom quizzes about hit songs from your favorite decades.
-          Choose how many questions and adjust the difficulty level from famous #1 hits to obscure gems.
+          Test your music knowledge with custom quizzes about hit songs from
+          your favorite decades. Choose how many questions and adjust the
+          difficulty level from famous #1 hits to obscure gems.
         </p>
       </div>
 
@@ -137,7 +144,9 @@ const QuizGenerator = () => {
                 Hit Level:
               </span>
             </div>
-            <p className="text-sm text-gray-500 mb-2">1 = #1 hits, 10 = obscure hits</p>
+            <p className="text-sm text-gray-500 mb-2">
+              1 = #1 hits, 10 = obscure hits
+            </p>
             <Select
               value={hitLevel}
               onChange={(value) => setHitLevel(value)}
@@ -168,7 +177,14 @@ const QuizGenerator = () => {
       {loading ? (
         <div className="flex justify-center items-center py-12">
           <div className="text-center">
-            <Spin size="large" tip={<span className="mt-3 text-gray-600">Creating your quiz questions...</span>} />
+            <Spin
+              size="large"
+              tip={
+                <span className="mt-3 text-gray-600">
+                  Creating your quiz questions...
+                </span>
+              }
+            />
           </div>
         </div>
       ) : (
@@ -176,7 +192,9 @@ const QuizGenerator = () => {
           {errorMessage ? (
             <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mt-6 text-center">
               <p className="font-medium">{errorMessage}</p>
-              <p className="text-sm mt-2">Try adjusting your filters to find more songs.</p>
+              <p className="text-sm mt-2">
+                Try adjusting your filters to find more songs.
+              </p>
             </div>
           ) : (
             quizQuestions.length > 0 && (
@@ -187,17 +205,22 @@ const QuizGenerator = () => {
                       Your Custom Quiz ({quizQuestions.length} Questions)
                     </h2>
                   </div>
-                  
+
                   <ul className="divide-y divide-gray-200">
                     {quizQuestions.map((question, index) => (
-                      <li key={index} className="p-5 hover:bg-gray-50 transition-colors">
+                      <li
+                        key={index}
+                        className="p-5 hover:bg-gray-50 transition-colors"
+                      >
                         <div className="flex items-start">
                           <div className="bg-pink-100 text-pink-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
                             {index + 1}
                           </div>
                           <div className="flex-1">
-                            <p className="text-lg font-medium text-gray-800 mb-3">{question.question}</p>
-                            
+                            <p className="text-lg font-medium text-gray-800 mb-3">
+                              {question.question}
+                            </p>
+
                             {!revealedAnswers[index] ? (
                               <Button
                                 onClick={() => toggleAnswerVisibility(index)}
@@ -210,9 +233,13 @@ const QuizGenerator = () => {
                               <div className="bg-green-50 border border-green-100 rounded-lg p-4 animate-fadeIn">
                                 <div className="flex  gap-2 mb-1">
                                   <EyeOff className="w-4 h-4 text-green-600" />
-                                  <span className="font-semibold text-green-800">Answer:</span>
+                                  <span className="font-semibold text-green-800">
+                                    Answer:
+                                  </span>
                                 </div>
-                                <p className="text-green-900">{question.answer}</p>
+                                <p className="text-green-900">
+                                  {question.answer}
+                                </p>
                                 <Button
                                   onClick={() => toggleAnswerVisibility(index)}
                                   className="mt-2 text-xs text-green-700 hover:text-green-900 bg-green-100 border-none shadow-none"

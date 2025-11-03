@@ -29,15 +29,16 @@ export default function ShareButtons({ song }) {
   const shareText = `${song.title} (${song.year}) was a hit by ${song.artist}, spending ${song.weeks_on_chart} weeks on the Hot 100, peaking at #${song.peak_rank}`;
   
   return (
-    <div className="p-1 mb-2">
-      <div className="flex justify-center gap-4">
+    <div className="p-6 mb-8 bg-yellow-50 rounded-xl shadow-sm border border-slate-300">
+      <h2 className="text-lg font-semibold text-slate-900 text-center mb-4">Share This Song</h2>
+      <div className="flex justify-center gap-4 flex-wrap">
         <div className="transform transition-transform hover:scale-110">
           <FacebookShareButton
             url={url}
             quote={`${song.title} by ${song.artist}`}
             hashtag="#popmusic"
           >
-            <FacebookIcon size={40} round />
+            <FacebookIcon size={44} round />
           </FacebookShareButton>
         </div>
         <div className="transform transition-transform hover:scale-110">
@@ -45,7 +46,7 @@ export default function ShareButtons({ song }) {
             url={url}
             title={shareText}
           >
-            <BlueskyIcon size={40} round />
+            <BlueskyIcon size={44} round />
           </BlueskyShareButton>
         </div>
         <div className="transform transition-transform hover:scale-110">
@@ -60,7 +61,7 @@ export default function ShareButtons({ song }) {
               "pophitsdotorg",
             ]}
           >
-            <XIcon size={40} round />
+            <XIcon size={44} round />
           </TwitterShareButton>
         </div>
         <div className="transform transition-transform hover:scale-110">
@@ -69,7 +70,7 @@ export default function ShareButtons({ song }) {
             title={shareText}
             separator=" - "
           >
-            <WhatsappIcon size={40} round />
+            <WhatsappIcon size={44} round />
           </WhatsappShareButton>
         </div>
         <div className="transform transition-transform hover:scale-110">
@@ -77,7 +78,7 @@ export default function ShareButtons({ song }) {
             url={url}
             appId="291494419107518"
           >
-            <FacebookMessengerIcon size={40} round />
+            <FacebookMessengerIcon size={44} round />
           </FacebookMessengerShareButton>
         </div>
       </div>

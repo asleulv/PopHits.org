@@ -99,7 +99,7 @@ export default function ChartsPage() {
   return (
     <div className="min-h-screen bg-yellow-50 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl text-center font-black mb-6">
+        <h1 className="text-4xl text-center font-cherry mb-6">
           Hot 100 Chart Archives
         </h1>
 
@@ -178,7 +178,7 @@ export default function ChartsPage() {
           {selectedDate && (
             <Link
               href={`/charts/hot-100/${selectedDate}/`}
-              className="w-full block bg-black text-white font-black py-3 text-center hover:bg-gray-800 border-2 border-black"
+              className="w-full block bg-white text-black font-black py-3 text-center hover:bg-yellow-500 border-2 border-black"
             >
               View Chart for {selectedDate}
             </Link>

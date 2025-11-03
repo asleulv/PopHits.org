@@ -30,10 +30,9 @@ export default function SongListClient({
   artistName,
   yearFilter: initialYearFilter,
 }) {
-  // State
   const [songs, setSongs] = useState(initialSongs || []);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // New state for error handling
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(initialPage || 1);
   const [perPage, setPerPage] = useState(initialPerPage || 25);
   const [totalCount, setTotalCount] = useState(totalSongs || 0);
@@ -50,14 +49,11 @@ export default function SongListClient({
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || "");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [artistSlug, setArtistSlug] = useState(initialArtistSlug || null);
-  // Disable automatic data fetching when sort changes
   const [disableAutoFetch, setDisableAutoFetch] = useState(false);
 
-  // Router and search params
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Extract artist slug from URL if present
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     const artistParam = params.get("artist");
@@ -66,7 +62,6 @@ export default function SongListClient({
     }
   }, [searchParams]);
 
-  // Extract search query from URL if present
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     const queryParam = params.get("query");
@@ -75,32 +70,26 @@ export default function SongListClient({
     }
   }, [searchParams, searchQuery]);
 
-  // Check authentication status on component mount
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
     setIsAuthenticated(!!authToken);
   }, []);
 
-  // Function to update URL with current filters
   const updateUrl = useCallback(() => {
     const params = new URLSearchParams();
 
-    // Add pagination
     if (page > 1) params.set("page", page.toString());
     if (perPage !== 25) params.set("per_page", perPage.toString());
 
-    // Add filters
     if (onlyNumberOneHits) params.set("filter", "number-one");
     if (onlyUnratedSongs) params.set("unrated", "true");
     if (decadeFilter) params.set("decade", decadeFilter);
     if (searchQuery) params.set("query", searchQuery);
     if (artistSlug) params.set("artist", artistSlug);
 
-    // Add sorting
     if (sortField) params.set("sort_by", sortField);
     if (sortOrder) params.set("order", sortOrder);
 
-    // Determine base path
     let path = "/songs";
     if (artistSlug) {
       path = `/artist/${artistSlug}`;
@@ -108,7 +97,6 @@ export default function SongListClient({
       path = `/year/${yearFilter}`;
     }
 
-    // Update URL without refreshing the page
     const queryString = params.toString();
     const newUrl = `${path}${queryString ? `?${queryString}` : ""}`;
     router.push(newUrl, { scroll: false });
@@ -126,15 +114,13 @@ export default function SongListClient({
     router,
   ]);
 
-  // Fetch data when filters change
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null); // Reset any previous errors
+      setError(null);
 
       const peakRankFilter = onlyNumberOneHits ? "1" : null;
 
-      // Determine filter type and value
       let filterType = null;
       let filterValue = null;
 
@@ -146,7 +132,6 @@ export default function SongListClient({
         filterValue = yearFilter;
       }
 
-      // Get auth token if available and unrated filter is active
       const authToken = isAuthenticated
         ? localStorage.getItem("authToken")
         : null;
@@ -171,7 +156,6 @@ export default function SongListClient({
       setTotalCount(data.count || 0);
     } catch (error) {
       console.error("Error fetching songs:", error);
-      // Set error state with user-friendly message
       if (error.message && error.message.includes("404")) {
         setError(
           "No results found for this search. Please try different search terms."
@@ -181,7 +165,6 @@ export default function SongListClient({
           "An error occurred while fetching songs. Please try again later."
         );
       }
-      // Reset songs and total count on error
       setSongs([]);
       setTotalCount(0);
     } finally {
@@ -201,24 +184,19 @@ export default function SongListClient({
     isAuthenticated,
   ]);
 
-  // Generate page title based on filters
   const getPageTitle = useCallback(() => {
-    // Start with base title parts
     let prefix = "";
     let base = "Hits";
     let suffix = "";
 
-    // Add unrated prefix if needed
     if (onlyUnratedSongs) {
       prefix = "Unrated ";
     }
 
-    // Add #1 prefix if needed
     if (onlyNumberOneHits) {
       prefix = prefix + "#1 ";
     }
 
-    // Determine the base part of the title
     if (artistSlug) {
       const formattedArtistName = artistName || artistSlug.replace(/-/g, " ");
       base = `${formattedArtistName} Hits`;
@@ -232,12 +210,10 @@ export default function SongListClient({
       base = "All Hits";
     }
 
-    // Add decade suffix for artist or year filters
     if (decadeFilter && (artistSlug || yearFilter)) {
       suffix = ` from the ${decadeFilter}s`;
     }
 
-    // Combine all parts
     return `${prefix}${base}${suffix}`;
   }, [
     onlyUnratedSongs,
@@ -249,47 +225,16 @@ export default function SongListClient({
     searchQuery,
   ]);
 
-  // Update document title when filters change
   useEffect(() => {
-    // Update the page title and header in a safer way
     try {
-      // Update the document title
       document.title = `${getPageTitle()} | PopHits.org`;
 
-      // Update the h1 element text
       const h1Element = document.querySelector("h1 span.bg-gradient-to-r");
       if (h1Element) {
         h1Element.textContent = getPageTitle();
       }
-
-      // Get the icon container
-      const iconContainer = document.querySelector("h1 div.flex");
-      if (iconContainer) {
-        // Create a new icon element based on filters
-        let newIcon;
-
-        if (onlyUnratedSongs) {
-          newIcon = <Star className="w-8 h-8 text-pink-500" />;
-        } else if (onlyNumberOneHits) {
-          newIcon = <Award className="w-8 h-8 text-pink-500" />;
-        } else if (searchQuery) {
-          newIcon = <Search className="w-8 h-8 text-pink-500" />;
-        } else if (decadeFilter) {
-          newIcon = <Calendar className="w-8 h-8 text-pink-500" />;
-        } else if (artistSlug) {
-          newIcon = <Music className="w-8 h-8 text-pink-500" />;
-        } else if (yearFilter) {
-          newIcon = <Calendar className="w-8 h-8 text-pink-500" />;
-        } else {
-          newIcon = <Filter className="w-8 h-8 text-pink-500" />;
-        }
-
-        // Instead of manipulating the DOM directly, we'll update the page title
-        // The actual icon will be handled by the SongListPage component on re-render
-      }
     } catch (error) {
       console.error("Error updating page title:", error);
-      // Don't let this error break the app
     }
   }, [
     onlyNumberOneHits,
@@ -299,12 +244,10 @@ export default function SongListClient({
     searchQuery,
     artistSlug,
     artistName,
-    getPageTitle, // Add getPageTitle to the dependency array
+    getPageTitle,
   ]);
 
-  // Update URL when filters change
   useEffect(() => {
-    // Only update URL if we're not navigating to an artist or song detail page
     if (
       !window.location.pathname.startsWith("/artist/") &&
       !window.location.pathname.startsWith("/songs/") &&
@@ -323,12 +266,10 @@ export default function SongListClient({
     yearFilter,
     searchQuery,
     artistSlug,
-    updateUrl, // Add updateUrl to the dependency array
+    updateUrl,
   ]);
 
-  // Fetch data when URL changes
   useEffect(() => {
-    // Skip automatic data fetching if manual fetch is in progress
     if (!disableAutoFetch) {
       fetchData();
     }
@@ -344,35 +285,30 @@ export default function SongListClient({
     searchQuery,
     artistSlug,
     disableAutoFetch,
-    fetchData, // Add fetchData to the dependency array
+    fetchData,
   ]);
 
-  // Handle number one hits toggle
   const handleNumberOneToggle = (checked) => {
     setOnlyNumberOneHits(checked);
-    setPage(1); // Reset to first page
+    setPage(1);
   };
 
-  // Handle unrated songs toggle
   const handleUnratedToggle = (checked) => {
     setOnlyUnratedSongs(checked);
-    setPage(1); // Reset to first page
+    setPage(1);
   };
 
-  // Handle decade filter change
   const handleDecadeChange = (decade) => {
     setDecadeFilter(decade === "all" ? null : decade);
-    setYearFilter(null); // Clear year filter when decade changes
-    setPage(1); // Reset to first page
+    setYearFilter(null);
+    setPage(1);
   };
 
-  // Handle year filter change
   const handleYearChange = (year) => {
     setYearFilter(year === "all" ? null : year);
-    setDecadeFilter(null); // Clear decade filter when year changes
-    setPage(1); // Reset to first page
+    setDecadeFilter(null);
+    setPage(1);
 
-    // Update URL for year navigation
     if (year === "all") {
       router.push("/songs");
     } else {
@@ -381,7 +317,6 @@ export default function SongListClient({
     }
   };
 
-  // Handle reset filters
   const handleReset = () => {
     setPage(1);
     setPerPage(25);
@@ -397,45 +332,35 @@ export default function SongListClient({
     router.push("/songs");
   };
 
-  // Handle search
   const handleSearch = (e) => {
     e.preventDefault();
-    setPage(1); // Reset to first page
-    // Search query is already updated via the input field
+    setPage(1);
   };
 
-  // Handle sort
   const handleSort = async (field) => {
-    // Set flag to disable automatic data fetching
     setDisableAutoFetch(true);
 
     let newSortField = field;
     let newSortOrder;
 
     if (sortField === field) {
-      // Toggle order if same field
       newSortOrder = sortOrder === "asc" ? "desc" : "asc";
     } else {
-      // Default to ascending for new field
       newSortField = field;
       newSortOrder = "asc";
     }
 
-    // Log for debugging
     console.log(`Sorting by ${newSortField} in ${newSortOrder} order`);
     console.log(`Current URL: ${window.location.href}`);
 
-    // Update state with the new sort parameters first
     setSortField(newSortField);
     setSortOrder(newSortOrder);
 
-    // Manually trigger data fetch with new sort parameters
     try {
       setLoading(true);
 
       const peakRankFilter = onlyNumberOneHits ? "1" : null;
 
-      // Determine filter type and value
       let filterType = null;
       let filterValue = null;
 
@@ -447,10 +372,8 @@ export default function SongListClient({
         filterValue = yearFilter;
       }
 
-      // Convert sortOrder to the format expected by the API
       const apiSortOrder = newSortOrder === "desc" ? "-" : "";
 
-      // Log the request parameters
       console.log("Fetching with parameters:", {
         page,
         perPage,
@@ -464,7 +387,6 @@ export default function SongListClient({
         decadeFilter,
       });
 
-      // Make the API request
       const data = await getSongs(
         page,
         perPage,
@@ -478,10 +400,8 @@ export default function SongListClient({
         decadeFilter
       );
 
-      // Log the response
       console.log("API response:", data);
 
-      // Update state with the new data
       setSongs(data.results || []);
       setTotalCount(data.count || 0);
     } catch (error) {
@@ -489,18 +409,14 @@ export default function SongListClient({
     } finally {
       setLoading(false);
 
-      // Re-enable automatic data fetching after manual fetch is complete
       setDisableAutoFetch(false);
     }
 
-    // Update URL with new sort parameters
     const params = new URLSearchParams(window.location.search);
 
-    // Update sort parameters
     params.set("sort_by", newSortField);
     params.set("order", newSortOrder);
 
-    // Determine base path
     let path = "/songs";
     if (artistSlug) {
       path = `/artist/${artistSlug}`;
@@ -508,26 +424,22 @@ export default function SongListClient({
       path = `/year/${yearFilter}`;
     }
 
-    // Update URL without refreshing the page
     const queryString = params.toString();
     const newUrl = `${path}${queryString ? `?${queryString}` : ""}`;
     console.log("Navigating to:", newUrl);
     router.push(newUrl, { scroll: false });
   };
 
-  // Handle pagination
   const handlePageChange = (newPage) => {
     setPage(newPage);
     window.scrollTo(0, 0);
   };
 
-  // Generate years for dropdown
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1958 + 1 }, (_, i) =>
     (1958 + i).toString()
   );
 
-  // Generate decades for dropdown
   const currentDecade = Math.floor(currentYear / 10) * 10;
   const decades = Array.from(
     { length: (currentDecade - 1950) / 10 + 1 },
@@ -537,45 +449,44 @@ export default function SongListClient({
     }
   );
 
-  // Calculate pagination
   const totalPages = Math.ceil(totalCount / perPage);
   const showingFrom = (page - 1) * perPage + 1;
   const showingTo = Math.min(page * perPage, totalCount);
 
   return (
     <div>
-      {/* Filters Section - HIDE COMPLETELY ON ARTIST PAGES */}
+      {/* Filters Section */}
       {!artistSlug && (
         <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
           {/* Left Column - Toggle Switches */}
           <div className="w-full md:w-1/3">
             {/* #1 Hits Only Toggle */}
-            <div className="bg-gray-50 p-4 rounded-lg shadow-sm mb-4 flex flex-col items-center gap-2">
+            <div className="bg-yellow-50 p-4 rounded-lg shadow-sm mb-4 flex flex-col items-center gap-2 border border-slate-300">
               <div className="flex items-center gap-2">
-                <Award className="w-6 h-6 text-orange-300" />
-                <span className="text-lg font-medium">#1 hits only</span>
+                <Award className="w-6 h-6 text-amber-600" />
+                <span className="text-lg font-medium text-slate-900">#1 hits only</span>
               </div>
               <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
                 <input
                   type="checkbox"
                   id="numberOneToggle"
-                  className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-gray-300 checked:border-pink-500 left-0 checked:left-6"
+                  className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-slate-400 checked:border-amber-400 left-0 checked:left-6"
                   checked={onlyNumberOneHits}
                   onChange={(e) => handleNumberOneToggle(e.target.checked)}
                 />
                 <label
                   htmlFor="numberOneToggle"
-                  className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-gray-300 peer-checked:bg-pink-500"
+                  className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-slate-300 peer-checked:bg-amber-400"
                 ></label>
               </div>
             </div>
 
-            {/* Unrated Songs Toggle - Only visible when logged in */}
+            {/* Unrated Songs Toggle */}
             {isAuthenticated && (
-              <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center gap-2">
+              <div className="bg-yellow-50 p-4 rounded-lg shadow-sm flex flex-col items-center gap-2 border border-slate-300">
                 <div className="flex items-center gap-2">
-                  <Star className="w-6 h-6 text-gray-500" />
-                  <span className="text-lg font-medium">
+                  <Star className="w-6 h-6 text-amber-600" />
+                  <span className="text-lg font-medium text-slate-900">
                     Unrated songs only
                   </span>
                 </div>
@@ -583,13 +494,13 @@ export default function SongListClient({
                   <input
                     type="checkbox"
                     id="unratedToggle"
-                    className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-gray-300 checked:border-blue-500 left-0 checked:left-6"
+                    className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-slate-400 checked:border-slate-900 left-0 checked:left-6"
                     checked={onlyUnratedSongs}
                     onChange={(e) => handleUnratedToggle(e.target.checked)}
                   />
                   <label
                     htmlFor="unratedToggle"
-                    className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-gray-300 peer-checked:bg-blue-500"
+                    className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-slate-300 peer-checked:bg-slate-900"
                   ></label>
                 </div>
               </div>
@@ -599,13 +510,13 @@ export default function SongListClient({
           {/* Middle Column - Dropdowns */}
           <div className="w-full md:w-1/3">
             {/* Year Filter */}
-            <div className="bg-gray-50 p-4 rounded-lg shadow-sm mb-4">
+            <div className="bg-yellow-50 p-4 rounded-lg shadow-sm mb-4 border border-slate-300">
               <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-6 h-6 text-pink-500" />
-                <span className="text-lg font-medium">Jump to year:</span>
+                <Calendar className="w-6 h-6 text-amber-600" />
+                <span className="text-lg font-medium text-slate-900">Jump to year:</span>
               </div>
               <select
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full p-2 border border-slate-400 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 text-slate-900"
                 value={yearFilter || "all"}
                 onChange={(e) => handleYearChange(e.target.value)}
               >
@@ -619,13 +530,13 @@ export default function SongListClient({
             </div>
 
             {/* Decade Filter */}
-            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+            <div className="bg-yellow-50 p-4 rounded-lg shadow-sm border border-slate-300">
               <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-6 h-6 text-blue-500" />
-                <span className="text-lg font-medium">Filter by decade:</span>
+                <Calendar className="w-6 h-6 text-amber-600" />
+                <span className="text-lg font-medium text-slate-900">Filter by decade:</span>
               </div>
               <select
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2 border border-slate-400 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 text-slate-900"
                 value={decadeFilter || "all"}
                 onChange={(e) => handleDecadeChange(e.target.value)}
               >
@@ -643,7 +554,7 @@ export default function SongListClient({
           <div className="w-full md:w-1/3">
             <button
               onClick={handleReset}
-              className="w-full bg-gray-50 p-4 rounded-lg shadow-sm text-pink-500 hover:text-pink-600 flex items-center justify-center gap-2 text-lg font-medium transition-colors h-full"
+              className="w-full bg-yellow-50 p-4 rounded-lg shadow-sm text-amber-700 hover:text-amber-900 flex items-center justify-center gap-2 text-lg font-medium transition-colors h-full border border-slate-300"
             >
               <RefreshCw className="w-5 h-5" />
               Reset all filters
@@ -653,45 +564,45 @@ export default function SongListClient({
       )}
 
       {/* Sort Controls */}
-      <div className="bg-white rounded-xl shadow-md p-4 mb-4">
-        <h3 className="text-lg font-medium text-gray-700 mb-2">Sort by:</h3>
+      <div className="bg-white rounded-xl shadow-md p-4 mb-4 border border-slate-400">
+        <h3 className="text-lg font-medium text-slate-900 mb-2">Sort by:</h3>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => handleSort("title")}
-            className={`px-3 py-1 rounded-md text-sm ${
+            className={`px-3 py-1 rounded-md text-sm transition-colors ${
               sortField === "title"
-                ? "bg-pink-500 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300"
             }`}
           >
             Title {sortField === "title" && (sortOrder === "asc" ? "↑" : "↓")}
           </button>
           <button
             onClick={() => handleSort("artist")}
-            className={`px-3 py-1 rounded-md text-sm ${
+            className={`px-3 py-1 rounded-md text-sm transition-colors ${
               sortField === "artist"
-                ? "bg-pink-500 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300"
             }`}
           >
             Artist {sortField === "artist" && (sortOrder === "asc" ? "↑" : "↓")}
           </button>
           <button
             onClick={() => handleSort("year")}
-            className={`px-3 py-1 rounded-md text-sm ${
+            className={`px-3 py-1 rounded-md text-sm transition-colors ${
               sortField === "year"
-                ? "bg-pink-500 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300"
             }`}
           >
             Year {sortField === "year" && (sortOrder === "asc" ? "↑" : "↓")}
           </button>
           <button
             onClick={() => handleSort("peak_rank")}
-            className={`px-3 py-1 rounded-md text-sm ${
+            className={`px-3 py-1 rounded-md text-sm transition-colors ${
               sortField === "peak_rank"
-                ? "bg-pink-500 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300"
             }`}
           >
             Peak Rank{" "}
@@ -699,10 +610,10 @@ export default function SongListClient({
           </button>
           <button
             onClick={() => handleSort("average_user_score")}
-            className={`px-3 py-1 rounded-md text-sm ${
+            className={`px-3 py-1 rounded-md text-sm transition-colors ${
               sortField === "average_user_score"
-                ? "bg-pink-500 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300"
             }`}
           >
             Score{" "}
@@ -711,10 +622,10 @@ export default function SongListClient({
           </button>
           <button
             onClick={() => handleSort("weeks_on_chart")}
-            className={`px-3 py-1 rounded-md text-sm ${
+            className={`px-3 py-1 rounded-md text-sm transition-colors ${
               sortField === "weeks_on_chart"
-                ? "bg-pink-500 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300"
             }`}
           >
             Weeks{" "}
@@ -725,37 +636,37 @@ export default function SongListClient({
       </div>
 
       {/* Songs List - Desktop View (Table) */}
-      <div className="hidden lg:block overflow-x-auto bg-white rounded-xl shadow-md">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="hidden lg:block overflow-x-auto bg-white rounded-xl shadow-md border border-slate-400">
+        <table className="min-w-full divide-y divide-slate-300">
+          <thead className="bg-slate-50 border-b border-slate-300">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-700">
                 Title
               </th>
-              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-700">
                 Artist
               </th>
-              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-700">
                 Year
               </th>
-              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-700">
                 Peak Rank
               </th>
-              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-700">
                 Average Score
               </th>
-              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-700">
                 Weeks on Chart
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-slate-300">
             {loading ? (
               <tr>
                 <td colSpan="6" className="px-4 py-2 text-center">
                   <div className="flex justify-center items-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
-                    <span className="ml-2">Loading songs...</span>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400"></div>
+                    <span className="ml-2 text-slate-700">Loading songs...</span>
                   </div>
                 </td>
               </tr>
@@ -763,11 +674,11 @@ export default function SongListClient({
               <tr>
                 <td colSpan="6" className="px-4 py-2 text-center">
                   <div className="flex flex-col items-center justify-center py-6">
-                    <Search className="w-10 h-10 text-red-400 mb-2" />
-                    <span className="text-red-500 font-medium">{error}</span>
+                    <Search className="w-10 h-10 text-red-500 mb-2" />
+                    <span className="text-red-600 font-medium">{error}</span>
                     <button
                       onClick={handleReset}
-                      className="mt-4 px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition-colors"
+                      className="mt-4 px-4 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-700 transition-colors"
                     >
                       Reset Search
                     </button>
@@ -778,8 +689,8 @@ export default function SongListClient({
               <tr>
                 <td colSpan="6" className="px-4 py-2 text-center">
                   <div className="flex flex-col items-center justify-center py-6">
-                    <Search className="w-10 h-10 text-gray-400 mb-2" />
-                    <span className="text-gray-500">No hits found</span>
+                    <Search className="w-10 h-10 text-slate-400 mb-2" />
+                    <span className="text-slate-600">No hits found</span>
                   </div>
                 </td>
               </tr>
@@ -787,14 +698,13 @@ export default function SongListClient({
               songs.map((song) => (
                 <tr
                   key={song.id}
-                  className="hover:bg-gray-50 transition-colors"
+                  className="hover:bg-yellow-50 transition-colors border-b border-slate-300"
                 >
                   <td className="px-4 py-2 whitespace-nowrap">
                     <Link
                       href={`/songs/${song.slug}`}
-                      className="text-gray-900 font-medium hover:text-pink-600 transition-colors"
+                      className="text-slate-900 font-medium hover:text-amber-700 transition-colors"
                       onClick={(e) => {
-                        // Prevent the updateUrl effect from running
                         e.stopPropagation();
                       }}
                     >
@@ -804,9 +714,8 @@ export default function SongListClient({
                   <td className="px-4 py-2 whitespace-nowrap">
                     <Link
                       href={`/artist/${song.artist_slug}`}
-                      className="text-pink-600 hover:text-gray-900 transition-colors"
+                      className="text-amber-700 hover:text-slate-900 transition-colors"
                       onClick={(e) => {
-                        // Prevent the updateUrl effect from running
                         e.stopPropagation();
                       }}
                     >
@@ -816,28 +725,27 @@ export default function SongListClient({
                   <td className="px-4 py-2 whitespace-nowrap">
                     <Link
                       href={`/year/${song.year}`}
-                      className="text-blue-600 hover:text-pink-600 transition-colors"
+                      className="text-slate-700 hover:text-amber-700 transition-colors"
                       onClick={(e) => {
-                        // Prevent the updateUrl effect from running
                         e.stopPropagation();
                       }}
                     >
                       {song.year}
                     </Link>
                   </td>
-                  <td className="px-4 py-2 whitespace-nowrap">
+                  <td className="px-4 py-2 whitespace-nowrap text-slate-900">
                     {song.peak_rank}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     {song.average_user_score ? (
-                      <span className="bg-pink-100 text-pink-800 px-2 py-1 rounded-full">
+                      <span className="bg-amber-100 text-amber-900 px-2 py-1 rounded-full">
                         {song.average_user_score.toFixed(1)}
                       </span>
                     ) : (
-                      <span className="text-gray-400">-</span>
+                      <span className="text-slate-400">-</span>
                     )}
                   </td>
-                  <td className="px-4 py-2 whitespace-nowrap">
+                  <td className="px-4 py-2 whitespace-nowrap text-slate-900">
                     {song.weeks_on_chart}
                   </td>
                 </tr>
@@ -850,30 +758,30 @@ export default function SongListClient({
       {/* Songs List - Mobile View (Cards) */}
       <div className="lg:hidden">
         {loading ? (
-          <div className="bg-white rounded-xl shadow-md p-6 text-center">
+          <div className="bg-white rounded-xl shadow-md p-6 text-center border border-slate-400">
             <div className="flex justify-center items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
-              <span className="ml-2">Loading songs...</span>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400"></div>
+              <span className="ml-2 text-slate-700">Loading songs...</span>
             </div>
           </div>
         ) : error ? (
-          <div className="bg-white rounded-xl shadow-md p-6 text-center">
+          <div className="bg-white rounded-xl shadow-md p-6 text-center border border-slate-400">
             <div className="flex flex-col items-center justify-center py-6">
-              <Search className="w-10 h-10 text-red-400 mb-2" />
-              <span className="text-red-500 font-medium">{error}</span>
+              <Search className="w-10 h-10 text-red-500 mb-2" />
+              <span className="text-red-600 font-medium">{error}</span>
               <button
                 onClick={handleReset}
-                className="mt-4 px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition-colors"
+                className="mt-4 px-4 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-700 transition-colors"
               >
                 Reset Search
               </button>
             </div>
           </div>
         ) : songs.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-6 text-center">
+          <div className="bg-white rounded-xl shadow-md p-6 text-center border border-slate-400">
             <div className="flex flex-col items-center justify-center py-6">
-              <Search className="w-10 h-10 text-gray-400 mb-2" />
-              <span className="text-gray-500">No hits found</span>
+              <Search className="w-10 h-10 text-slate-400 mb-2" />
+              <span className="text-slate-600">No hits found</span>
             </div>
           </div>
         ) : (
@@ -881,15 +789,14 @@ export default function SongListClient({
             {songs.map((song) => (
               <div
                 key={song.id}
-                className="bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-shadow"
+                className="bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-shadow border border-slate-400"
               >
                 <div className="flex justify-between items-start">
                   <div>
                     <Link
                       href={`/songs/${song.slug}`}
-                      className="text-lg font-medium text-gray-900 hover:text-pink-600 transition-colors"
+                      className="text-lg font-medium text-slate-900 hover:text-amber-700 transition-colors"
                       onClick={(e) => {
-                        // Prevent the updateUrl effect from running
                         e.stopPropagation();
                       }}
                     >
@@ -898,9 +805,8 @@ export default function SongListClient({
                     <div className="mt-1">
                       <Link
                         href={`/artist/${song.artist_slug}`}
-                        className="text-pink-600 hover:text-gray-900 transition-colors"
+                        className="text-amber-700 hover:text-slate-900 transition-colors"
                         onClick={(e) => {
-                          // Prevent the updateUrl effect from running
                           e.stopPropagation();
                         }}
                       >
@@ -911,9 +817,8 @@ export default function SongListClient({
                   <div className="text-right">
                     <Link
                       href={`/year/${song.year}`}
-                      className="text-blue-600 hover:text-pink-600 transition-colors text-sm"
+                      className="text-slate-700 hover:text-amber-700 transition-colors text-sm"
                       onClick={(e) => {
-                        // Prevent the updateUrl effect from running
                         e.stopPropagation();
                       }}
                     >
@@ -925,25 +830,25 @@ export default function SongListClient({
                 <div className="mt-3 flex justify-between text-sm">
                   <div className="flex space-x-4">
                     <div>
-                      <span className="text-gray-500">Peak:</span>
-                      <span className="font-medium ml-1">
+                      <span className="text-slate-600">Peak:</span>
+                      <span className="font-medium ml-1 text-slate-900">
                         #{song.peak_rank}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Weeks:</span>
-                      <span className="font-medium ml-1">
+                      <span className="text-slate-600">Weeks:</span>
+                      <span className="font-medium ml-1 text-slate-900">
                         {song.weeks_on_chart}
                       </span>
                     </div>
                   </div>
                   <div>
                     {song.average_user_score ? (
-                      <span className="bg-pink-100 text-pink-800 px-2 py-1 rounded-full text-xs">
+                      <span className="bg-amber-100 text-amber-900 px-2 py-1 rounded-full text-xs">
                         {song.average_user_score.toFixed(1)}
                       </span>
                     ) : (
-                      <span className="text-gray-400">Not rated</span>
+                      <span className="text-slate-400">Not rated</span>
                     )}
                   </div>
                 </div>
@@ -960,10 +865,10 @@ export default function SongListClient({
             <button
               onClick={() => handlePageChange(1)}
               disabled={page === 1}
-              className={`px-3 py-1 rounded-md ${
+              className={`px-3 py-1 rounded-md border transition-colors ${
                 page === 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
+                  ? "bg-slate-50 text-slate-400 cursor-not-allowed border-slate-300"
+                  : "bg-white text-slate-800 hover:bg-slate-100 border-slate-300"
               }`}
             >
               First
@@ -971,18 +876,16 @@ export default function SongListClient({
             <button
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 1}
-              className={`px-3 py-1 rounded-md ${
+              className={`px-3 py-1 rounded-md border transition-colors ${
                 page === 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
+                  ? "bg-slate-50 text-slate-400 cursor-not-allowed border-slate-300"
+                  : "bg-white text-slate-800 hover:bg-slate-100 border-slate-300"
               }`}
             >
               Prev
             </button>
 
-            {/* Page numbers */}
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              // Show pages around current page
               let pageNum;
               if (totalPages <= 5) {
                 pageNum = i + 1;
@@ -998,10 +901,10 @@ export default function SongListClient({
                 <button
                   key={pageNum}
                   onClick={() => handlePageChange(pageNum)}
-                  className={`px-3 py-1 rounded-md ${
+                  className={`px-3 py-1 rounded-md border transition-colors ${
                     page === pageNum
-                      ? "bg-pink-500 text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-50"
+                      ? "bg-slate-900 text-white border-slate-900"
+                      : "bg-white text-slate-800 hover:bg-slate-100 border-slate-300"
                   }`}
                 >
                   {pageNum}
@@ -1012,10 +915,10 @@ export default function SongListClient({
             <button
               onClick={() => handlePageChange(page + 1)}
               disabled={page === totalPages}
-              className={`px-3 py-1 rounded-md ${
+              className={`px-3 py-1 rounded-md border transition-colors ${
                 page === totalPages
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
+                  ? "bg-slate-50 text-slate-400 cursor-not-allowed border-slate-300"
+                  : "bg-white text-slate-800 hover:bg-slate-100 border-slate-300"
               }`}
             >
               Next
@@ -1023,10 +926,10 @@ export default function SongListClient({
             <button
               onClick={() => handlePageChange(totalPages)}
               disabled={page === totalPages}
-              className={`px-3 py-1 rounded-md ${
+              className={`px-3 py-1 rounded-md border transition-colors ${
                 page === totalPages
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
+                  ? "bg-slate-50 text-slate-400 cursor-not-allowed border-slate-300"
+                  : "bg-white text-slate-800 hover:bg-slate-100 border-slate-300"
               }`}
             >
               Last
@@ -1036,17 +939,17 @@ export default function SongListClient({
       )}
 
       {/* Results Summary */}
-      <div className="mt-6 w-full text-center text-gray-600 bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg shadow-sm">
+      <div className="mt-6 w-full text-center text-slate-700 bg-yellow-50 p-3 rounded-lg shadow-sm border border-slate-300">
         Showing{" "}
-        <span className="font-bold text-pink-600">
+        <span className="font-bold text-amber-700">
           {showingFrom}-{showingTo}
         </span>{" "}
-        of <span className="font-bold text-pink-600">{totalCount}</span> hit
+        of <span className="font-bold text-amber-700">{totalCount}</span> hit
         songs
       </div>
 
       {/* Copy Spotify URLs Button */}
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mt-4 mb-4">
         <button
           onClick={() => {
             const urls = songs
@@ -1064,7 +967,7 @@ export default function SongListClient({
               alert("No Spotify URLs to copy!");
             }
           }}
-          className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors flex items-center gap-2"
+          className="bg-slate-900 hover:bg-slate-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors flex items-center gap-2"
         >
           <Clipboard className="w-5 h-5" />
           Copy Spotify URLs to clipboard

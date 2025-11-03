@@ -16,8 +16,8 @@ export default function RandomHitsByDecadeClient({ groupedByDecade, initialDecad
               key={decade}
               className={`px-5 py-2 rounded-lg text-md transition-all duration-300 transform hover:scale-105 shadow-md ${
                 activeDecade === decade
-                  ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold"
-                  : "bg-gray-200 text-gray-800 hover:bg-pink-400 hover:text-white"
+                  ? "bg-slate-900 text-white font-bold"
+                  : "bg-slate-200 text-slate-800 hover:bg-amber-400 hover:text-slate-900"
               }`}
               onClick={() => setActiveDecade(decade)}
             >
@@ -31,7 +31,7 @@ export default function RandomHitsByDecadeClient({ groupedByDecade, initialDecad
           groupedByDecade[activeDecade].map((song) => (
             <div
               key={song.id}
-              className="mb-8 w-full bg-gray-700 rounded-lg p-4 shadow-lg transform transition-all duration-300 hover:shadow-xl"
+              className="mb-8 w-full bg-white border border-slate-400 rounded-lg p-4 shadow-lg transform transition-all duration-300 hover:shadow-xl"
             >
               <iframe
                 src={`https://open.spotify.com/embed/track/${song.spotify_url
@@ -45,36 +45,36 @@ export default function RandomHitsByDecadeClient({ groupedByDecade, initialDecad
                 className="w-full rounded-md shadow-md"
                 title={`${song.title} by ${song.artist}`}
               ></iframe>
-              <p className="mt-4 text-center text-sm bg-gray-800 p-3 rounded-lg shadow-inner">
+              <p className="mt-4 text-center text-sm bg-slate-100 p-3 rounded-lg shadow-inner border border-slate-300 text-slate-900">
                 <Link
                   href={`/songs/${song.slug}`}
-                  className="text-pink-300 hover:text-pink-200 transition-colors font-bold"
+                  className="text-amber-700 hover:text-amber-900 transition-colors font-cherry font-bold"
                 >
                   {song.title}
                 </Link>{" "}
                 by{" "}
                 <Link
                   href={`/artist/${song.artist_slug}`}
-                  className="text-blue-300 hover:text-blue-200 transition-colors font-bold"
+                  className="text-slate-700 hover:text-slate-900 transition-colors font-cherry"
                 >
                   {song.artist}
                 </Link>{" "}
                 entered the charts in{" "}
                 <Link
                   href={`/year/${song.year}`}
-                  className="text-gray-300 hover:text-gray-400 transition-colors font-bold"
+                  className="text-slate-700 hover:text-slate-900 transition-colors font-cherry font-bold"
                 >
                   {song.year}
                 </Link>{" "}
                 peaking at{" "}
-                <span className="text-pink-300 px-2 py-1 rounded-full font-bold">
+                <span className="text-white bg-slate-900 px-2 py-1 rounded-full font-cherry font-bold">
                   #{song.peak_rank}
                 </span>
               </p>
             </div>
           ))
         ) : (
-          <p className="text-center p-6 bg-gray-700 rounded-lg">
+          <p className="text-center p-6 bg-white border border-slate-400 rounded-lg text-slate-700">
             No songs available for this decade.
           </p>
         )}

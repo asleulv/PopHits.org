@@ -11,13 +11,11 @@ export default function FeaturedArtists({ artists }) {
     <div className="mb-12">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-2">
-          <Star className="hidden lg:block w-8 h-8 text-purple-700" />
-          <span className="bg-gradient-to-r from-purple-700 to-purple-600 bg-clip-text text-transparent">
+          <Star className="hidden lg:block w-8 h-8 text-amber-600" />
+          <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
             Featured artists
           </span>
         </h2>
-        
-       
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
@@ -37,9 +35,9 @@ export default function FeaturedArtists({ artists }) {
                   alt={artist.name}
                   width={160}
                   height={160}
-                  className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full border-4 border-purple-300 group-hover:border-purple-500 transition-colors mx-auto mb-2"
+                  className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full border-4 border-amber-400 group-hover:border-amber-600 transition-colors mx-auto mb-2"
                 />
-                <h3 className="font-semibold text-center group-hover:text-purple-600 text-l">
+                <h3 className="font-semibold text-center group-hover:text-amber-700 text-l text-slate-900">
                   {artist.name}
                 </h3>
               </div>
@@ -50,7 +48,7 @@ export default function FeaturedArtists({ artists }) {
       <div className="text-center mt-6">
         <Link
           href="/artists"
-          className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-full shadow-md hover:from-pink-600 hover:to-pink-700 transition-all hover:text-white duration-300 transform"
+          className="inline-block px-6 py-2 bg-slate-900 text-gray-200 hover:text-white font-cherry rounded-full shadow-md hover:bg-slate-700 transition-all duration-300"
         >
           All artists
         </Link>
