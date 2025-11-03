@@ -5,14 +5,10 @@ import puppeteer from 'puppeteer';
 export async function generateBirthdayImage(requestedDate, name) {
   let browser;
   try {
-    // Bruk samme pattern som api.js
-    let baseUrl = 'https://pophits.org'; // Production external
+    let baseUrl = 'https://pophits.org'; // Alltid pophits.org
     
     if (process.env.NODE_ENV === 'development') {
-      baseUrl = 'http://localhost:3000'; // Lokalt
-    } else {
-      // På produksjon: bruk intern loopback URL
-      baseUrl = 'http://127.0.0.1:3000'; // Puppeteer kjørar på same maskin
+      baseUrl = 'http://localhost:3001'; // Lokalt (port 3001!)
     }
     
     console.log('Puppeteer baseUrl:', baseUrl, '| NODE_ENV:', process.env.NODE_ENV);
