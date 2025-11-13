@@ -86,6 +86,7 @@ def historic_chart(request, date_str):
             'position': entry.rank,
             'title': entry.song.title,
             'artist': entry.song.artist,
+            'artist_slug': entry.song.artist_slug,
             'slug': entry.song.slug,
             'peak_rank': entry.song.peak_rank,
             'weeks_on_chart': entry.song.weeks_on_chart,

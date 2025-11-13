@@ -121,9 +121,7 @@ export default async function ChartPage({ params }) {
               </h3>
               <p className="text-xs md:text-sm text-gray-700 mt-1">
                 <Link
-                  href={`/artists/${song.artist
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}`}
+                  href={`/artist/${song.artist_slug}`}
                   className="font-bold text-gray-700 hover:text-yellow-600 hover:underline"
                 >
                   {song.artist}
