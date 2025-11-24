@@ -74,13 +74,14 @@ def generate_sitemap():
                 'url': f'https://pophits.org/charts/hot-100/{chart_date_str}',
                 'priority': '0.7',
                 'changefreq': 'never',
-                'lastmod': chart_date_str
+                'lastmod': today  # <- use today's date instead of chart date
             })
             chart_count += 1
             if chart_count % 1000 == 0:
                 logger.info(f"Added {chart_count} chart pages so far...")
-        
+
         logger.info(f"Total chart pages added: {chart_count}")
+
         
         # Add song pages
         logger.info("Adding songs to sitemap...")
