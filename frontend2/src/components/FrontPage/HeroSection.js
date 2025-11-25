@@ -37,8 +37,7 @@ export default function HeroSection({
         </p>
 
         <p className="text-lg text-slate-700 mb-8 leading-relaxed">
-          <span className="text-slate-900 font-semibold">{songCount?.toLocaleString() ?? "30,000"}</span> songs spanning 67 years of chart history. Discover forgotten gems,
-          explore chart stories, and become a hit music expert.
+          Explore tens of thousands of songs spanning 67 years of chart history. Discover forgotten gems, dive into chart stories, and become a true hit-music expert.
         </p>
 
         {/* Stats grid - modern, calm, soft borders */}
@@ -81,7 +80,7 @@ export default function HeroSection({
                 User Ratings
               </div>
               <div className="text-slate-400 text-xs">
-                Charts rated by music fans
+                Songs rated by music fans
               </div>
             </div>
           </div>
