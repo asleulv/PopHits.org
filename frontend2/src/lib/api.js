@@ -49,6 +49,9 @@ export const API_ENDPOINTS = {
   // User endpoints
   userProfile: `${BASE_URL}/api/profile/`,
 
+  // Website stats endpoints
+  websiteStats: `${BASE_URL}/api/songs/website-stats/`,
+
   // Blog endpoints
   blogPosts: `${BASE_URL}/api/blog/`,
   blogPostBySlug: (slug) => `${BASE_URL}/api/blog/${slug}/`,
@@ -429,6 +432,14 @@ export async function getLatestBlogPost() {
     console.error("Error fetching latest blog post:", error);
     return null;
   }
+}
+
+// ============================================================================
+// WEBSITE STATS  API FUNCTIONS
+// ============================================================================
+
+export async function getWebsiteStats() {
+  return fetchData(API_ENDPOINTS.websiteStats);
 }
 
 

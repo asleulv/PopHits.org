@@ -7,6 +7,7 @@ import {
   getCurrentHot100,
   getNumberOneHits,
   getRandomSongByArtist,
+  getWebsiteStats,
 } from "@/lib/api";
 import { getBlueskyPosts } from "@/lib/bluesky";
 
@@ -21,7 +22,6 @@ import RandomHitsByDecadeSection from "@/components/FrontPage/RandomHitsByDecade
 import BlueskyDiscoverySection from "@/components/FrontPage/BlueskyDiscoverySection";
 import FeaturedArtists from "@/components/FrontPage/FeaturedArtists";
 import BirthdayWidget from "@/components/FrontPage/BirthdayWidget";
-
 
 // Helper function to get decade from year
 function getDecade(year) {
@@ -78,7 +78,11 @@ export const metadata = {
 
 async function HeroSectionWrapper() {
   try {
-    const featuredArtists = await getFeaturedArtists();
+    // Fetch featured artists and site stats in parallel for speed
+    const [featuredArtists, stats] = await Promise.all([
+      getFeaturedArtists(),
+      getWebsiteStats(),
+    ]);
     let songWithImage = null;
     if (featuredArtists?.length > 0) {
       const randomArtist =
@@ -98,7 +102,16 @@ async function HeroSectionWrapper() {
         };
       }
     }
-    return <HeroSection songWithImage={songWithImage} />;
+    // Pass dynamic stats to HeroSection
+    return (
+      <HeroSection
+        songWithImage={songWithImage}
+        songCount={stats.song_count}
+        artistCount={stats.artist_count}
+        userRatingCount={stats.user_rating_count}
+        newestUsername={stats.newest_username}
+      />
+    );
   } catch (error) {
     console.error("Hero fetch failed:", error);
     return <HeroSection songWithImage={null} />;

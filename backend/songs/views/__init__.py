@@ -17,6 +17,7 @@ from .charts import CurrentHot100View, historic_chart, chart_dates
 from .generators import PlaylistGeneratorView, QuizGeneratorView
 from .stats import ArtistStatsView
 from .pagination import CustomPagination, ArtistPagination
+from .website_stats import website_stats
 
 __all__ = [
     # Songs
@@ -53,6 +54,7 @@ __all__ = [
     'QuizGeneratorView',
     # Stats
     'ArtistStatsView',
+    'website_stats',
     # Pagination
     'CustomPagination',
     'ArtistPagination',

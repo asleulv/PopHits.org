@@ -5,11 +5,13 @@ from .views import (
     UserBookmarkView, UserBookmarkedSongsView, BookmarkStatusView, CommentStatusView,
     RandomSongView, TopRatedSongsView, RandomSongsByDecadeView, NumberOneSongsView,
     SongsWithImagesView, PlaylistGeneratorView, QuizGeneratorView, CurrentHot100View, 
-    featured_artists, random_song_by_artist, SongTimelineView, historic_chart, chart_dates
+    featured_artists, random_song_by_artist, SongTimelineView, historic_chart, chart_dates,
+    website_stats
 )
 
 urlpatterns = [
     path('', SongListCreateView.as_view(), name='song-list-create'),
+    path('website-stats/', website_stats, name='website-stats'),
     path('<int:pk>/', SongDetailView.as_view(), name='song-detail'),
     path('<int:pk>/timeline/', SongTimelineView.as_view(), name='song-timeline'),
     path('slug/<slug:slug>/timeline/', SongTimelineView.as_view(), name='song-timeline-slug'),
