@@ -19,7 +19,7 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
   }
 
   return (
-    <section className="mb-8 text-slate-900 p-6 w-full bg-yellow-50 rounded-xl shadow-sm">
+    <section className="mb-8 text-slate-900 p-6 w-full bg-white md:bg-yellow-50 rounded-xl shadow-sm">
       <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
         <Flame className="hidden lg:block w-8 h-8 text-amber-600" />
         <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
