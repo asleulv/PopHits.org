@@ -8,7 +8,7 @@ import {
   Star,
   ThumbsUp,
   PartyPopper,
-  CirclePlay
+  CirclePlay,
 } from "lucide-react";
 
 export default function HeroSection({
@@ -33,22 +33,46 @@ export default function HeroSection({
         </h1>
 
         <p className="text-xl md:text-2xl text-slate-800 mb-4 font-medium">
-          The complete database of every Billboard Hot 100 hit from 1958 to today. Updated weekly with the latest chart data.
+          The complete database of every Billboard Hot 100 hit from 1958 to
+          today. Updated weekly with the latest chart data.
         </p>
 
         <p className="text-lg text-slate-700 mb-8 leading-relaxed">
-          Explore tens of thousands of songs spanning 67 years of chart history. Discover forgotten gems, dive into chart stories, and become a true hit-music expert.
+          Explore tens of thousands of songs spanning 67 years of chart history.
+          Discover forgotten gems, dive into chart stories, and become a true
+          hit-music expert.
         </p>
 
-        {/* Stats grid - modern, calm, soft borders */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div className="flex items-center gap-3 p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-            <Star className="w-7 h-7 text-amber-400 flex-shrink-0" />
-            <div>
-              <div className="font-cherry font-extrabold text-4xl text-slate-900 mb-1 leading-tight">
+          {/* Hit Songs */}
+          <div className="relative flex flex-col items-center p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+            {/* Icon: above on md+, inline left on mobile */}
+            <div className="hidden md:block absolute -top-7 left-1/2 transform -translate-x-1/2">
+              <span className="flex items-center justify-center w-14 h-14 bg-slate-700 rounded-full shadow">
+                <Star className="w-7 h-7 text-amber-400" />
+              </span>
+            </div>
+            <div className="flex md:hidden items-center mb-2 w-full">
+              <span className="flex items-center justify-center w-12 h-12 bg-slate-700 rounded-full shadow mr-4 flex-shrink-0">
+                <Star className="w-6 h-6 text-amber-400" />
+              </span>
+              <div>
+                <div className="font-cherry font-black text-3xl text-slate-900 mb-0.5">
+                  {songCount?.toLocaleString() ?? "?"}
+                </div>
+                <div className="uppercase text-slate-700 font-semibold text-[14px] tracking-wide mb-0.5">
+                  Hit Songs
+                </div>
+                <div className="text-slate-400 text-xs">
+                  All Hot 100 singles since 1958
+                </div>
+              </div>
+            </div>
+            <div className="mt-0 md:mt-7 flex-col items-center w-full hidden md:flex">
+              <div className="font-cherry font-black text-2xl sm:text-3xl md:text-4xl text-slate-900 mb-0.5">
                 {songCount?.toLocaleString() ?? "?"}
               </div>
-              <div className="uppercase text-slate-700 font-semibold text-[14px] tracking-wider mb-0.5">
+              <div className="uppercase text-slate-700 font-semibold text-[15px] tracking-wide mb-0.5">
                 Hit Songs
               </div>
               <div className="text-slate-400 text-xs">
@@ -56,13 +80,34 @@ export default function HeroSection({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-            <Users className="w-7 h-7 text-amber-400 flex-shrink-0" />
-            <div>
-              <div className="font-cherry font-extrabold text-4xl text-slate-900 mb-1 leading-tight">
+          {/* Hitmakers */}
+          <div className="relative flex flex-col items-center p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+            <div className="hidden md:block absolute -top-7 left-1/2 transform -translate-x-1/2">
+              <span className="flex items-center justify-center w-14 h-14 bg-slate-700 rounded-full shadow">
+                <Users className="w-7 h-7 text-amber-400" />
+              </span>
+            </div>
+            <div className="flex md:hidden items-center mb-2 w-full">
+              <span className="flex items-center justify-center w-12 h-12 bg-slate-700 rounded-full shadow mr-4 flex-shrink-0">
+                <Users className="w-6 h-6 text-amber-400" />
+              </span>
+              <div>
+                <div className="font-cherry font-black text-3xl text-slate-900 mb-0.5">
+                  {artistCount?.toLocaleString() ?? "?"}
+                </div>
+                <div className="uppercase text-slate-700 font-semibold text-[14px] tracking-wide mb-0.5">
+                  Hitmakers
+                </div>
+                <div className="text-slate-400 text-xs">
+                  Artists who made the charts
+                </div>
+              </div>
+            </div>
+            <div className="mt-0 md:mt-7 flex-col items-center w-full hidden md:flex">
+              <div className="font-cherry font-black text-2xl sm:text-3xl md:text-4xl text-slate-900 mb-0.5">
                 {artistCount?.toLocaleString() ?? "?"}
               </div>
-              <div className="uppercase text-slate-700 font-semibold text-[14px] tracking-wider mb-0.5">
+              <div className="uppercase text-slate-700 font-semibold text-[15px] tracking-wide mb-0.5">
                 Hitmakers
               </div>
               <div className="text-slate-400 text-xs">
@@ -70,13 +115,34 @@ export default function HeroSection({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-            <ThumbsUp className="w-7 h-7 text-amber-400 flex-shrink-0" />
-            <div>
-              <div className="font-cherry font-extrabold text-4xl text-slate-900 mb-1 leading-tight">
+          {/* User Ratings */}
+          <div className="relative flex flex-col items-center p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+            <div className="hidden md:block absolute -top-7 left-1/2 transform -translate-x-1/2">
+              <span className="flex items-center justify-center w-14 h-14 bg-slate-700 rounded-full shadow">
+                <ThumbsUp className="w-7 h-7 text-amber-400" />
+              </span>
+            </div>
+            <div className="flex md:hidden items-center mb-2 w-full">
+              <span className="flex items-center justify-center w-12 h-12 bg-slate-700 rounded-full shadow mr-4 flex-shrink-0">
+                <ThumbsUp className="w-6 h-6 text-amber-400" />
+              </span>
+              <div>
+                <div className="font-cherry font-black text-3xl text-slate-900 mb-0.5">
+                  {userRatingCount?.toLocaleString() ?? "?"}
+                </div>
+                <div className="uppercase text-slate-700 font-semibold text-[14px] tracking-wide mb-0.5">
+                  User Ratings
+                </div>
+                <div className="text-slate-400 text-xs">
+                  Songs rated by music fans
+                </div>
+              </div>
+            </div>
+            <div className="mt-0 md:mt-7 flex-col items-center w-full hidden md:flex">
+              <div className="font-cherry font-black text-2xl sm:text-3xl md:text-4xl text-slate-900 mb-0.5">
                 {userRatingCount?.toLocaleString() ?? "?"}
               </div>
-              <div className="uppercase text-slate-700 font-semibold text-[14px] tracking-wider mb-0.5">
+              <div className="uppercase text-slate-700 font-semibold text-[15px] tracking-wide mb-0.5">
                 User Ratings
               </div>
               <div className="text-slate-400 text-xs">
@@ -86,13 +152,15 @@ export default function HeroSection({
           </div>
         </div>
 
-        {/* Welcome newest member, calm and subtle */}
+        {/* Welcome newest member */}
         {newestUsername && (
           <div className="text-center mb-8">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-100 text-slate-700 font-semibold shadow-sm">
               <PartyPopper className="w-5 h-5 text-amber-400" />
               Welcome to our newest member:{" "}
-              <span className="font-monoline underline text-amber-600">{newestUsername}</span>
+              <span className="font-monoline underline text-amber-600">
+                {newestUsername}
+              </span>
             </span>
           </div>
         )}
