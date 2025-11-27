@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Suspense, useState, useEffect } from "react";
+import * as LucideIcons from "lucide-react";
 import {
   Calendar,
   TrendingUp,
@@ -15,6 +16,27 @@ import SongTimeline from "@/components/SongDetail/SongTimeline";
 import SongComments from "@/components/SongDetail/SongComments";
 import ShareButtons from "./ShareButtons";
 import { useSong } from "@/contexts/SongContext";
+
+function SongTagPill({ tag }) {
+  const { name, slug, color, icon } = tag || {};
+
+  const iconKey = icon && icon.charAt(0).toUpperCase() + icon.slice(1);
+  const IconComponent = iconKey && LucideIcons[iconKey];
+
+  return (
+    <Link
+      href={{
+        pathname: `/tags/${slug}`,
+        query: { name }, // pass tag name for titles
+      }}
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-white hover:text-white shadow-sm hover:opacity-80 transition"
+      style={{ backgroundColor: color || "#334155" }}
+    >
+      {IconComponent && <IconComponent size={14} className="text-white" />}
+      <span className="text-white">{name}</span>
+    </Link>
+  );
+}
 
 export default function SongDetailContent({ initialTimeline = [] }) {
   function getTrackIdFromUrl(url) {
@@ -49,6 +71,15 @@ export default function SongDetailContent({ initialTimeline = [] }) {
         </h1>
 
         <SongActions showRatingOnly={false} />
+
+        {song?.tags && song.tags.length > 0 && (
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
+            {song.tags.map((tag, index) => {
+              const key = tag.slug || `${tag.name}-${index}`;
+              return <SongTagPill key={key} tag={tag} />;
+            })}
+          </div>
+        )}
       </div>
 
       {/* Song Information Box with Lucide icons */}

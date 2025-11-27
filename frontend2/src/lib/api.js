@@ -215,7 +215,8 @@ export async function getSongs(
   query = "",
   peakRankFilter = null,
   unratedOnly = false,
-  decade = null
+  decade = null,
+  tagSlug = null  
 ) {
   const url = new URL(API_ENDPOINTS.songs);
 
@@ -250,6 +251,10 @@ export async function getSongs(
 
   if (decade) {
     url.searchParams.append("decade", decade);
+  }
+
+  if (tagSlug) {
+    url.searchParams.append("tag", tagSlug);
   }
 
   // Get auth token if needed

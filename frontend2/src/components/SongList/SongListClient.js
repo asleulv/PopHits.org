@@ -29,6 +29,8 @@ export default function SongListClient({
   artistSlug: initialArtistSlug,
   artistName,
   yearFilter: initialYearFilter,
+  tagSlug: initialTagSlug,
+  tagName,
 }) {
   const [songs, setSongs] = useState(initialSongs || []);
   const [loading, setLoading] = useState(false);
@@ -49,6 +51,7 @@ export default function SongListClient({
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || "");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [artistSlug, setArtistSlug] = useState(initialArtistSlug || null);
+  const [tagSlug, setTagSlug] = useState(initialTagSlug || null);
   const [disableAutoFetch, setDisableAutoFetch] = useState(false);
 
   const router = useRouter();
@@ -95,6 +98,8 @@ export default function SongListClient({
       path = `/artist/${artistSlug}`;
     } else if (yearFilter) {
       path = `/year/${yearFilter}`;
+    } else if (tagSlug) {
+      path = `/tags/${tagSlug}`;
     }
 
     const queryString = params.toString();
@@ -111,6 +116,7 @@ export default function SongListClient({
     sortField,
     sortOrder,
     yearFilter,
+    tagSlug,
     router,
   ]);
 
@@ -149,7 +155,8 @@ export default function SongListClient({
         searchQuery,
         peakRankFilter,
         onlyUnratedSongs,
-        decadeFilter
+        decadeFilter,
+        tagSlug
       );
 
       setSongs(data.results || []);
@@ -182,6 +189,7 @@ export default function SongListClient({
     onlyUnratedSongs,
     decadeFilter,
     isAuthenticated,
+    tagSlug,
   ]);
 
   const getPageTitle = useCallback(() => {
@@ -204,6 +212,8 @@ export default function SongListClient({
       base = `${yearFilter} Hits`;
     } else if (decadeFilter) {
       base = `${decadeFilter}s Hits`;
+    } else if (tagName) {
+      base = `${tagName} Hits`;
     } else if (searchQuery) {
       return `Search Results for "${searchQuery}"`;
     } else {
@@ -223,6 +233,7 @@ export default function SongListClient({
     yearFilter,
     decadeFilter,
     searchQuery,
+    tagName,
   ]);
 
   useEffect(() => {
@@ -329,7 +340,11 @@ export default function SongListClient({
     setSearchQuery("");
     setArtistSlug(null);
 
-    router.push("/songs");
+    if (tagSlug) {
+      router.push(`/tags/${tagSlug}`); // stay on tag page
+    } else {
+      router.push("/songs");
+    }
   };
 
   const handleSearch = (e) => {
@@ -464,7 +479,9 @@ export default function SongListClient({
             <div className="bg-yellow-50 p-4 rounded-lg shadow-sm mb-4 flex flex-col items-center gap-2 border border-slate-300">
               <div className="flex items-center gap-2">
                 <Award className="w-6 h-6 text-amber-600" />
-                <span className="text-lg font-medium text-slate-900">#1 hits only</span>
+                <span className="text-lg font-medium text-slate-900">
+                  #1 hits only
+                </span>
               </div>
               <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
                 <input
@@ -513,7 +530,9 @@ export default function SongListClient({
             <div className="bg-yellow-50 p-4 rounded-lg shadow-sm mb-4 border border-slate-300">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-6 h-6 text-amber-600" />
-                <span className="text-lg font-medium text-slate-900">Jump to year:</span>
+                <span className="text-lg font-medium text-slate-900">
+                  Jump to year:
+                </span>
               </div>
               <select
                 className="w-full p-2 border border-slate-400 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 text-slate-900"
@@ -533,7 +552,9 @@ export default function SongListClient({
             <div className="bg-yellow-50 p-4 rounded-lg shadow-sm border border-slate-300">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-6 h-6 text-amber-600" />
-                <span className="text-lg font-medium text-slate-900">Filter by decade:</span>
+                <span className="text-lg font-medium text-slate-900">
+                  Filter by decade:
+                </span>
               </div>
               <select
                 className="w-full p-2 border border-slate-400 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 text-slate-900"
@@ -666,7 +687,9 @@ export default function SongListClient({
                 <td colSpan="6" className="px-4 py-2 text-center">
                   <div className="flex justify-center items-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400"></div>
-                    <span className="ml-2 text-slate-700">Loading songs...</span>
+                    <span className="ml-2 text-slate-700">
+                      Loading songs...
+                    </span>
                   </div>
                 </td>
               </tr>

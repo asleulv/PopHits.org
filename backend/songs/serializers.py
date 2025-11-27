@@ -169,23 +169,40 @@ class ArtistDetailSerializer(serializers.ModelSerializer):
 class SongSerializer(serializers.ModelSerializer):
     comments = UserSongCommentSerializer(many=True, read_only=True)
     artist_data = serializers.SerializerMethodField()
-    
+    # Explicit tags field so '__all__' doesn’t auto-generate the ID list
+    tags = serializers.SerializerMethodField()
+
     class Meta:
         model = Song
         fields = '__all__'
-    
+
     def get_artist_data(self, obj):
-        """Get enriched artist data if available"""
         try:
-            # Get the main artist object
             artist = Artist.objects.get(name=obj.artist)
-            
-            # Only return enriched data if the artist has a MusicBrainz ID
             if artist.musicbrainz_id:
                 return ArtistDetailSerializer(artist).data
             return None
         except Artist.DoesNotExist:
             return None
+
+    def get_tags(self, obj):
+        # Some related models (e.g. NumberOneSong) don't have tag_relations
+        if not hasattr(obj, "tag_relations"):
+            return []
+
+        tag_relations = obj.tag_relations.select_related("tag")
+        return [
+            {
+                "name": rel.tag.name,
+                "slug": rel.tag.slug,
+                "color": rel.tag.color,
+                "icon": rel.tag.lucide_icon,
+                "category": rel.tag.category,
+            }
+            for rel in tag_relations
+        ]
+
+
         
 class SongTimelineSerializer(serializers.ModelSerializer):
     class Meta:

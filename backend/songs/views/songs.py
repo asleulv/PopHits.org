@@ -33,6 +33,12 @@ class SongListCreateView(generics.ListCreateAPIView):
         if year:
             queryset = queryset.filter(year=year)
 
+        tag_slug = self.request.GET.get('tag')
+        if tag_slug:
+            queryset = queryset.filter(
+                tag_relations__tag__slug=tag_slug
+            ).distinct()
+
         # Apply peak rank filter
         peak_rank_filter = self.request.GET.get('peak_rank')
         if peak_rank_filter:
@@ -93,15 +99,36 @@ class SongDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SongSerializer
 
     def get_queryset(self):
-        return Song.objects.all()
+        # Prefetch tags for efficiency
+        return Song.objects.all().prefetch_related(
+            'tag_relations__tag'
+        )
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
+
+        # Comments
         comments = UserSongComment.objects.filter(song=instance)
         comment_serializer = UserSongCommentSerializer(comments, many=True)
+
+        # Tags (with visual metadata)
+        tag_relations = instance.tag_relations.select_related('tag')
+        tags_data = [
+            {
+                'name': rel.tag.name,
+                'slug': rel.tag.slug,
+                'color': rel.tag.color,
+                'icon': rel.tag.lucide_icon,
+                'category': rel.tag.category,
+            }
+            for rel in tag_relations
+        ]
+
         data = serializer.data
         data['comments'] = comment_serializer.data
+        data['tags'] = tags_data
+
         return Response(data)
     
 class SongTimelineView(APIView):
