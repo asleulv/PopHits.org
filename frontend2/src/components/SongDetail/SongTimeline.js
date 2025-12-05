@@ -124,31 +124,30 @@ export default function SongTimeline({ timeline }) {
             >
               {/* Background rank zones: full chart width */}
               {/* Background rank zones: full chart width */}
-<ReferenceArea
-  y1={1}
-  y2={10}
-  x1={firstDate}
-  x2={lastDate}
-  fill="#dcfce7"
-  fillOpacity={0.5}
-/>
-<ReferenceArea
-  y1={11}
-  y2={20}
-  x1={firstDate}
-  x2={lastDate}
-  fill="#dbeafe"
-  fillOpacity={0.5}
-/>
-<ReferenceArea
-  y1={21}
-  y2={40}
-  x1={firstDate}
-  x2={lastDate}
-  fill="#ede9fe"
-  fillOpacity={0.5}
-/>
-
+              <ReferenceArea
+                y1={1}
+                y2={10}
+                x1={firstDate}
+                x2={lastDate}
+                fill="#dcfce7"
+                fillOpacity={0.5}
+              />
+              <ReferenceArea
+                y1={11}
+                y2={20}
+                x1={firstDate}
+                x2={lastDate}
+                fill="#dbeafe"
+                fillOpacity={0.5}
+              />
+              <ReferenceArea
+                y1={21}
+                y2={40}
+                x1={firstDate}
+                x2={lastDate}
+                fill="#ede9fe"
+                fillOpacity={0.5}
+              />
 
               {/* Sleeping gaps */}
               {gaps.map((gap, index) => (
@@ -287,7 +286,7 @@ export default function SongTimeline({ timeline }) {
         )}
         {gaps.length > 0 && (
           <span className="text-amber-700">
-            Yellow areas with "💤" indicate “sleeping periods” where the song
+            Yellow areas with 💤 indicate sleeping periods where the song
             was out of the charts for over 1 year.
           </span>
         )}
