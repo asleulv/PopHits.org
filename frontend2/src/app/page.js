@@ -275,6 +275,11 @@ export default async function FrontPage() {
           <HeroSectionWrapper />
         </Suspense>
 
+        {/* 9. Latest Blog Post */}
+        <Suspense fallback={<div>Loading blog...</div>}>
+          <BlogWrapper />
+        </Suspense>
+
         <BirthdayWidget />
 
         {/* 2. Current Hot 100 */}
@@ -312,10 +317,7 @@ export default async function FrontPage() {
         {/* 8. Year Browser */}
         <YearBrowserSection years={years} />
 
-        {/* 9. Latest Blog Post */}
-        <Suspense fallback={<div>Loading blog...</div>}>
-          <BlogWrapper />
-        </Suspense>
+        
       </div>
     </>
   );

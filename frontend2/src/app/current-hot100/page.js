@@ -151,7 +151,7 @@ export default async function CurrentHot100Page() {
                 <h3 className="font-black text-sm md:text-base leading-tight tracking-tight uppercase hover:text-grey-800 hover:underline">
                   <Link
                     href={`/songs/${song.slug}`}
-                    className="hover:text-white"
+                    className="hover:text-gray-700"
                   >
                     {song.title}
                   </Link>
