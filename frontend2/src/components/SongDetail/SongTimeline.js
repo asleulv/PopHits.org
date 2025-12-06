@@ -116,133 +116,142 @@ export default function SongTimeline({ timeline }) {
 
       {/* Chart */}
       {showChart ? (
-        <div style={{ width: "100%", height: 200 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={dataWithBreaks}
-              margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+  <div className="overflow-x-auto" style={{ height: 220 }}>
+    {/* Dynamic width: 40px per datapoint, minimum 600px */}
+    <div
+      style={{
+        width: Math.max(dataWithBreaks.length * 40, 600),
+        height: "100%",
+      }}
+    >
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          data={dataWithBreaks}
+          margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+        >
+          {/* Background rank zones */}
+          <ReferenceArea
+            y1={1}
+            y2={10}
+            x1={firstDate}
+            x2={lastDate}
+            fill="#dcfce7"
+            fillOpacity={0.5}
+          />
+          <ReferenceArea
+            y1={11}
+            y2={20}
+            x1={firstDate}
+            x2={lastDate}
+            fill="#dbeafe"
+            fillOpacity={0.5}
+          />
+          <ReferenceArea
+            y1={21}
+            y2={40}
+            x1={firstDate}
+            x2={lastDate}
+            fill="#ede9fe"
+            fillOpacity={0.5}
+          />
+
+          {/* Sleeping gaps */}
+          {gaps.map((gap, index) => (
+            <ReferenceArea
+              key={index}
+              x1={gap.from}
+              x2={gap.to}
+              y1={1}
+              y2={CHART_BOTTOM}
+              fill="#fef9c3"
+              fillOpacity={0.6}
+              stroke="#facc15"
+              strokeOpacity={0.9}
             >
-              {/* Background rank zones: full chart width */}
-              {/* Background rank zones: full chart width */}
-              <ReferenceArea
-                y1={1}
-                y2={10}
-                x1={firstDate}
-                x2={lastDate}
-                fill="#dcfce7"
-                fillOpacity={0.5}
-              />
-              <ReferenceArea
-                y1={11}
-                y2={20}
-                x1={firstDate}
-                x2={lastDate}
-                fill="#dbeafe"
-                fillOpacity={0.5}
-              />
-              <ReferenceArea
-                y1={21}
-                y2={40}
-                x1={firstDate}
-                x2={lastDate}
-                fill="#ede9fe"
-                fillOpacity={0.5}
-              />
+              <Label value="💤" position="insideMiddle" offset={0} />
+            </ReferenceArea>
+          ))}
 
-              {/* Sleeping gaps */}
-              {gaps.map((gap, index) => (
-                <ReferenceArea
-                  key={index}
-                  x1={gap.from}
-                  x2={gap.to}
-                  y1={1}
-                  y2={CHART_BOTTOM}
-                  fill="#fef9c3"
-                  fillOpacity={0.6}
-                  stroke="#facc15"
-                  strokeOpacity={0.9}
-                >
-                  <Label value="💤" position="insideMiddle" offset={0} />
-                </ReferenceArea>
-              ))}
+          {/* Axes */}
+          <XAxis
+            dataKey="chart_date"
+            tickFormatter={formatDateLabel}
+            type="category"
+            minTickGap={50}
+            tick={{ fontSize: 12, fill: "#475569" }}
+            axisLine={{ stroke: "#0f172a" }}
+            tickLine={{ stroke: "#0f172a" }}
+          />
 
-              {/* Axes */}
-              <XAxis
-                dataKey="chart_date"
-                tickFormatter={formatDateLabel}
-                type="category"
-                minTickGap={50}
-                tick={{ fontSize: 12, fill: "#475569" }}
-                axisLine={{ stroke: "#0f172a" }}
-                tickLine={{ stroke: "#0f172a" }}
-              />
-              <YAxis
-                dataKey="rank"
-                domain={[1, CHART_BOTTOM]}
-                reversed={true}
-                tick={{ fontSize: 12, fill: "#475569" }}
-                tickFormatter={(v) => `#${v}`}
-                axisLine={{ stroke: "#0f172a" }}
-                tickLine={{ stroke: "#0f172a" }}
-                ticks={[1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
-              />
+          <YAxis
+            dataKey="rank"
+            domain={[1, CHART_BOTTOM]}
+            reversed={true}
+            tick={{ fontSize: 12, fill: "#475569" }}
+            tickFormatter={(v) => `#${v}`}
+            axisLine={{ stroke: "#0f172a" }}
+            tickLine={{ stroke: "#0f172a" }}
+            ticks={[1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
+          />
 
-              {/* Tooltip */}
-              <Tooltip
-                labelFormatter={formatTooltipLabel}
-                formatter={(value, name, props) => {
-                  // Only _drop points are off chart
-                  if (props.payload.isBreak) return ["Off the chart", "Rank"];
-                  return [`#${value}`, "Rank"];
-                }}
-                contentStyle={{ fontSize: 12, borderRadius: 6 }}
-              />
+          {/* Tooltip */}
+          <Tooltip
+            labelFormatter={formatTooltipLabel}
+            formatter={(value, name, props) => {
+              if (props.payload.isBreak) return ["Off the chart", "Rank"];
+              return [`#${value}`, "Rank"];
+            }}
+            contentStyle={{ fontSize: 12, borderRadius: 6 }}
+          />
 
-              {/* Line */}
-              <Line
-                type="monotone"
-                dataKey="rank"
-                stroke="#0f172a"
-                strokeWidth={2}
-                dot={{
-                  r: 4,
-                  stroke: "#0f172a",
-                  strokeWidth: 1,
-                  fill: "#f97316",
-                }}
-                activeDot={{ r: 6 }}
-              />
+          {/* Main line */}
+          <Line
+            type="monotone"
+            dataKey="rank"
+            stroke="#0f172a"
+            strokeWidth={2}
+            dot={{
+              r: 4,
+              stroke: "#0f172a",
+              strokeWidth: 1,
+              fill: "#f97316",
+            }}
+            activeDot={{ r: 6 }}
+          />
 
-              {/* First #1 */}
-              {firstNumberOne && (
-                <ReferenceDot
-                  x={firstNumberOne.chart_date}
-                  y={1}
-                  r={8}
-                  fill="#fef08a"
-                  stroke="#ca8a04"
-                  strokeWidth={3}
-                  ifOverflow="visible"
-                />
-              )}
+          {/* First #1 */}
+          {firstNumberOne && (
+            <ReferenceDot
+              x={firstNumberOne.chart_date}
+              y={1}
+              r={8}
+              fill="#fef08a"
+              stroke="#ca8a04"
+              strokeWidth={3}
+              ifOverflow="visible"
+            />
+          )}
 
-              {/* All #1 points */}
-              {numberOnes.map((d, i) => (
-                <ReferenceDot
-                  key={i}
-                  x={d.chart_date}
-                  y={1}
-                  r={5}
-                  fill="#22c55e"
-                  stroke="#15803d"
-                  strokeWidth={2}
-                  ifOverflow="visible"
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      ) : (
+          {/* All #1 points */}
+          {numberOnes.map((d, i) => (
+            <ReferenceDot
+              key={i}
+              x={d.chart_date}
+              y={1}
+              r={5}
+              fill="#22c55e"
+              stroke="#15803d"
+              strokeWidth={2}
+              ifOverflow="visible"
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+) : (
+  /* your text table view stays unchanged */
+
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse border border-gray-300">
             <thead>
