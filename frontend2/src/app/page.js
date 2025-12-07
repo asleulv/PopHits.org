@@ -22,6 +22,7 @@ import RandomHitsByDecadeSection from "@/components/FrontPage/RandomHitsByDecade
 import BlueskyDiscoverySection from "@/components/FrontPage/BlueskyDiscoverySection";
 import FeaturedArtists from "@/components/FrontPage/FeaturedArtists";
 import BirthdayWidget from "@/components/FrontPage/BirthdayWidget";
+import BlueskyClient from "@/components/FrontPage/BlueskyClient";
 
 // Helper function to get decade from year
 function getDecade(year) {
@@ -291,7 +292,7 @@ export default async function FrontPage() {
 
         {/* 3. Featured Discovery (Bluesky) */}
         <Suspense fallback={<div>Loading discovery...</div>}>
-          <BlueskyWrapper />
+          <BlueskyClient />
         </Suspense>
 
         {/* 4. Random Hits by Decade */}
@@ -316,8 +317,6 @@ export default async function FrontPage() {
 
         {/* 8. Year Browser */}
         <YearBrowserSection years={years} />
-
-        
       </div>
     </>
   );
