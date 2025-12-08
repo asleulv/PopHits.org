@@ -27,7 +27,7 @@ STATICFILES_DIRS = [
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG_MODE')
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org','188.245.244.69']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org', '142.132.173.134']
 SESSION_COOKIE_AGE = 3600
 
 # REGISTRATION EMAIL
