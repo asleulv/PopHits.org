@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getSongs, getBlogPosts } from '@/lib/api';
 
 export default async function sitemap() {
