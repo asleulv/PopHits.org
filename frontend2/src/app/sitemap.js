@@ -3,13 +3,11 @@ export const dynamic = 'force-dynamic';
 import { getSongs, getBlogPosts } from '@/lib/api';
 
 export default async function sitemap() {
-  const baseUrl =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : 'https://pophits.org';
+  const baseUrl = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3000' 
+    : 'https://pophits.org';
 
   const currentDate = new Date();
-
   const staticRoutes = [
     { url: `${baseUrl}`, lastModified: currentDate, changeFrequency: 'daily', priority: 1.0 },
     { url: `${baseUrl}/songs`, lastModified: currentDate, changeFrequency: 'daily', priority: 0.9 },
@@ -17,23 +15,23 @@ export default async function sitemap() {
     { url: `${baseUrl}/blog`, lastModified: currentDate, changeFrequency: 'daily', priority: 0.9 },
   ];
 
+  // Static year/decade routes (fast, no API)
   const currentYear = new Date().getFullYear();
   const yearRoutes = [];
   for (let year = 1958; year <= currentYear; year++) {
     yearRoutes.push({ url: `${baseUrl}/year/${year}`, lastModified: currentDate, changeFrequency: 'monthly', priority: 0.8 });
   }
-
   const decadeRoutes = [];
   for (let decade = 1950; decade <= Math.floor(currentYear / 10) * 10; decade += 10) {
     decadeRoutes.push({ url: `${baseUrl}/songs?decade=${decade}`, lastModified: currentDate, changeFrequency: 'monthly', priority: 0.7 });
   }
 
-  // Skip API calls during build in development
+  // Only fetch dynamic data if NOT building (runtime request)
   let songRoutes = [];
   let artistRoutes = [];
   let blogPostRoutes = [];
-
-  if (process.env.NODE_ENV !== 'development') {
+  
+  if (typeof window === 'undefined' && process.env.NEXT_PHASE !== 'phase-production-build') {
     try {
       const songsData = await getSongs(1, 1000);
       const songs = songsData.results || [];
@@ -53,15 +51,14 @@ export default async function sitemap() {
       }));
 
       const blogPostsData = await getBlogPosts(1, 100);
-      const blogPosts = blogPostsData.results || [];
-      blogPostRoutes = blogPosts.map((post) => ({
+      const blogPostRoutes = blogPostsData.results?.map((post) => ({
         url: `${baseUrl}/blog/${post.slug}`,
         lastModified: new Date(post.updated_date || post.published_date),
         changeFrequency: 'weekly',
         priority: 0.8,
-      }));
+      })) || [];
     } catch (err) {
-      console.error('Skipping dynamic routes in sitemap due to API error:', err);
+      console.error('Sitemap API error:', err);
     }
   }
 
