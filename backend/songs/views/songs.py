@@ -3,36 +3,42 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
+from django.db.models import Max, Min, Q
+import random
 from random import randint
 
-from ..models import Song, UserSongComment, SongTimeline
+from ..models import Song, UserSongComment, SongTimeline, UserSongRating
 from ..serializers import SongSerializer, UserSongCommentSerializer, SongTimelineSerializer
 from .pagination import CustomPagination
 
-
 class SongListCreateView(generics.ListCreateAPIView):
-    queryset = Song.objects.all()
     serializer_class = SongSerializer
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        search_query = self.request.GET.get('search', None)
+        # Optimize with select_related and prefetch_related to avoid N+1 queries
+        queryset = Song.objects.select_related(
+            'artist_fk'  # For artist data lookups
+        ).prefetch_related(
+            'tag_relations__tag'  # For the get_tags() method in serializer
+        )
 
+        search_query = self.request.GET.get('search', None)
         # Apply search query
         if search_query:
-            queryset = queryset.filter(title__icontains=search_query) | queryset.filter(artist__icontains=search_query)
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) | Q(artist__icontains=search_query)
+            )
 
         # Apply artist and year filters
         artist_slug = self.request.GET.get('artist')
         year = self.request.GET.get('year')
-
         if artist_slug:
             queryset = queryset.filter(artist_slug=artist_slug)
-
         if year:
             queryset = queryset.filter(year=year)
 
+        # Apply tag filter
         tag_slug = self.request.GET.get('tag')
         if tag_slug:
             queryset = queryset.filter(
@@ -53,14 +59,12 @@ class SongListCreateView(generics.ListCreateAPIView):
             except ValueError:
                 pass
 
-        # Apply unrated filter - only show songs the user hasn't rated yet
+        # Optimized unrated filter - push logic to database instead of loading IDs into memory
         unrated_only = self.request.GET.get('unrated_only', 'false').lower() == 'true'
         if unrated_only and self.request.user.is_authenticated:
-            from ..models import UserSongRating
-            rated_song_ids = UserSongRating.objects.filter(
-                user=self.request.user
-            ).values_list('song_id', flat=True)
-            queryset = queryset.exclude(id__in=rated_song_ids)
+            queryset = queryset.exclude(
+                usersongrating__user=self.request.user
+            ).distinct()
 
         # Apply decade filter
         decade = self.request.GET.get('decade')
@@ -72,27 +76,26 @@ class SongListCreateView(generics.ListCreateAPIView):
             except ValueError:
                 pass
 
+        # Apply sorting in get_queryset for better query optimization
+        sort_by = self.request.GET.get('sort_by', 'id')
+        order = self.request.GET.get('order', 'asc')
+        order_field = sort_by if order == 'asc' else f'-{sort_by}'
+        queryset = queryset.order_by(order_field)
+
         return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
 
-        # Apply sorting
-        sort_by = request.GET.get('sort_by', 'id')
-        order = request.GET.get('order', 'asc')
-        if order == 'asc':
-            queryset = queryset.order_by(sort_by)
-        else:
-            queryset = queryset.order_by(f'-{sort_by}')
-
         page = self.paginate_queryset(queryset)
-
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
 
 
 class SongDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -187,16 +190,23 @@ class SongDetailBySlugView(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(data)
 
-
 class RandomSongView(APIView):
     serializer_class = SongSerializer
 
     def get(self, request, *args, **kwargs):
-        song_count = Song.objects.count()
-        random_index = randint(0, song_count - 1)
-        random_song = Song.objects.all()[random_index]
-        serializer = self.serializer_class(random_song)
-        return Response(serializer.data)
+        max_id = Song.objects.aggregate(max_id=Max("id"))["max_id"]
+        if not max_id:
+            return Response({"detail": "No songs"}, status=404)
+
+        for _ in range(5):
+            pk = randint(1, max_id)
+            song = Song.objects.filter(pk=pk).first()
+            if song:
+                serializer = self.serializer_class(song)
+                return Response(serializer.data)
+
+        return Response({"detail": "No songs"}, status=404)
+
 
 
 class SongsWithImagesView(generics.ListAPIView):
@@ -208,20 +218,30 @@ class SongsWithImagesView(generics.ListAPIView):
 
 @api_view(['GET'])
 def random_song_by_artist(request):
-    """Get a random song by artist slug - optimized endpoint"""
+    """Get a random song by artist slug - optimized for huge tables"""
     artist_slug = request.query_params.get('artist_slug')
-
     if not artist_slug:
         return Response({'error': 'artist_slug required'}, status=400)
 
-    song = Song.objects.filter(
-        artist_fk__slug=artist_slug
-    ).values(
-        'id', 'title', 'year', 'peak_rank', 'weeks_on_chart',
-        'average_user_score', 'slug', 'artist_slug', 'is_original_recording'
-    ).order_by('?').first()
-
-    if not song:
+    # Get the min and max IDs for this artist
+    qs = Song.objects.filter(artist_fk__slug=artist_slug)
+    min_max = qs.aggregate(min_id=Min('id'), max_id=Max('id'))
+    if not min_max['min_id']:
         return Response({'detail': 'Not found'}, status=404)
 
+    # Try random IDs until we find one (handles gaps in IDs)
+    for _ in range(10):  # up to 10 attempts
+        random_id = random.randint(min_max['min_id'], min_max['max_id'])
+        song = qs.filter(id__gte=random_id).values(
+            'id', 'title', 'year', 'peak_rank', 'weeks_on_chart',
+            'average_user_score', 'slug', 'artist_slug', 'is_original_recording'
+        ).first()
+        if song:
+            return Response(song)
+
+    # Fallback: pick the first song if random attempts fail
+    song = qs.values(
+        'id', 'title', 'year', 'peak_rank', 'weeks_on_chart',
+        'average_user_score', 'slug', 'artist_slug', 'is_original_recording'
+    ).first()
     return Response(song)

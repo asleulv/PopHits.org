@@ -71,10 +71,10 @@ class ArtistDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_tags(self, obj):
-        """Get artist genre tags"""
-        tag_relations = ArtistTagRelation.objects.filter(
-            artist=obj
-        ).select_related('tag').order_by('-confidence')[:5]
+        """Get artist genre tags - uses prefetched data"""
+        tag_relations = [
+            rel for rel in obj.artisttagrelation_set.all()
+        ][:5]
         
         return [{
             'name': tag_rel.tag.name,
@@ -82,13 +82,12 @@ class ArtistDetailSerializer(serializers.ModelSerializer):
         } for tag_rel in tag_relations]
     
     def get_members(self, obj):
-        """Get band members (people who are members of this band)"""
-        members = ArtistRelationship.objects.filter(
-            to_artist=obj,
-            relationship_type='member_of'
-        ).select_related('from_artist')
+        """Get band members - uses prefetched data"""
+        members = [
+            rel for rel in obj.relationships_to.all()
+            if rel.relationship_type == 'member_of'
+        ]
         
-        # Pass context to tell serializer to use 'from_artist'
         return ArtistRelationshipSerializer(
             members, 
             many=True,
@@ -96,13 +95,12 @@ class ArtistDetailSerializer(serializers.ModelSerializer):
         ).data
     
     def get_member_of(self, obj):
-        """Get bands this artist is a member of"""
-        bands = ArtistRelationship.objects.filter(
-            from_artist=obj,
-            relationship_type='member_of'
-        ).select_related('to_artist')
+        """Get bands this artist is a member of - uses prefetched data"""
+        bands = [
+            rel for rel in obj.relationships_from.all()
+            if rel.relationship_type == 'member_of'
+        ]
         
-        # Pass context to tell serializer to use 'to_artist'
         return ArtistRelationshipSerializer(
             bands, 
             many=True,
@@ -110,25 +108,23 @@ class ArtistDetailSerializer(serializers.ModelSerializer):
         ).data
     
     def get_collaborations(self, obj):
-        """Get collaboration artists pointing to this main artist"""
-        collabs = ArtistRelationship.objects.filter(
-            to_artist=obj,
-            relationship_type='collaboration'
-        ).select_related('from_artist')
+        """Get collaboration artists - uses prefetched data"""
+        collabs = [
+            rel for rel in obj.relationships_to.all()
+            if rel.relationship_type == 'collaboration'
+        ]
         
-        # Return the collaboration artist names
         return [{
             'name': rel.from_artist.name,
             'slug': rel.from_artist.slug
         } for rel in collabs]
     
     def get_participating_artists(self, obj):
-        """For collaboration artists, return the individual artists they link to"""
-        # Get all main artists that this collaboration points to
-        participants = ArtistRelationship.objects.filter(
-            from_artist=obj,
-            relationship_type='collaboration'
-        ).select_related('to_artist')
+        """For collaboration artists - uses prefetched data"""
+        participants = [
+            rel for rel in obj.relationships_from.all()
+            if rel.relationship_type == 'collaboration'
+        ]
         
         return [{
             'name': rel.to_artist.name,
@@ -136,40 +132,34 @@ class ArtistDetailSerializer(serializers.ModelSerializer):
         } for rel in participants]
     
     def get_billboard_stats(self, obj):
-        """Get Billboard Hot 100 statistics for this artist"""
-        # Use the foreign key relationship instead of string matching
-        songs = Song.objects.filter(artist_fk=obj)
+        """Get Billboard Hot 100 statistics - uses prefetched songs"""
+        songs = [s for s in obj.songs.all()]
         
-        if not songs.exists():
+        if not songs:
             return None
         
-        stats = songs.aggregate(
-            total_hits=Count('id'),
-            highest_peak=Min('peak_rank'),
-            total_weeks=Sum('weeks_on_chart'),
-            first_hit_year=Min('year'),
-            last_hit_year=Max('year')
-        )
-        
-        # Count number of #1 hits
-        number_one_hits = songs.filter(peak_rank=1).count()
+        # Calculate stats in Python from prefetched data
+        total_hits = len(songs)
+        highest_peak = min(s.peak_rank for s in songs)
+        total_weeks = sum(s.weeks_on_chart for s in songs)
+        first_hit_year = min(s.year for s in songs)
+        last_hit_year = max(s.year for s in songs)
+        number_one_hits = sum(1 for s in songs if s.peak_rank == 1)
         
         return {
-            'total_hits': stats['total_hits'],
-            'highest_peak': stats['highest_peak'],
-            'number_one_hits': number_one_hits,  # ← NEW
-            'total_weeks': stats['total_weeks'],
-            'first_hit_year': stats['first_hit_year'],
-            'last_hit_year': stats['last_hit_year']
+            'total_hits': total_hits,
+            'highest_peak': highest_peak,
+            'number_one_hits': number_one_hits,
+            'total_weeks': total_weeks,
+            'first_hit_year': first_hit_year,
+            'last_hit_year': last_hit_year
         }
-
 
 
 
 class SongSerializer(serializers.ModelSerializer):
     comments = UserSongCommentSerializer(many=True, read_only=True)
     artist_data = serializers.SerializerMethodField()
-    # Explicit tags field so '__all__' doesn’t auto-generate the ID list
     tags = serializers.SerializerMethodField()
 
     class Meta:
@@ -177,20 +167,16 @@ class SongSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_artist_data(self, obj):
-        try:
-            artist = Artist.objects.get(name=obj.artist)
-            if artist.musicbrainz_id:
-                return ArtistDetailSerializer(artist).data
-            return None
-        except Artist.DoesNotExist:
-            return None
+        # Check if artist_fk exists (for NumberOneSong compatibility)
+        if hasattr(obj, 'artist_fk') and obj.artist_fk and obj.artist_fk.musicbrainz_id:
+            return ArtistDetailSerializer(obj.artist_fk).data
+        return None
 
     def get_tags(self, obj):
-        # Some related models (e.g. NumberOneSong) don't have tag_relations
         if not hasattr(obj, "tag_relations"):
             return []
 
-        tag_relations = obj.tag_relations.select_related("tag")
+        # Use prefetched data instead of select_related
         return [
             {
                 "name": rel.tag.name,
@@ -199,9 +185,8 @@ class SongSerializer(serializers.ModelSerializer):
                 "icon": rel.tag.lucide_icon,
                 "category": rel.tag.category,
             }
-            for rel in tag_relations
+            for rel in obj.tag_relations.all()
         ]
-
 
         
 class SongTimelineSerializer(serializers.ModelSerializer):

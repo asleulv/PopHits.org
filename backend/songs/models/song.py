@@ -38,6 +38,15 @@ class Song(models.Model):
         blank=True
     )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['title']),
+            models.Index(fields=['artist']),
+            models.Index(fields=['artist_slug']),
+            models.Index(fields=['year']),
+            models.Index(fields=['peak_rank']),
+        ]
+
     def save(self, *args, **kwargs):
         # Generate a slug when saving the object
         self.slug = slugify(f"{self.artist} {self.title}")
