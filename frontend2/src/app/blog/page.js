@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import Script from "next/script";  // <--- import Script here
+import Script from "next/script"; // <--- import Script here
 import { getBlogPosts } from "@/lib/api";
 
 export const metadata = {
@@ -33,10 +33,11 @@ export default async function BlogPage() {
   let error = null;
 
   try {
-    const apiUrl =
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:8000/api/blog/"
-        : "https://pophits.org/api/blog/";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
+      ? `${process.env.NEXT_PUBLIC_API_URL}/blog/`
+      : process.env.NODE_ENV === "development"
+      ? "http://localhost:8000/api/blog/"
+      : "https://pophits.org/api/blog/";
 
     const response = await fetch(apiUrl, {
       method: "GET",
@@ -79,7 +80,9 @@ export default async function BlogPage() {
       "@type": "BlogPosting",
       headline: post.title,
       url: `https://pophits.org/blog/${post.slug}`,
-      image: post.featured_image || "https://pophits.org/static/media/oldhits_logo.png",
+      image:
+        post.featured_image ||
+        "https://pophits.org/static/media/oldhits_logo.png",
       datePublished: post.published_date,
       description: post.meta_description,
     })),
@@ -99,7 +102,8 @@ export default async function BlogPage() {
 
         <div className="max-w-4xl mx-auto">
           <p className="text-lg text-gray-700 mb-8 text-center">
-            Thoughts on pop music history, one-hit wonders, chart milestones, and more.
+            Thoughts on pop music history, one-hit wonders, chart milestones,
+            and more.
           </p>
 
           {blogPosts.results && blogPosts.results.length > 0 ? (
@@ -157,7 +161,9 @@ export default async function BlogPage() {
               <h3 className="text-xl font-medium text-gray-700">
                 No blog posts yet
               </h3>
-              <p className="text-gray-500 mt-2">Check back soon for new articles!</p>
+              <p className="text-gray-500 mt-2">
+                Check back soon for new articles!
+              </p>
             </div>
           )}
         </div>

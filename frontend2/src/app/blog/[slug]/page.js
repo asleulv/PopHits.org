@@ -45,7 +45,7 @@ function BlogPostStructuredData({ post }) {
 export default function BlogPostPage() {
   const params = useParams();
   const slug = params.slug;
-  
+
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,12 +54,13 @@ export default function BlogPostPage() {
   useEffect(() => {
     async function fetchPost() {
       try {
-        const apiUrl =
-          process.env.NODE_ENV === "development"
-            ? `http://localhost:8000/api/blog/${slug}/`
-            : `https://pophits.org/api/blog/${slug}/`;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL
+          ? `${process.env.NEXT_PUBLIC_API_URL}/blog/${slug}/`
+          : process.env.NODE_ENV === "development"
+          ? `http://localhost:8000/api/blog/${slug}/`
+          : `https://pophits.org/api/blog/${slug}/`;
 
-        console.log('Fetching blog post from URL:', apiUrl);
+        console.log("Fetching blog post from URL:", apiUrl);
 
         const response = await fetch(apiUrl, {
           method: "GET",
@@ -74,7 +75,7 @@ export default function BlogPostPage() {
         }
 
         const data = await response.json();
-        console.log('Blog post fetched:', data);
+        console.log("Blog post fetched:", data);
         setPost(data);
       } catch (err) {
         console.error("Error fetching blog post:", err);
@@ -89,8 +90,8 @@ export default function BlogPostPage() {
     }
 
     const checkAuth = () => {
-      const authToken = localStorage.getItem('authToken');
-      console.log('Auth token found:', !!authToken);
+      const authToken = localStorage.getItem("authToken");
+      console.log("Auth token found:", !!authToken);
       setIsAuthenticated(!!authToken);
     };
 
@@ -129,7 +130,10 @@ export default function BlogPostPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-300 text-red-800 p-4 rounded-lg">
           <h1 className="text-2xl font-bold mb-2">Blog Post Not Found</h1>
-          <p>Sorry, we couldn&rsquo;t find the blog post you&rsquo;re looking for.</p>
+          <p>
+            Sorry, we couldn&rsquo;t find the blog post you&rsquo;re looking
+            for.
+          </p>
           <Link
             href="/blog"
             className="text-amber-700 hover:text-amber-900 font-medium mt-4 inline-block"

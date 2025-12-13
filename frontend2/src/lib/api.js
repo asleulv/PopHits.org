@@ -7,10 +7,11 @@
 // BASE URL CONFIGURATION
 // ============================================================================
 
-export const BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:8000"
-    : "https://pophits.org";
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL
+  ? process.env.NEXT_PUBLIC_API_URL.replace("/api", "")
+  : process.env.NODE_ENV === "development"
+  ? "http://localhost:8000"
+  : "https://pophits.org";
 
 // ============================================================================
 // API ENDPOINTS
@@ -216,7 +217,7 @@ export async function getSongs(
   peakRankFilter = null,
   unratedOnly = false,
   decade = null,
-  tagSlug = null  
+  tagSlug = null
 ) {
   const url = new URL(API_ENDPOINTS.songs);
 
@@ -375,7 +376,6 @@ export async function getUserProfile(authToken) {
 // HISTORIC CHARTS ENDPOINTS
 // ============================================================================
 
-
 /**
  * Fetch all available chart dates
  */
@@ -446,5 +446,3 @@ export async function getLatestBlogPost() {
 export async function getWebsiteStats() {
   return fetchData(API_ENDPOINTS.websiteStats);
 }
-
-
