@@ -8,6 +8,7 @@ import {
   getNumberOneHits,
   getRandomSongByArtist,
   getWebsiteStats,
+  getBlogPosts,
 } from "@/lib/api";
 import { getBlueskyPosts } from "@/lib/bluesky";
 
@@ -202,28 +203,9 @@ async function NumberOneWrapper() {
   }
 }
 
-async function BlogWrapper() {
+export async function BlogWrapper() {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-      ? `${process.env.NEXT_PUBLIC_API_URL}/blog/?page=1&page_size=1`
-      : process.env.NODE_ENV === "development"
-      ? "http://localhost:8000/api/blog/?page=1&page_size=1"
-      : "https://pophits.org/api/blog/?page=1&page_size=1";
-
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-      next: { revalidate: 0 },
-    });
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = await getBlogPosts({ page: 1, page_size: 1 }); 
 
     let latestBlogPost = null;
     if (Array.isArray(data)) {
@@ -236,6 +218,7 @@ async function BlogWrapper() {
       <LatestBlogPostSection latestBlogPost={latestBlogPost} />
     ) : null;
   } catch (error) {
+    console.error("Error fetching latest blog post:", error);
     return null;
   }
 }

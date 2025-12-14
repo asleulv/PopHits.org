@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import Script from "next/script"; // <--- import Script here
+import Script from "next/script";
 import { getBlogPosts } from "@/lib/api";
 
 export const metadata = {
@@ -26,49 +26,21 @@ export const metadata = {
   },
 };
 
-export const revalidate = 0; // Disable caching for this page
+export const revalidate = 0;
 
 export default async function BlogPage() {
-  let blogPosts;
+  let blogPosts = { results: [] };
   let error = null;
 
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-      ? `${process.env.NEXT_PUBLIC_API_URL}/blog/`
-      : process.env.NODE_ENV === "development"
-      ? "http://localhost:8000/api/blog/"
-      : "https://pophits.org/api/blog/";
-
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-      next: { revalidate: 0 },
-    });
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    if (Array.isArray(data)) {
-      blogPosts = { results: data };
-    } else {
-      blogPosts = data;
-      if (!blogPosts.results) {
-        blogPosts.results = [];
-      }
-    }
+    const data = await getBlogPosts(); // <-- use centralized API helper
+    blogPosts.results = Array.isArray(data) ? data : data.results || [];
   } catch (err) {
     console.error("Error fetching blog posts:", err);
     error = err.message;
-    blogPosts = { results: [] };
   }
 
-  // Now build the jsonLd after blogPosts is defined:
+  // Build JSON-LD
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -106,7 +78,7 @@ export default async function BlogPage() {
             and more.
           </p>
 
-          {blogPosts.results && blogPosts.results.length > 0 ? (
+          {blogPosts.results.length > 0 ? (
             <div className="grid gap-8">
               {blogPosts.results.map((post) => (
                 <article
@@ -134,16 +106,14 @@ export default async function BlogPage() {
                           {post.meta_description}
                         </p>
                         <div className="flex items-center text-sm text-gray-500">
-                          <span>
-                            {new Date(post.published_date).toLocaleDateString(
-                              "en-US",
-                              {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              }
-                            )}
-                          </span>
+                          {new Date(post.published_date).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            }
+                          )}
                         </div>
                         <div className="mt-4">
                           <span className="inline-block bg-amber-400 text-amber-800 px-3 py-1 rounded-full text-sm font-semibold">
@@ -161,6 +131,7 @@ export default async function BlogPage() {
               <h3 className="text-xl font-medium text-gray-700">
                 No blog posts yet
               </h3>
+              {error && <p className="text-red-500 mt-2">{error}</p>}
               <p className="text-gray-500 mt-2">
                 Check back soon for new articles!
               </p>

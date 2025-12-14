@@ -14,6 +14,16 @@ export const BASE_URL = process.env.NEXT_PUBLIC_API_URL
   : "https://pophits.org";
 
 // ============================================================================
+// BLOG URL CONFIGURATION
+// ============================================================================
+
+export const BLOG_API_ENDPOINTS = {
+  blogPosts: `${BASE_URL}/api/blog/`,
+  blogPostBySlug: (slug) => `${BASE_URL}/api/blog/${slug}/`,
+  latestBlogPost: `${BASE_URL}/api/blog/?page=1&page_size=1`,
+};
+
+// ============================================================================
 // API ENDPOINTS
 // ============================================================================
 
@@ -108,6 +118,23 @@ async function fetchData(url, options = {}) {
   } catch (error) {
     console.error(`Error fetching from ${url}:`, error);
     throw error;
+  }
+}
+// Blog helper function
+export async function fetchBlogData(url, options = {}) {
+  try {
+    const res = await fetch(url, {
+      ...options,
+      headers: { "Content-Type": "application/json", ...options.headers },
+      next: options.next || undefined,
+    });
+
+    if (!res.ok) throw new Error(`Blog API error ${res.status} for ${url}`);
+
+    return res.json();
+  } catch (error) {
+    console.error(`Error fetching from ${url}:`, error);
+    return null;
   }
 }
 
