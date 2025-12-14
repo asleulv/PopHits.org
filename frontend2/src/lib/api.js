@@ -471,5 +471,6 @@ export async function getLatestBlogPost() {
 // ============================================================================
 
 export async function getWebsiteStats() {
-  return fetchData(API_ENDPOINTS.websiteStats);
+  return fetchData(API_ENDPOINTS.websiteStats, { cache: 'no-store' });
 }
+
