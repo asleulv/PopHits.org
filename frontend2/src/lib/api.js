@@ -246,8 +246,8 @@ export async function getSongs(
   decade = null,
   tagSlug = null
 ) {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const url = new URL(API_ENDPOINTS.songs, base); // /api/songs/ → Next.js proxy
+  // Build query for the real Django endpoint
+  const url = new URL("http://dummyurl.com/api/songs/");
 
   url.searchParams.append("page", page);
   url.searchParams.append("page_size", perPage);
@@ -264,8 +264,11 @@ export async function getSongs(
   if (decade) url.searchParams.append("decade", decade);
   if (tagSlug) url.searchParams.append("tag", tagSlug);
 
-  return fetchData(url.toString());
+  // Call Django directly with internal key
+  const response = await internalFetch(url.pathname + url.search);
+  return response.json();
 }
+
 
 
 /**
@@ -450,24 +453,24 @@ export async function getWebsiteStats() {
 // ============================================================================
 
 export async function internalFetch(path, options = {}) {
-  // Safety check to ensure this function is never called client-side
   if (typeof window !== "undefined") {
     throw new Error("internalFetch is a server-only function.");
   }
 
-  // Determine the Django URL. Use the production BASE_URL here.
   const internalBaseUrl =
-    process.env.NODE_ENV === "development" ? "http://localhost:8000" : BASE_URL; // BASE_URL is "https://pophits.org" in prod
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:8000"       // dev Django
+      : "http://127.0.0.1";           // prod: NGINX on localhost
 
   const headers = {
     ...options.headers,
-    "X-Internal-Key": process.env.INTERNAL_API_KEY, // Inject the secret key
+    "X-Internal-Key": process.env.INTERNAL_API_KEY,
   };
 
   const response = await fetch(`${internalBaseUrl}${path}`, {
     ...options,
     headers,
-    cache: "no-store", // Do not cache secure/live data
+    cache: "no-store",
   });
 
   if (!response.ok) {
@@ -476,6 +479,5 @@ export async function internalFetch(path, options = {}) {
     );
   }
 
-  // For pagination/list views, we return the full Response object to access headers
   return response;
 }
