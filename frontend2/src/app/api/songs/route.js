@@ -6,7 +6,7 @@ const INTERNAL_KEY = process.env.INTERNAL_API_KEY;
 const DJANGO_BACKEND_URL =
   process.env.NODE_ENV === "development"
     ? process.env.DJANGO_BACKEND_URL || "http://127.0.0.1:8000"
-    : "http://127.0.0.1:8000";  // ⬅ change prod to direct backend
+    : "https://pophits.org";  // ⬅ PRODUCTION: same as random-song
 
 export async function GET(request) {
   if (!INTERNAL_KEY) {
