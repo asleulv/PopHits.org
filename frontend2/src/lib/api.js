@@ -459,8 +459,8 @@ export async function internalFetch(path, options = {}) {
 
   const internalBaseUrl =
     process.env.NODE_ENV === "development"
-      ? "http://localhost:8000"       // dev Django
-      : "http://127.0.0.1";           // prod: NGINX on localhost
+      ? "http://localhost:8000"      // dev Django
+      : "https://pophits.org";       // prod via Nginx/Cloudflare
 
   const headers = {
     ...options.headers,
@@ -481,3 +481,4 @@ export async function internalFetch(path, options = {}) {
 
   return response;
 }
+
