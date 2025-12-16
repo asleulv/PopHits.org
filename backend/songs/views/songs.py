@@ -9,7 +9,7 @@ from django.db.models import Max, Min, Q
 import random
 from random import randint
 
-from ..permissions import IsInternalServer
+from ..permissions import IsInternalServer, IsInternalServerWithOptionalAuth
 from ..models import Song, UserSongComment, SongTimeline, UserSongRating
 from ..serializers import SongSerializer, UserSongCommentSerializer, SongTimelineSerializer
 from .pagination import CustomPagination
@@ -19,7 +19,7 @@ class SongListCreateView(generics.ListCreateAPIView):
     pagination_class = CustomPagination
 
     authentication_classes = [TokenAuthentication]  # Change this
-    permission_classes = [IsInternalServer]  # Keep this the same
+    permission_classes = [IsInternalServerWithOptionalAuth]
 
     def get_queryset(self):
         # Optimize with select_related and prefetch_related to avoid N+1 queries
