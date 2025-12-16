@@ -37,7 +37,7 @@ export const API_ENDPOINTS = {
     `${BASE_URL}/api/songs/random-by-artist/?artist_slug=${artistSlug}`,
   songBySlug: (slug) => `${BASE_URL}/api/songs/${slug}/`,
   songTimelineBySlug: (slug) => `${BASE_URL}/api/songs/slug/${slug}/timeline/`,
-  songs: "/api/songs/",
+  songs: `${BASE_URL}/api/songs/`, 
   submitUserScore: (songId) => `${BASE_URL}/api/songs/${songId}/rate/`,
   submitUserComment: (songId) => `${BASE_URL}/api/songs/${songId}/comment/`,
   deleteUserComment: (commentId) =>
@@ -233,6 +233,10 @@ export async function getArtists(options = {}) {
 /**
  * Fetch songs with advanced filtering and sorting
  */
+/**
+ * Fetch songs with advanced filtering and sorting
+ * Works in both client and server contexts
+ */
 export async function getSongs(
   page = 1,
   perPage = 25,
@@ -244,29 +248,75 @@ export async function getSongs(
   peakRankFilter = null,
   unratedOnly = false,
   decade = null,
-  tagSlug = null
+  tagSlug = null,
+  authToken = null
 ) {
-  // Build query for the real Django endpoint
-  const url = new URL("http://dummyurl.com/api/songs/");
+  // Build query params
+  const params = new URLSearchParams();
+  params.append("page", page);
+  params.append("page_size", perPage);
 
-  url.searchParams.append("page", page);
-  url.searchParams.append("page_size", perPage);
-
-  if (filterType && filterValue)
-    url.searchParams.append(filterType, filterValue);
+  if (filterType && filterValue) params.append(filterType, filterValue);
   if (sortField) {
-    url.searchParams.append("sort_by", sortField);
-    url.searchParams.append("order", sortOrder === "-" ? "desc" : "asc");
+    params.append("sort_by", sortField);
+    params.append("order", sortOrder === "-" ? "desc" : "asc");
   }
-  if (query) url.searchParams.append("search", query);
-  if (peakRankFilter) url.searchParams.append("peak_rank", peakRankFilter);
-  if (unratedOnly) url.searchParams.append("unrated_only", "true");
-  if (decade) url.searchParams.append("decade", decade);
-  if (tagSlug) url.searchParams.append("tag", tagSlug);
+  if (query) params.append("search", query);
+  if (peakRankFilter) params.append("peak_rank", peakRankFilter);
+  if (unratedOnly) params.append("unrated_only", "true");
+  if (decade) params.append("decade", decade);
+  if (tagSlug) params.append("tag", tagSlug);
 
-  // Call Django directly with internal key
-  const response = await internalFetch(url.pathname + url.search);
-  return response.json();
+  // Determine if we're on server or client
+  const isServer = typeof window === "undefined";
+  
+  if (isServer) {
+    // SERVER: Call Django directly with internal key (bypass Next.js API route)
+    const DJANGO_BACKEND_URL = process.env.NODE_ENV === "development"
+      ? "http://127.0.0.1:8000"
+      : "http://127.0.0.1:8080";  // Internal nginx in production
+    
+    const headers = {
+      "Content-Type": "application/json",
+      "X-Internal-Key": process.env.INTERNAL_API_KEY,
+    };
+    
+    if (authToken) {
+      headers["Authorization"] = `Token ${authToken}`;
+    }
+    
+    const response = await fetch(`${DJANGO_BACKEND_URL}/api/songs/?${params.toString()}`, {
+      headers,
+      cache: "no-store",
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    return response.json();
+    
+  } else {
+    // CLIENT: Call Next.js API route which adds the internal key
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    
+    if (authToken) {
+      headers["Authorization"] = `Token ${authToken}`;
+    }
+    
+    const response = await fetch(`/api/songs?${params.toString()}`, {
+      headers,
+      cache: "no-store",
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    return response.json();
+  }
 }
 
 

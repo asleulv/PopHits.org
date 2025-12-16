@@ -156,7 +156,8 @@ export default function SongListClient({
         peakRankFilter,
         onlyUnratedSongs,
         decadeFilter,
-        tagSlug
+        tagSlug,
+        authToken  
       );
 
       setSongs(data.results || []);
@@ -389,6 +390,8 @@ export default function SongListClient({
 
       const apiSortOrder = newSortOrder === "desc" ? "-" : "";
 
+      const authToken = isAuthenticated ? localStorage.getItem("authToken") : null;
+
       console.log("Fetching with parameters:", {
         page,
         perPage,
@@ -412,7 +415,8 @@ export default function SongListClient({
         searchQuery,
         peakRankFilter,
         onlyUnratedSongs,
-        decadeFilter
+        decadeFilter,
+        authToken  
       );
 
       console.log("API response:", data);

@@ -25,3 +25,13 @@ class IsInternalServer(BasePermission):
         # - Must have an expected_key
         # - The sent_key must match the expected_key
         return expected_key and (sent_key == expected_key)
+    
+class IsInternalServerWithOptionalAuth(BasePermission):
+    """
+    Same as IsInternalServer but allows optional user authentication to be passed through.
+    Use this with TokenAuthentication in authentication_classes to support user-specific filtering.
+    """
+    def has_permission(self, request, view):
+        expected_key = settings.INTERNAL_API_KEY
+        sent_key = request.META.get('HTTP_X_INTERNAL_KEY')
+        return expected_key and (sent_key == expected_key)

@@ -1,6 +1,8 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from django.db.models import Max, Min, Q
@@ -16,8 +18,8 @@ class SongListCreateView(generics.ListCreateAPIView):
     serializer_class = SongSerializer
     pagination_class = CustomPagination
 
-    authentication_classes = []
-    permission_classes = [IsInternalServer]
+    authentication_classes = [TokenAuthentication]  # Change this
+    permission_classes = [IsInternalServer]  # Keep this the same
 
     def get_queryset(self):
         # Optimize with select_related and prefetch_related to avoid N+1 queries
