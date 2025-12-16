@@ -37,7 +37,7 @@ export const API_ENDPOINTS = {
     `${BASE_URL}/api/songs/random-by-artist/?artist_slug=${artistSlug}`,
   songBySlug: (slug) => `${BASE_URL}/api/songs/${slug}/`,
   songTimelineBySlug: (slug) => `${BASE_URL}/api/songs/slug/${slug}/timeline/`,
-  songs: `${BASE_URL}/api/songs/`,
+  songs: "/api/songs/",
   submitUserScore: (songId) => `${BASE_URL}/api/songs/${songId}/rate/`,
   submitUserComment: (songId) => `${BASE_URL}/api/songs/${songId}/comment/`,
   deleteUserComment: (commentId) =>
@@ -246,56 +246,27 @@ export async function getSongs(
   decade = null,
   tagSlug = null
 ) {
-  const url = new URL(API_ENDPOINTS.songs);
+  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const url = new URL(API_ENDPOINTS.songs, base); // /api/songs/ → Next.js proxy
 
-  // Pagination
   url.searchParams.append("page", page);
   url.searchParams.append("page_size", perPage);
 
-  // Filters
-  if (filterType && filterValue) {
+  if (filterType && filterValue)
     url.searchParams.append(filterType, filterValue);
-  }
-
-  // Sorting
   if (sortField) {
     url.searchParams.append("sort_by", sortField);
     url.searchParams.append("order", sortOrder === "-" ? "desc" : "asc");
   }
+  if (query) url.searchParams.append("search", query);
+  if (peakRankFilter) url.searchParams.append("peak_rank", peakRankFilter);
+  if (unratedOnly) url.searchParams.append("unrated_only", "true");
+  if (decade) url.searchParams.append("decade", decade);
+  if (tagSlug) url.searchParams.append("tag", tagSlug);
 
-  // Search
-  if (query) {
-    url.searchParams.append("search", query);
-  }
-
-  // Additional filters
-  if (peakRankFilter) {
-    url.searchParams.append("peak_rank", peakRankFilter);
-  }
-
-  if (unratedOnly) {
-    url.searchParams.append("unrated_only", "true");
-  }
-
-  if (decade) {
-    url.searchParams.append("decade", decade);
-  }
-
-  if (tagSlug) {
-    url.searchParams.append("tag", tagSlug);
-  }
-
-  // Get auth token if needed
-  const options = {};
-  if (typeof window !== "undefined") {
-    const authToken = localStorage.getItem("authToken");
-    if (authToken) {
-      options.headers = { Authorization: `Token ${authToken}` };
-    }
-  }
-
-  return fetchData(url.toString(), options);
+  return fetchData(url.toString());
 }
+
 
 /**
  * Generate quiz questions based on criteria
@@ -471,6 +442,40 @@ export async function getLatestBlogPost() {
 // ============================================================================
 
 export async function getWebsiteStats() {
-  return fetchData(API_ENDPOINTS.websiteStats, { cache: 'no-store' });
+  return fetchData(API_ENDPOINTS.websiteStats, { cache: "no-store" });
 }
 
+// ============================================================================
+// SERVER-SIDE API FUNCTIONS (for use in server components)
+// ============================================================================
+
+export async function internalFetch(path, options = {}) {
+  // Safety check to ensure this function is never called client-side
+  if (typeof window !== "undefined") {
+    throw new Error("internalFetch is a server-only function.");
+  }
+
+  // Determine the Django URL. Use the production BASE_URL here.
+  const internalBaseUrl =
+    process.env.NODE_ENV === "development" ? "http://localhost:8000" : BASE_URL; // BASE_URL is "https://pophits.org" in prod
+
+  const headers = {
+    ...options.headers,
+    "X-Internal-Key": process.env.INTERNAL_API_KEY, // Inject the secret key
+  };
+
+  const response = await fetch(`${internalBaseUrl}${path}`, {
+    ...options,
+    headers,
+    cache: "no-store", // Do not cache secure/live data
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Internal API error: ${response.status} ${response.statusText} from ${path}`
+    );
+  }
+
+  // For pagination/list views, we return the full Response object to access headers
+  return response;
+}

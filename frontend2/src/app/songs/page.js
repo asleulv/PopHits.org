@@ -8,20 +8,20 @@ export const metadata = {
 };
 
 export default async function SongsPage({ searchParams }) {
+  const sp = await searchParams; // ← important change
+
   // Extract search parameters
-  const page = parseInt(searchParams.page || '1', 10);
-  const perPage = parseInt(searchParams.per_page || '25', 10);
-  const query = searchParams.query || '';
-  const filter = searchParams.filter || null;
-  const unrated = searchParams.unrated === 'true';
-  const decade = searchParams.decade || null;
-  const sortBy = searchParams.sort_by || null;
-  const order = searchParams.order || null;
-  
-  // Determine peak rank filter
+  const page = parseInt(sp.page || '1', 10);
+  const perPage = parseInt(sp.per_page || '25', 10);
+  const query = sp.query || '';
+  const filter = sp.filter || null;
+  const unrated = sp.unrated === 'true';
+  const decade = sp.decade || null;
+  const sortBy = sp.sort_by || null;
+  const order = sp.order || null;
+
   const peakRankFilter = filter === 'number-one' ? '1' : null;
-  
-  // Fetch songs data with filters
+
   const songsData = await getSongs(
     page,
     perPage,
@@ -35,11 +35,9 @@ export default async function SongsPage({ searchParams }) {
     decade
   );
 
-  // Extract songs and total count
   const songs = songsData.results || [];
   const totalSongs = songsData.count || 0;
 
-  // Prepare JSON-LD for song list
   const songListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -49,7 +47,7 @@ export default async function SongsPage({ searchParams }) {
     "itemListElement": songs.map((song, index) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "url": `https://pophits.org/songs/${song.slug}`,  // <-- using slug here
+      "url": `https://pophits.org/songs/${song.slug}`,
       "name": song.title,
       "item": {
         "@type": "MusicRecording",
@@ -79,7 +77,6 @@ export default async function SongsPage({ searchParams }) {
       />
       <script
         type="application/ld+json"
-        // JSON.stringify here converts the object to a string for the script tag
         dangerouslySetInnerHTML={{ __html: JSON.stringify(songListSchema) }}
       />
     </>

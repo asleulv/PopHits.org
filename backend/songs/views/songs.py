@@ -16,6 +16,9 @@ class SongListCreateView(generics.ListCreateAPIView):
     serializer_class = SongSerializer
     pagination_class = CustomPagination
 
+    authentication_classes = []
+    permission_classes = [IsInternalServer]
+
     def get_queryset(self):
         # Optimize with select_related and prefetch_related to avoid N+1 queries
         queryset = Song.objects.select_related(
