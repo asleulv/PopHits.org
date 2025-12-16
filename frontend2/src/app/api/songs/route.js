@@ -1,33 +1,59 @@
 // app/api/songs/route.js
 import { NextResponse } from "next/server";
 
+const INTERNAL_KEY = process.env.INTERNAL_API_KEY;
+
+const DJANGO_BACKEND_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.DJANGO_BACKEND_URL || "http://127.0.0.1:8000"
+    : "http://127.0.0.1:8000";  // ⬅ change prod to direct backend
+
 export async function GET(request) {
-  // 1) Read query params from the incoming request
+  if (!INTERNAL_KEY) {
+    console.error("SERVER CONFIG ERROR: INTERNAL_API_KEY is not set.");
+    return NextResponse.json(
+      { error: "Server configuration error: Internal key missing" },
+      { status: 500 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
 
-  // 2) Build the Django URL (local in dev)
-  const djangoBase =
-    process.env.NODE_ENV === "development"
-      ? "http://127.0.0.1:8000"
-      : "https://pophits.org";
-
-  const djangoUrl = new URL("/api/songs/", djangoBase);
-
-  // 3) Forward all query params to Django
+  const djangoUrl = new URL("/api/songs/", DJANGO_BACKEND_URL);
   searchParams.forEach((value, key) => {
     djangoUrl.searchParams.append(key, value);
   });
 
-  // 4) Call Django with the internal key
-  const djangoResponse = await fetch(djangoUrl.toString(), {
-    headers: {
-      "X-Internal-Key": process.env.INTERNAL_API_KEY,
-      "Content-Type": "application/json",
-    },
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(djangoUrl.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Internal-Key": INTERNAL_KEY,
+      },
+      cache: "no-store",
+    });
 
-  const data = await djangoResponse.json();
+    if (!response.ok) {
+      const errorDetail = await response
+        .json()
+        .catch(() => ({ detail: "Unknown error from backend" }));
+      return NextResponse.json(
+        {
+          error: "Failed to fetch songs from secure backend.",
+          details: errorDetail.detail || `HTTP Status ${response.status}`,
+        },
+        { status: response.status }
+      );
+    }
 
-  return NextResponse.json(data, { status: djangoResponse.status });
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Error in songs API route:", error);
+    return NextResponse.json(
+      { error: "Internal network server error during fetch to Django" },
+      { status: 500 }
+    );
+  }
 }
