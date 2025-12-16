@@ -7,6 +7,7 @@ from django.db.models import Max, Min, Q
 import random
 from random import randint
 
+from ..permissions import IsInternalServer
 from ..models import Song, UserSongComment, SongTimeline, UserSongRating
 from ..serializers import SongSerializer, UserSongCommentSerializer, SongTimelineSerializer
 from .pagination import CustomPagination
@@ -191,6 +192,8 @@ class SongDetailBySlugView(generics.RetrieveUpdateDestroyAPIView):
         return Response(data)
 
 class RandomSongView(APIView):
+    authentication_classes = []
+    permission_classes = [IsInternalServer]
     serializer_class = SongSerializer
 
     def get(self, request, *args, **kwargs):
@@ -206,7 +209,6 @@ class RandomSongView(APIView):
                 return Response(serializer.data)
 
         return Response({"detail": "No songs"}, status=404)
-
 
 
 class SongsWithImagesView(generics.ListAPIView):

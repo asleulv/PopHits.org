@@ -16,7 +16,7 @@ export default function RandomSongClient() {
         setError(null);
         
         // Fetch a random song from our API route
-        const response = await fetch('/api/songs/random-song', {
+        const response = await fetch('/api/songs/random', {
           cache: 'no-store',
         });
         

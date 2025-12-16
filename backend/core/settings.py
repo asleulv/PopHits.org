@@ -30,6 +30,9 @@ DEBUG = os.getenv('DEBUG_MODE', 'False').lower() == 'true'
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pophits.org', 'www.pophits.org', '142.132.173.134','91.98.154.162']
 SESSION_COOKIE_AGE = 3600
 
+# DATABASE API
+INTERNAL_API_KEY = os.environ.get('INTERNAL_API_KEY', 'default-unsecure-key-for-testing')
+
 # REGISTRATION EMAIL
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
