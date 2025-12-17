@@ -1,30 +1,36 @@
-import withPWA from 'next-pwa';
+import withPWA from "next-pwa";
 
 const nextConfig = {
   // Configure external image domains
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '8000',
-        pathname: '/media/**',
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/media/**",
       },
       {
-        protocol: 'https',
-        hostname: 'pophits.org',
-        pathname: '/media/**',
+        protocol: 'http',           
+        hostname: '127.0.0.1',      
+        port: '8000',               
+        pathname: '/media/**',      
+      }, 
+      {
+        protocol: "https",
+        hostname: "pophits.org",
+        pathname: "/media/**",
       },
       {
-        protocol: 'https',
-        hostname: 'i.scdn.co',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "i.scdn.co",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'cdn.bsky.app',
-        port: '',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "cdn.bsky.app",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
@@ -34,20 +40,21 @@ const nextConfig = {
   },
   // Environment variables
   env: {
-    API_URL: process.env.NODE_ENV === 'development' 
-      ? 'http://localhost:8000' 
-      : 'https://pophits.org',
+    API_URL:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:8000"
+        : "https://pophits.org",
   },
   async rewrites() {
-    return process.env.NODE_ENV === 'development'
+    return process.env.NODE_ENV === "development"
       ? [
           {
-            source: '/api/:path*',
-            destination: 'http://localhost:8000/api/:path*',
+            source: "/api/:path*",
+            destination: "http://localhost:8000/api/:path*",
           },
           {
-            source: '/media/:path*',  // ← ADD THIS
-            destination: 'http://localhost:8000/media/:path*',  // ← ADD THIS
+            source: "/media/:path*", // ← ADD THIS
+            destination: "http://localhost:8000/media/:path*", // ← ADD THIS
           },
         ]
       : [];
@@ -57,61 +64,61 @@ const nextConfig = {
     return [
       {
         // Cache JavaScript files
-        source: '/:path*.js',
+        source: "/:path*.js",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
       {
         // Cache CSS files
-        source: '/:path*.css',
+        source: "/:path*.css",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
       {
         // Cache image files
-        source: '/:path*.(png|jpg|jpeg|gif|ico|svg|webp)',
+        source: "/:path*.(png|jpg|jpeg|gif|ico|svg|webp)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
       {
         // Cache font files
-        source: '/:path*.(woff|woff2|eot|ttf|otf)',
+        source: "/:path*.(woff|woff2|eot|ttf|otf)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
       {
         // Cache your static folder specifically
-        source: '/static/:path*',
+        source: "/static/:path*",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
       {
         // Cache API responses for shorter time
-        source: '/api/:path*',
+        source: "/api/:path*",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=300', // 5 minutes
+            key: "Cache-Control",
+            value: "public, max-age=300", // 5 minutes
           },
         ],
       },
@@ -120,8 +127,8 @@ const nextConfig = {
 };
 
 export default withPWA({
-  dest: 'public',
+  dest: "public",
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
+  disable: process.env.NODE_ENV === "development",
 })(nextConfig);

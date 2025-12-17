@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
@@ -21,12 +22,16 @@ from rest_framework.decorators import api_view
 
 
 class CSRFTokenView(APIView):
+    permission_classes = [AllowAny]
+
     @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         return HttpResponse("CSRF cookie set")
 
 
 class UserRegistrationView(APIView):
+    permission_classes = [AllowAny]
+
     @method_decorator(ensure_csrf_cookie)
     def post(self, request):
         username = request.data.get('username')
@@ -56,6 +61,8 @@ class UserRegistrationView(APIView):
         return response
 
 class UserLoginView(APIView):
+    permission_classes = [AllowAny]
+
     @method_decorator(ensure_csrf_cookie)
     def post(self, request):
         email = request.data.get('email')
@@ -72,6 +79,8 @@ class UserLoginView(APIView):
             return Response({'error': 'Invalid credentials'}, status=400)
     
 class UserLogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         # Ensure CSRF token is included in the response
         # if the view is being rendered by a template
@@ -134,6 +143,7 @@ class UserProfileView(APIView):
           return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ResetPasswordRequest(APIView):
+  permission_classes = [AllowAny]
 
   def post(self, request):
     email = request.data['email']
@@ -152,6 +162,7 @@ class ResetPasswordRequest(APIView):
       return Response({'error': 'User with this email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ResetPasswordConfirm(APIView):
+  permission_classes = [AllowAny]
 
   @staticmethod
   def get_user_for_token(uid, token):
