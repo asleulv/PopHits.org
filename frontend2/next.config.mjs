@@ -7,13 +7,13 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
-        port: "8000",
+        port: "8080",
         pathname: "/media/**",
       },
       {
         protocol: 'http',           
         hostname: '127.0.0.1',      
-        port: '8000',               
+        port: '8080',               
         pathname: '/media/**',      
       }, 
       {
@@ -43,7 +43,7 @@ const nextConfig = {
     API_URL:
       process.env.NODE_ENV === "development"
         ? "http://localhost:8000"
-        : "https://pophits.org",
+        : "http://127.0.0.1:8080",
   },
   async rewrites() {
     return process.env.NODE_ENV === "development"
