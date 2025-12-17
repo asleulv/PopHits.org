@@ -8,6 +8,21 @@ import { getChartDates } from "@/lib/api";
 const YEARS = Array.from({ length: 68 }, (_, i) => 1958 + i);
 const FIRST_CHART_DATE = "1958-08-04"; // Hot 100 debut
 
+ const months = [
+    { value: "01", label: "January" },
+    { value: "02", label: "February" },
+    { value: "03", label: "March" },
+    { value: "04", label: "April" },
+    { value: "05", label: "May" },
+    { value: "06", label: "June" },
+    { value: "07", label: "July" },
+    { value: "08", label: "August" },
+    { value: "09", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
+
 export default function ChartsPage() {
   const [selectedYear, setSelectedYear] = useState(2024);
   const [selectedMonth, setSelectedMonth] = useState("01");
@@ -37,21 +52,7 @@ export default function ChartsPage() {
     fetchAllDates();
   }, []);
 
-  const months = [
-    { value: "01", label: "January" },
-    { value: "02", label: "February" },
-    { value: "03", label: "March" },
-    { value: "04", label: "April" },
-    { value: "05", label: "May" },
-    { value: "06", label: "June" },
-    { value: "07", label: "July" },
-    { value: "08", label: "August" },
-    { value: "09", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
-  ];
-
+ 
   const currentMonth = months.find((m) => m.value === selectedMonth)?.label;
 
   // Handle year/month filters

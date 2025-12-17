@@ -1,4 +1,3 @@
-import { Metadata } from 'next';
 import RegisterForm from '@/components/users/RegisterForm';
 
 export const metadata = {

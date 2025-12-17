@@ -1,4 +1,3 @@
-import { Metadata } from 'next';
 import ResetPasswordForm from '@/components/users/ResetPasswordForm';
 
 export const metadata = {

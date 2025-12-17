@@ -1,5 +1,3 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
 import ProfileClient from '@/components/users/ProfileClient';
 
 export const metadata = {

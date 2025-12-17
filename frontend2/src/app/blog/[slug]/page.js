@@ -7,9 +7,10 @@ import Link from "next/link";
 import SongPreview from "@/components/Blog/SongPreview";
 import YouTubeEmbed from "@/components/Blog/YouTubeEmbed";
 import SignupCTA from "@/components/Blog/SignupCTA";
-import { fetchBlogData, BLOG_API_ENDPOINTS } from "@/lib/api";
+// ✅ UPDATED IMPORT: Using the new high-level proxy function
+import { getBlogPostBySlug } from "@/lib/api";
 
-// Structured data for SEO
+// Structured data for SEO (remains the same)
 function BlogPostStructuredData({ post }) {
   const structuredData = {
     "@context": "https://schema.org",
@@ -52,7 +53,14 @@ export default function BlogPostPage() {
 
     async function fetchPost() {
       try {
-        const data = await fetchBlogData(BLOG_API_ENDPOINTS.blogPostBySlug(slug));
+        // ✅ UPDATED CALL: Using getBlogPostBySlug instead of fetchBlogData
+        const data = await getBlogPostBySlug(slug);
+        
+        // Handle the internal image URL replacement if necessary
+        if (data && data.featured_image) {
+          data.featured_image = data.featured_image.replace('http://127.0.0.1:8000', 'https://pophits.org');
+        }
+        
         setPost(data);
       } catch (err) {
         console.error("Error fetching blog post:", err);
@@ -64,26 +72,17 @@ export default function BlogPostPage() {
 
     fetchPost();
 
-    const authToken = localStorage.getItem("authToken");
+    const authToken = typeof window !== 'undefined' ? localStorage.getItem("authToken") : null;
     setIsAuthenticated(!!authToken);
   }, [slug]);
 
   if (loading) return <div className="text-center py-16 text-slate-700">Loading...</div>;
-  if (error)
+  
+  if (error || !post)
     return (
       <div className="container mx-auto px-4 py-8 bg-red-50 border border-red-300 text-red-800 p-4 rounded-lg">
-        <h1 className="text-2xl font-bold mb-2">Error Loading Post</h1>
-        <p>{error}</p>
-        <Link href="/blog" className="text-amber-700 hover:text-amber-900 font-medium mt-4 inline-block">
-          Return to Blog
-        </Link>
-      </div>
-    );
-  if (!post)
-    return (
-      <div className="container mx-auto px-4 py-8 bg-red-50 border border-red-300 text-red-800 p-4 rounded-lg">
-        <h1 className="text-2xl font-bold mb-2">Blog Post Not Found</h1>
-        <p>Sorry, we couldn’t find the blog post you’re looking for.</p>
+        <h1 className="text-2xl font-bold mb-2">{error ? "Error Loading Post" : "Blog Post Not Found"}</h1>
+        <p>{error || "Sorry, we couldn’t find the blog post you’re looking for."}</p>
         <Link href="/blog" className="text-amber-700 hover:text-amber-900 font-medium mt-4 inline-block">
           Return to Blog
         </Link>
@@ -110,7 +109,13 @@ export default function BlogPostPage() {
       <article className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-slate-400">
         {post.featured_image && (
           <div className="relative w-full h-80">
-            <Image src={post.featured_image} alt={post.title} fill className="object-cover" />
+            <Image 
+              src={post.featured_image} 
+              alt={post.title} 
+              fill 
+              className="object-cover"
+              unoptimized={true} // Helpful if images are served from a different internal IP
+            />
           </div>
         )}
 
@@ -122,6 +127,7 @@ export default function BlogPostPage() {
             Published on {new Date(post.published_date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
           </div>
 
+          {/* This component handles rendering the HTML content from Django */}
           <YouTubeEmbed content={post.content} />
           <SignupCTA isLoggedIn={isAuthenticated} />
 

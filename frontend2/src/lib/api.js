@@ -1,42 +1,66 @@
 // src/lib/api.js - BULLETPROOF VERSION
 
-const PROXY_BASE = '/proxy';
+const PROXY_BASE = "/proxy";
 
 // Generic fetch wrapper with server-side support
+// Generic fetch wrapper with server-side support
 async function proxyFetch(path, options = {}) {
-  // Ensure path starts with /
-  if (!path.startsWith('/')) {
-    path = '/' + path;
+  if (!path.startsWith("/")) {
+    path = "/" + path;
   }
-  
-  // For server-side rendering, use full URL
-  const baseUrl = typeof window === 'undefined' 
-    ? 'http://localhost:3000'
-    : '';
-  
-  const url = `${baseUrl}${PROXY_BASE}${path}`;
-  
+
+  const isServer = typeof window === "undefined";
+  let url;
+
+  if (isServer) {
+    /**
+     * BUILD-TIME / SERVER-SIDE LOGIC
+     * Bypass the local proxy (port 3000) and hit Django (port 8000) directly.
+     * This prevents ECONNREFUSED during 'npm run build'.
+     */
+    const DJANGO_INTERNAL = "http://127.0.0.1:8000";
+    url = `${DJANGO_INTERNAL}/api${path}`;
+
+    // Manually inject the Internal Key since we are bypassing the proxy route
+    options.headers = {
+      ...options.headers,
+      "X-Internal-Key": process.env.INTERNAL_API_KEY,
+    };
+  } else {
+    /**
+     * CLIENT-SIDE LOGIC
+     * Use the relative /proxy route which NGINX/Next.js handles.
+     */
+    url = `${PROXY_BASE}${path}`;
+  }
+
   try {
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }
-    
-    // Handle 204 No Content
+
     if (response.status === 204) {
       return {};
     }
-    
+
     return await response.json();
   } catch (error) {
-    console.error(`[proxyFetch] Error fetching ${url}:`, error);
+    console.error(`[proxyFetch] Error fetching ${url}:`, error.message);
+
+    // If it's a server-side fetch during build, return empty data to prevent a crash
+    if (isServer) {
+      if (path.includes("dates")) return [];
+      return { results: [] };
+    }
+
     throw error;
   }
 }
@@ -50,16 +74,16 @@ export async function getSongs(page = 1, perPage = 25, filters = null) {
     page: String(page || 1),
     page_size: String(perPage || 25),
   });
-  
+
   // Add all filters - SAFE version
-  if (filters && typeof filters === 'object' && !Array.isArray(filters)) {
+  if (filters && typeof filters === "object" && !Array.isArray(filters)) {
     Object.entries(filters).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
+      if (value !== null && value !== undefined && value !== "") {
         params.append(key, String(value));
       }
     });
   }
-  
+
   return proxyFetch(`/songs/?${params.toString()}`);
 }
 
@@ -93,7 +117,7 @@ export async function getRandomSongByArtist(artistSlug) {
 
 export async function submitUserScore(songId, userScore, authToken) {
   return proxyFetch(`/songs/${songId}/rate/`, {
-    method: 'POST',
+    method: "POST",
     headers: { Authorization: `Token ${authToken}` },
     body: JSON.stringify({ rating: userScore }),
   });
@@ -101,7 +125,7 @@ export async function submitUserScore(songId, userScore, authToken) {
 
 export async function submitUserComment(songId, commentText, authToken) {
   return proxyFetch(`/songs/${songId}/comment/`, {
-    method: 'POST',
+    method: "POST",
     headers: { Authorization: `Token ${authToken}` },
     body: JSON.stringify({ comment_text: commentText }),
   });
@@ -109,14 +133,14 @@ export async function submitUserComment(songId, commentText, authToken) {
 
 export async function deleteUserComment(commentId, authToken) {
   return proxyFetch(`/songs/${commentId}/comment/`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: { Authorization: `Token ${authToken}` },
   });
 }
 
 export async function editUserComment(songId, commentId, newText, authToken) {
   return proxyFetch(`/songs/${songId}/comment/${commentId}/`, {
-    method: 'PUT',
+    method: "PUT",
     headers: { Authorization: `Token ${authToken}` },
     body: JSON.stringify({ comment_text: newText }),
   });
@@ -124,7 +148,7 @@ export async function editUserComment(songId, commentId, newText, authToken) {
 
 export async function toggleBookmarkSong(songId, authToken) {
   return proxyFetch(`/songs/${songId}/bookmark/`, {
-    method: 'POST',
+    method: "POST",
     headers: { Authorization: `Token ${authToken}` },
   });
 }
@@ -134,24 +158,32 @@ export async function generateQuiz(numSongs, hitLevel, selectedDecades = []) {
     number_of_songs: String(numSongs),
     hit_size: String(hitLevel),
   });
-  
+
   if (Array.isArray(selectedDecades)) {
-    selectedDecades.forEach(decade => params.append('decades', String(decade)));
+    selectedDecades.forEach((decade) =>
+      params.append("decades", String(decade))
+    );
   }
-  
+
   return proxyFetch(`/songs/generate-quiz/?${params.toString()}`);
 }
 
-export async function generatePlaylist(numSongs, hitLevel, selectedDecades = []) {
+export async function generatePlaylist(
+  numSongs,
+  hitLevel,
+  selectedDecades = []
+) {
   const params = new URLSearchParams({
     number_of_songs: String(numSongs),
     hit_size: String(hitLevel),
   });
-  
+
   if (Array.isArray(selectedDecades)) {
-    selectedDecades.forEach(decade => params.append('decades', String(decade)));
+    selectedDecades.forEach((decade) =>
+      params.append("decades", String(decade))
+    );
   }
-  
+
   return proxyFetch(`/songs/generate-playlist/?${params.toString()}`);
 }
 
@@ -165,16 +197,16 @@ export async function getArtistBySlug(slug) {
 
 export async function getArtists(options = {}) {
   const { letter, page = 1, pageSize = 100 } = options || {};
-  
+
   const params = new URLSearchParams({
     page: String(page || 1),
     page_size: String(pageSize || 100),
   });
-  
-  if (letter && letter !== 'All') {
-    params.append('letter', letter);
+
+  if (letter && letter !== "All") {
+    params.append("letter", letter);
   }
-  
+
   return proxyFetch(`/artists/?${params.toString()}`);
 }
 
@@ -182,7 +214,7 @@ export async function getFeaturedArtists() {
   try {
     return await proxyFetch(`/songs/featured-artists/`);
   } catch (error) {
-    console.error('Error fetching featured artists:', error);
+    console.error("Error fetching featured artists:", error);
     return [];
   }
 }
@@ -209,90 +241,89 @@ export async function getUserProfile(authToken) {
   });
 }
 
-
 // ============================================================================
 // AUTHENTICATION ENDPOINTS
 // ============================================================================
 
 export async function loginUser(username, password) {
   // Get CSRF token first
-  const csrfResponse = await fetch('http://localhost:8000/api/csrf/', {
-    credentials: 'include',
+  const csrfResponse = await fetch("http://localhost:8000/api/csrf/", {
+    credentials: "include",
   });
   const { csrfToken } = await csrfResponse.json();
-  
+
   // Then login
-  const response = await fetch('http://localhost:8000/api/login/', {
-    method: 'POST',
-    credentials: 'include',
+  const response = await fetch("http://localhost:8000/api/login/", {
+    method: "POST",
+    credentials: "include",
     headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken,
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
     },
     body: JSON.stringify({ username, password }),
   });
-  
+
   if (!response.ok) {
-    throw new Error('Login failed');
+    throw new Error("Login failed");
   }
-  
+
   return await response.json();
 }
 
 export async function registerUser(username, email, password) {
   // Similar pattern with CSRF token
-  const csrfResponse = await fetch('http://localhost:8000/api/csrf/', {
-    credentials: 'include',
+  const csrfResponse = await fetch("http://localhost:8000/api/csrf/", {
+    credentials: "include",
   });
   const { csrfToken } = await csrfResponse.json();
-  
-  const response = await fetch('http://localhost:8000/api/register/', {
-    method: 'POST',
-    credentials: 'include',
+
+  const response = await fetch("http://localhost:8000/api/register/", {
+    method: "POST",
+    credentials: "include",
     headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken,
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
     },
     body: JSON.stringify({ username, email, password }),
   });
-  
+
   if (!response.ok) {
-    throw new Error('Registration failed');
+    throw new Error("Registration failed");
   }
-  
+
   return await response.json();
 }
 
 export async function logoutUser(authToken) {
-  return fetch('http://localhost:8000/api/logout/', {
-    method: 'POST',
-    credentials: 'include',
+  return fetch("http://localhost:8000/api/logout/", {
+    method: "POST",
+    credentials: "include",
     headers: {
-      'Authorization': `Token ${authToken}`,
+      Authorization: `Token ${authToken}`,
     },
   });
 }
 
 export async function resetPassword(email) {
-  const csrfResponse = await fetch('http://localhost:8000/api/csrf/', {
-    credentials: 'include',
+  const csrfResponse = await fetch("http://localhost:8000/api/csrf/", {
+    credentials: "include",
   });
   const { csrfToken } = await csrfResponse.json();
-  
-  const response = await fetch('http://localhost:8000/api/reset-password/', {
-    method: 'POST',
-    credentials: 'include',
+
+  const response = await fetch("http://localhost:8000/api/reset-password/", {
+    method: "POST",
+    credentials: "include",
     headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken,
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
     },
     body: JSON.stringify({ email }),
   });
-  
+
   if (!response.ok) {
-    throw new Error('Password reset failed');
+    throw new Error("Password reset failed");
   }
-  
+
   return await response.json();
 }
 
@@ -300,16 +331,16 @@ export async function resetPassword(email) {
 // BLOG ENDPOINTS
 // ============================================================================
 
-export async function getBlogPosts(page = 1, perPage = 10, search = '') {
+export async function getBlogPosts(page = 1, perPage = 10, search = "") {
   const params = new URLSearchParams({
     page: String(page || 1),
     page_size: String(perPage || 10),
   });
-  
+
   if (search) {
-    params.append('search', String(search));
+    params.append("search", String(search));
   }
-  
+
   return proxyFetch(`/blog/?${params.toString()}`);
 }
 
@@ -322,7 +353,7 @@ export async function getLatestBlogPost() {
     const response = await proxyFetch(`/blog/?page=1&page_size=1`);
     return response.results?.[0] || response[0] || null;
   } catch (error) {
-    console.error('Error fetching latest blog post:', error);
+    console.error("Error fetching latest blog post:", error);
     return null;
   }
 }
