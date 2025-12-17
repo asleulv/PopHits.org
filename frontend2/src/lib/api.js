@@ -273,6 +273,29 @@ export async function logoutUser(authToken) {
   });
 }
 
+export async function resetPassword(email) {
+  const csrfResponse = await fetch('http://localhost:8000/api/csrf/', {
+    credentials: 'include',
+  });
+  const { csrfToken } = await csrfResponse.json();
+  
+  const response = await fetch('http://localhost:8000/api/reset-password/', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+    body: JSON.stringify({ email }),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Password reset failed');
+  }
+  
+  return await response.json();
+}
+
 // ============================================================================
 // BLOG ENDPOINTS
 // ============================================================================
