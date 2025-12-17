@@ -18,7 +18,7 @@ async function proxyFetch(path, options = {}) {
      * Bypass the local proxy (port 3000) and hit Django (port 8000) directly.
      * This prevents ECONNREFUSED during 'npm run build'.
      */
-    const DJANGO_INTERNAL = "http://127.0.0.1:8000";
+    const DJANGO_INTERNAL = "http://127.0.0.1:8080";
     url = `${DJANGO_INTERNAL}/api${path}`;
 
     // Manually inject the Internal Key since we are bypassing the proxy route
