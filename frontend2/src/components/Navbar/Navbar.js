@@ -185,18 +185,6 @@ export default function Navbar() {
                     </Link>
                   </li>
 
-                  <li className="navbar-menu-item">
-                    <Link
-                      href="/charts"
-                      className="navbar-menu-link hover:text-amber-300"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <span className="navbar-menu-icon">
-                        <Calendar size={18} />
-                      </span>
-                      Chart Archives
-                    </Link>
-                  </li>
 
                   <li className="navbar-menu-item">
                     <Link
