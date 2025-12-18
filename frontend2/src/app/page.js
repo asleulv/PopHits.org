@@ -279,10 +279,7 @@ export default async function FrontPage() {
         </Suspense>
 
 
-        {/* 3. Featured Discovery (Bluesky) */}
-        <Suspense fallback={<div>Loading discovery...</div>}>
-          <BlueskyClient />
-        </Suspense>
+        
 
         {/* 4. Random Hits by Decade */}
         <Suspense fallback={<div>Loading hits...</div>}>
@@ -306,6 +303,11 @@ export default async function FrontPage() {
 
         {/* 8. Year Browser */}
         <YearBrowserSection years={years} />
+
+        {/* 3. Featured Discovery (Bluesky) */}
+        <Suspense fallback={<div>Loading discovery...</div>}>
+          <BlueskyClient />
+        </Suspense>
       </div>
     </>
   );

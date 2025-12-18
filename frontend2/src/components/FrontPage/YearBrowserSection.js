@@ -12,7 +12,7 @@ export default function YearBrowserSection({ years }) {
        - Added md:rounded-3xl rounded-none for mobile consistency
        - Added md:border-4 border-y-4 border-x-0 for cleaner mobile edges
     */
-    <section className="mb-12 md:w-full w-screen md:mx-0 mx-[-1rem] bg-blue-950 p-6 md:p-10 md:rounded-3xl rounded-none md:border-4 border-y-4 border-x-0 border-black  shadow-none">
+    <section className="relative mb-12 bg-blue-950 p-6 md:p-10 md:rounded-3xl rounded-none md:border-4 border-y-4 border-x-0 border-black md:w-full w-[100vw] ml-[50%] translate-x-[-50%] shadow-none">
       {/* Header Section */}
       <div className="flex flex-col items-center mb-10">
         {/* Fixed Version */}

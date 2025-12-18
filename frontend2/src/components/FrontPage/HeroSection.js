@@ -19,7 +19,7 @@ export default function HeroSection({
   newestUsername,
 }) {
   return (
-    <div className="flex flex-col md:flex-row md:space-x-8 mb-12 md:w-full w-screen md:mx-0 mx-[-1rem] bg-yellow-50 p-8 md:rounded-3xl rounded-none md:border-2 border-y-2 border-x-0 border-black md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] shadow-none animate-fadeIn">
+    <div className="relative flex flex-col md:flex-row md:space-x-8 mb-12 bg-yellow-50 p-8 md:rounded-3xl rounded-none md:border-2 border-y-2 border-x-0 border-black md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:w-full w-[100vw] ml-[50%] translate-x-[-50%] animate-fadeIn">
       <div className="flex-1 mb-8 md:mb-0">
         <div className="mb-4 text-center md:text-left">
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-black text-yellow-400 rounded-full text-sm font-black uppercase tracking-widest">
@@ -28,17 +28,20 @@ export default function HeroSection({
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter italic uppercase text-slate-900">
+        {/* Added text-center md:text-left */}
+        <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter italic uppercase text-slate-900 text-center md:text-left">
           THE HIT SONG ARCHIVE
         </h1>
 
-        <p className="text-xl md:text-2xl text-slate-800 mb-4 font-bold leading-tight">
+        {/* Added text-center md:text-left */}
+        <p className="text-xl md:text-2xl text-slate-800 mb-4 font-bold leading-tight text-center md:text-left">
           The definitive collection of historical hits for true music fans. Rate
           every song, build your ultimate collections, and test your knowledge
           against decades of chart history.
         </p>
 
-        <p className="text-lg text-slate-700 mb-8 leading-relaxed">
+        {/* Added text-center md:text-left */}
+        <p className="text-lg text-slate-700 mb-8 leading-relaxed text-center md:text-left">
           Dive into a massive library spanning the modern era. Join a community
           of hit-music experts: score your favorite classics, curate
           personalized playlists, and master our deep-dive music trivia.
@@ -145,9 +148,9 @@ export default function HeroSection({
           </div>
         </div>
 
-        {/* Welcome member */}
+        {/* Welcome member - Center flex container on mobile */}
         {newestUsername && (
-          <div className="text-center md:text-left mb-8 mt-6">
+          <div className="flex justify-center md:justify-start mb-8 mt-6">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-black text-slate-700 font-bold text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <PartyPopper className="w-5 h-5 text-yellow-400" />
               Newest Music Historian:{" "}
@@ -158,6 +161,7 @@ export default function HeroSection({
           </div>
         )}
 
+        {/* CTA Button - Center flex container on mobile */}
         <div className="flex justify-center md:justify-start">
           <Link
             href="/songs"
@@ -169,7 +173,7 @@ export default function HeroSection({
         </div>
       </div>
 
-      {/* Featured Hit Card - Adjusted for full width on mobile */}
+      {/* Featured Hit Card */}
       {songWithImage && (
         <div className="w-full md:max-w-md mx-auto md:mx-0">
           <div className="bg-slate-900 text-white p-6 rounded-3xl border-4 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
@@ -190,7 +194,7 @@ export default function HeroSection({
             </div>
 
             <div className="text-center space-y-2">
-              <div className="text-sm font-black uppercase text-black tracking-tight">
+              <div className="text-sm font-black uppercase tracking-tight">
                 <Link
                   href={`/artist/${songWithImage.artist_slug}`}
                   className="text-white hover:text-yellow-400 transition-colors"
@@ -199,7 +203,7 @@ export default function HeroSection({
                 </Link>
               </div>
 
-              <div className="text-2xl font-black uppercase italic leading-none text-black">
+              <div className="text-2xl font-black uppercase italic leading-none">
                 <Link
                   href={`/songs/${songWithImage.slug}`}
                   className="text-white hover:text-yellow-400 transition-colors"
