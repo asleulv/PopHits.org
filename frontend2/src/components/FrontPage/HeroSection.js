@@ -19,7 +19,7 @@ export default function HeroSection({
   newestUsername,
 }) {
   return (
-    <div className="flex flex-col md:flex-row md:space-x-8 mb-12 w-full bg-yellow-50 p-8 rounded-3xl border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate-fadeIn">
+    <div className="flex flex-col md:flex-row md:space-x-8 mb-12 md:w-full w-screen md:mx-0 mx-[-1rem] bg-yellow-50 p-8 md:rounded-3xl rounded-none md:border-2 border-y-2 border-x-0 border-black md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] shadow-none animate-fadeIn">
       <div className="flex-1 mb-8 md:mb-0">
         <div className="mb-4 text-center md:text-left">
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-black text-yellow-400 rounded-full text-sm font-black uppercase tracking-widest">
@@ -150,7 +150,7 @@ export default function HeroSection({
           <div className="text-center md:text-left mb-8 mt-6">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-black text-slate-700 font-bold text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <PartyPopper className="w-5 h-5 text-yellow-400" />
-              Newest Historian:{" "}
+              Newest Music Historian:{" "}
               <span className="text-blue-950 underline decoration-2 uppercase font-black">
                 {newestUsername}
               </span>
@@ -169,9 +169,9 @@ export default function HeroSection({
         </div>
       </div>
 
-      {/* Featured Hit Card */}
+      {/* Featured Hit Card - Adjusted for full width on mobile */}
       {songWithImage && (
-        <div className="flex-1 max-w-md mx-auto md:mx-0">
+        <div className="w-full md:max-w-md mx-auto md:mx-0">
           <div className="bg-slate-900 text-white p-6 rounded-3xl border-4 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex items-center gap-2 mb-4 border-b border-white/20 pb-2">
               <Disc className="w-6 h-6 text-yellow-400 animate-spin-slow" />
@@ -190,7 +190,6 @@ export default function HeroSection({
             </div>
 
             <div className="text-center space-y-2">
-              {/* Artist in Black */}
               <div className="text-sm font-black uppercase text-black tracking-tight">
                 <Link
                   href={`/artist/${songWithImage.artist_slug}`}
@@ -200,7 +199,6 @@ export default function HeroSection({
                 </Link>
               </div>
 
-              {/* Title in Black */}
               <div className="text-2xl font-black uppercase italic leading-none text-black">
                 <Link
                   href={`/songs/${songWithImage.slug}`}
@@ -210,7 +208,6 @@ export default function HeroSection({
                 </Link>
               </div>
 
-              {/* Recorded In text in Black */}
               <div className="text-white font-mono text-xs pt-1 font-bold">
                 <Link
                   href={`/year/${songWithImage.year}`}

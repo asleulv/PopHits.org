@@ -5,7 +5,7 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
   if (!topRatedSongs || topRatedSongs.length === 0) return null;
 
   return (
-    <section className="mb-12 w-full bg-blue-950 p-4 md:p-10 rounded-3xl border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+    <section className="mb-12 md:w-full w-screen md:mx-0 mx-[-1rem] bg-blue-950 p-4 md:p-10 md:rounded-3xl rounded-none md:border-4 border-y-4 border-x-0 border-black shadow-none">
       {/* Header */}
       <div className="flex flex-col items-center mb-10">
         <div className="bg-yellow-400 text-black px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
@@ -17,14 +17,14 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
       </div>
 
       {/* The List */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 px-2 md:px-0">
         {topRatedSongs.map((song, index) => (
           <div
             key={song.id}
-            className="flex items-center bg-white border-4 border-black p-3 md:p-4"
+            className="flex items-center bg-white border-4 border-black p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
             {/* Rank */}
-            <div className="w-8 md:w-14 flex-shrink-0 text-xl md:text-3xl font-black italic text-slate-500 tracking-tighter border-r-2 border-slate-100 mr-3">
+            <div className="w-8 md:w-14 flex-shrink-0 text-xl md:text-3xl font-black italic text-blue-900 tracking-tighter border-r-2 border-slate-100 mr-3">
               {index + 1}
             </div>
 
@@ -35,19 +35,19 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
                 className="group flex flex-col md:flex-row md:items-baseline md:gap-x-2"
               >
                 {/* Mobile: Artist on top / Desktop: Artist first */}
-                <span className="text-slate-500 font-bold uppercase text-[10px] md:text-sm tracking-tight group-hover:text-blue-950">
+                <span className="text-black font-bold uppercase text-[10px] md:text-sm tracking-tight group-hover:text-blue-950">
                   {song.artist}
                 </span>
                 
                 {/* Desktop-only separator */}
-                <span className="text-slate-300 font-light hidden md:inline">—</span>
+                <span className="text-slate-300 font-light hidden md:inline">-</span>
                 
                 {/* Title and Year Container */}
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-black font-black uppercase text-sm md:text-lg leading-tight group-hover:text-blue-950 truncate">
                     {song.title}
                   </span>
-                  <span className="text-slate-400 font-mono text-[9px] md:text-sm shrink-0">
+                  <span className="text-slate-700 font-mono text-[11px] md:text-sm shrink-0">
                     ({song.year})
                   </span>
                 </div>
