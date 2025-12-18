@@ -25,6 +25,8 @@ import BirthdayWidget from "@/components/FrontPage/BirthdayWidget";
 import BlueskyClient from "@/components/FrontPage/BlueskyClient";
 import TrendingHits from "@/components/FrontPage/CommunityFavourites";
 
+export const dynamic = 'force-dynamic';
+
 // Helper function to get decade from year
 function getDecade(year) {
   const decade = Math.floor(year / 10) * 10;
