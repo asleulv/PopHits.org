@@ -1,16 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { FileText } from 'lucide-react';
+import { FileText, ArrowRight } from 'lucide-react';
 
 export default function LatestBlogPostSection({ latestBlogPost }) {
-  if (!latestBlogPost) {
-    console.log('No latest blog post available');
-    return null;
-  }
-  
-  console.log('Rendering latest blog post:', latestBlogPost);
+  if (!latestBlogPost) return null;
 
-  // Format the date
   const formattedDate = new Date(latestBlogPost.published_date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -18,35 +12,56 @@ export default function LatestBlogPostSection({ latestBlogPost }) {
   });
 
   return (
-    <section className="mb-8 text-slate-900 p-6 w-full bg-yellow-50 rounded-xl shadow-sm">
-      <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-        <FileText className="hidden lg:block w-8 h-8 text-amber-600" />
-        <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">Latest Music Posts and Billboard Updates</span>
-      </h2>
-      
-      <div className="max-w-4xl mx-auto bg-white border border-slate-400 rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg">
-        <Link href={`/blog/${latestBlogPost.slug}`} className="block">
+    <section className="mb-12 text-slate-900 w-full bg-yellow-50 rounded-3xl p-4 md:p-10">
+      {/* Header matching the Archive style */}
+      <div className="flex flex-col items-center mb-8">
+        <div className="bg-black text-white px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4">
+          Editorial
+        </div>
+        <h2 className="text-3xl md:text-5xl font-black text-center tracking-tighter italic uppercase">
+          Latest Research Notes
+        </h2>
+        <p className="text-sm font-mono mt-2 text-slate-600 text-center">
+          Deep dives into the history of the hits
+        </p>
+      </div>
+
+      {/* Main Post Card: Brutalist Style */}
+      <div className="max-w-4xl mx-auto bg-white border-4 border-black rounded-xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <Link href={`/blog/${latestBlogPost.slug}`} className="block group">
           <div className="md:flex">
             {latestBlogPost.featured_image && (
-              <div className="md:flex-shrink-0">
+              <div className="md:flex-shrink-0 border-b-4 md:border-b-0 md:border-r-4 border-black">
                 <Image
                   src={latestBlogPost.featured_image}
                   alt={latestBlogPost.title}
-                  width={300}
-                  height={200}
-                  className="h-48 w-full object-cover md:h-full md:w-48"
+                  width={400}
+                  height={300}
+                  className="h-56 w-full object-cover md:h-full md:w-64 grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
               </div>
             )}
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-slate-900 mb-2 font-cherry">{latestBlogPost.title}</h3>
-              <p className="text-slate-700 mb-4 font-cherry">{latestBlogPost.meta_description}</p>
-              <div className="flex text-sm text-slate-600">
-                <span>{formattedDate}</span>
+            <div className="p-8 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[10px] font-black uppercase bg-yellow-400 border border-black px-2 py-0.5">
+                    Music History
+                  </span>
+                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                    {formattedDate}
+                  </span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-3 uppercase tracking-tighter leading-none group-hover:underline decoration-4">
+                  {latestBlogPost.title}
+                </h3>
+                <p className="text-slate-700 font-medium leading-snug mb-6 line-clamp-3">
+                  {latestBlogPost.meta_description}
+                </p>
               </div>
-              <div className="mt-4">
-                <span className="inline-block bg-amber-100 text-amber-900 px-3 py-1 rounded-full text-sm font-semibold hover:bg-amber-200 transition-colors">
-                  Read More →
+              
+              <div>
+                <span className="inline-flex items-center gap-2 bg-black text-white px-6 py-2 text-sm font-black uppercase tracking-tighter hover:bg-yellow-500 hover:text-black transition-colors">
+                  Open File <ArrowRight size={14} />
                 </span>
               </div>
             </div>
@@ -54,12 +69,13 @@ export default function LatestBlogPostSection({ latestBlogPost }) {
         </Link>
       </div>
       
-      <div className="text-center mt-6">
+      {/* Footer Link */}
+      <div className="text-center mt-10">
         <Link 
           href="/blog" 
-          className="inline-block px-6 py-2 bg-slate-900 text-gray-200 hover:text-white font-cherry font-semibold rounded-full shadow-md hover:bg-slate-700 transition-all duration-300"
+          className="inline-block px-8 py-3 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 transition-all"
         >
-          View All Blog Posts
+          Browse Full Editorial Index
         </Link>
       </div>
     </section>

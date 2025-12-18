@@ -162,6 +162,10 @@ class SongSerializer(serializers.ModelSerializer):
     artist_data = serializers.SerializerMethodField()
     tags = serializers.SerializerMethodField()
 
+    latest_score = serializers.IntegerField(read_only=True)
+    latest_rater = serializers.CharField(read_only=True)
+    latest_time = serializers.DateTimeField(read_only=True)
+
     class Meta:
         model = Song
         fields = '__all__'

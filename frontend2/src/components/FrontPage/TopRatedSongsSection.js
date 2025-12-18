@@ -2,156 +2,75 @@ import Link from "next/link";
 import { Flame } from "lucide-react";
 
 export default function TopRatedSongsSection({ topRatedSongs }) {
-  if (topRatedSongs.length === 0) {
-    return (
-      <section className="mb-8 text-slate-900 p-6 w-full bg-yellow-50 rounded-xl shadow-sm">
-        <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-          <Flame className="hidden lg:block w-8 h-8 text-amber-600" />
-          <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
-            Top 10 User-Rated Billboard Chart Hits
-          </span>
-        </h2>
-        <div className="flex justify-center items-center py-12">
-          <p className="text-xl text-slate-700">Loading top rated songs...</p>
-        </div>
-      </section>
-    );
-  }
+  if (!topRatedSongs || topRatedSongs.length === 0) return null;
 
   return (
-    <section className="mb-8 text-slate-900 p-6 w-full bg-white md:bg-yellow-50 rounded-xl shadow-sm">
-      <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-        <Flame className="hidden lg:block w-8 h-8 text-amber-600" />
-        <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
-          Top 10 User-Rated Billboard Chart Hits
-        </span>
-      </h2>
+    <section className="mb-12 w-full bg-blue-950 p-4 md:p-10 rounded-3xl border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+      {/* Header */}
+      <div className="flex flex-col items-center mb-10">
+        <div className="bg-yellow-400 text-black px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+          <Flame size={14} fill="currentColor" /> Hall of Fame
+        </div>
+        <h2 className="text-3xl md:text-5xl font-black text-center tracking-tighter italic uppercase text-white leading-none">
+          The <span className="text-yellow-400">All-Time</span> High Scores
+        </h2>
+      </div>
 
-      {/* Mobile Layout */}
-      <div className="block md:hidden space-y-3">
+      {/* The List */}
+      <div className="flex flex-col gap-3">
         {topRatedSongs.map((song, index) => (
           <div
             key={song.id}
-            className="flex items-start justify-between py-2 border-b border-slate-300 last:border-b-0"
+            className="flex items-center bg-white border-4 border-black p-3 md:p-4"
           >
-            <div className="flex gap-3 flex-1 min-w-0">
-              <span className="text-slate-500 font-semibold text-sm w-6 text-center">
-                #{index + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <Link
-                  href={`/songs/${song.slug}`}
-                  className="text-slate-900 font-semibold text-sm hover:text-amber-700 transition-colors block truncate"
-                >
-                  {song.title}
-                </Link>
-                <div className="text-xs text-slate-600 mt-0.5">
-                  <Link
-                    href={`/artist/${song.artist_slug}`}
-                    className="text-amber-700 hover:text-slate-900 transition-colors"
-                  >
-                    {song.artist}
-                  </Link>
+            {/* Rank */}
+            <div className="w-8 md:w-14 flex-shrink-0 text-xl md:text-3xl font-black italic text-slate-500 tracking-tighter border-r-2 border-slate-100 mr-3">
+              {index + 1}
+            </div>
+
+            {/* Content - Responsive Layout */}
+            <div className="flex-grow min-w-0 pr-2">
+              <Link
+                href={`/songs/${song.slug}`}
+                className="group flex flex-col md:flex-row md:items-baseline md:gap-x-2"
+              >
+                {/* Mobile: Artist on top / Desktop: Artist first */}
+                <span className="text-slate-500 font-bold uppercase text-[10px] md:text-sm tracking-tight group-hover:text-blue-950">
+                  {song.artist}
+                </span>
+                
+                {/* Desktop-only separator */}
+                <span className="text-slate-300 font-light hidden md:inline">—</span>
+                
+                {/* Title and Year Container */}
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-black font-black uppercase text-sm md:text-lg leading-tight group-hover:text-blue-950 truncate">
+                    {song.title}
+                  </span>
+                  <span className="text-slate-400 font-mono text-[9px] md:text-sm shrink-0">
+                    ({song.year})
+                  </span>
                 </div>
-                <div className="text-xs text-slate-600">
-                  <Link
-                    href={`/year/${song.year}`}
-                    className="text-slate-600 hover:text-amber-700 transition-colors"
-                  >
-                    {song.year}
-                  </Link>
-                </div>
+              </Link>
+            </div>
+
+            {/* Score */}
+            <div className="flex-shrink-0">
+              <div className="bg-yellow-400 text-black font-black px-3 py-1 text-xs md:text-lg border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                {song.average_user_score}
               </div>
             </div>
-            <span className="bg-slate-900 text-white text-xs font-bold px-2 py-1 rounded-full ml-2 flex-shrink-0">
-              {song.average_user_score}
-            </span>
           </div>
         ))}
       </div>
 
-      {/* Desktop Layout */}
-      <div className="hidden md:block overflow-x-auto rounded-lg shadow-md">
-        <table className="min-w-full divide-y divide-slate-300 border-collapse">
-          <thead className="bg-slate-900 text-white">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                #
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                Title
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                Artist
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                Year
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                Rating
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-slate-300">
-            {topRatedSongs.map((song, index) => (
-              <tr
-                key={song.id}
-                className="hover:bg-yellow-50 transition-colors duration-200"
-              >
-                <td className="px-4 py-3 whitespace-nowrap text-base">
-                  <span className="font-semibold">
-                    {index === 0 ? (
-                      <span className="text-amber-600 text-xl">1</span>
-                    ) : index === 1 ? (
-                      <span className="text-slate-600 text-lg">2</span>
-                    ) : index === 2 ? (
-                      <span className="text-amber-700 text-lg">3</span>
-                    ) : (
-                      index + 1
-                    )}
-                  </span>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-base">
-                  <Link
-                    href={`/songs/${song.slug}`}
-                    className="text-slate-900 font-bold hover:text-amber-700 transition-colors"
-                  >
-                    {song.title}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-base">
-                  <Link
-                    href={`/artist/${song.artist_slug}`}
-                    className="text-amber-700 hover:text-slate-900 transition-colors"
-                  >
-                    {song.artist}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-base">
-                  <Link
-                    href={`/year/${song.year}`}
-                    className="text-slate-700 hover:text-amber-700 transition-colors"
-                  >
-                    {song.year}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-base">
-                  <span className="bg-slate-900 text-white font-bold px-3 py-1 rounded-full">
-                    {song.average_user_score}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="text-center mt-6">
+      {/* Footer CTA */}
+      <div className="text-center mt-10">
         <Link
           href="/songs?sort_by=average_user_score&order=desc"
-          className="inline-block px-6 py-2 bg-slate-900 text-white font-semibold rounded-full shadow-md hover:bg-slate-700 transition-all duration-300"
+          className="inline-block px-10 py-4 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1"
         >
-          All rated songs
+          View Full Leaderboard →
         </Link>
       </div>
     </section>

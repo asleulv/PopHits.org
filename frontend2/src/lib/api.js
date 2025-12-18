@@ -18,7 +18,8 @@ async function proxyFetch(path, options = {}) {
      * Bypass the local proxy (port 3000) and hit Django (port 8000) directly.
      * This prevents ECONNREFUSED during 'npm run build'.
      */
-    const DJANGO_INTERNAL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const DJANGO_INTERNAL =
+      process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     url = `${DJANGO_INTERNAL}/api${path}`;
 
     // Manually inject the Internal Key since we are bypassing the proxy route
@@ -69,22 +70,58 @@ async function proxyFetch(path, options = {}) {
 // SONG ENDPOINTS
 // ============================================================================
 
-export async function getSongs(page = 1, perPage = 25, filters = null) {
+// src/lib/api.js
+
+// src/lib/api.js
+
+// src/lib/api.js
+
+export async function getSongs(options = {}) {
+  // 1. Detect if the user passed 10 arguments (like in your SongsPage)
+  const isLegacyCall = typeof options !== 'object';
+  
+  // 2. Extract values based on position OR name
+  const page = isLegacyCall ? arguments[0] : (options.page || 1);
+  const perPage = isLegacyCall ? arguments[1] : (options.perPage || 25);
+  const type = isLegacyCall ? arguments[2] : options.type;
+  const slugOrYear = isLegacyCall ? arguments[3] : (options.slug || options.year);
+  const sortBy = isLegacyCall ? arguments[4] : options.sortBy;
+  const order = isLegacyCall ? arguments[5] : options.order;
+  const query = isLegacyCall ? arguments[6] : options.query;
+  const peakRank = isLegacyCall ? arguments[7] : options.peakRank;
+  const unrated = isLegacyCall ? arguments[8] : options.unrated;
+  const decade = isLegacyCall ? arguments[9] : options.decade;
+
   const params = new URLSearchParams({
-    page: String(page || 1),
-    page_size: String(perPage || 25),
+    page: String(page),
+    page_size: String(perPage),
   });
 
-  // Add all filters - SAFE version
-  if (filters && typeof filters === "object" && !Array.isArray(filters)) {
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== "") {
-        params.append(key, String(value));
-      }
-    });
-  }
+  // ARTIST/YEAR HANDSHAKE: Ensure Django gets the 'artist' or 'year' keys
+  if (type === 'artist' && slugOrYear) params.append('artist', slugOrYear);
+  if (type === 'year' && slugOrYear) params.append('year', String(slugOrYear));
 
-  return proxyFetch(`/songs/?${params.toString()}`);
+  // GLOBAL FILTERS: Map these to the keys Django expects
+  if (sortBy) params.append('sort_by', sortBy);
+  if (order) params.append('order', order);
+  
+  // Django looks for 'search' for text queries
+  if (query) params.append('search', query);
+  
+  if (decade) params.append('decade', decade);
+  
+  if (peakRank) {
+    // Normalize 'number-one' to 'number_one' for Django's filter
+    const rankValue = (peakRank === 'number-one' || peakRank === '1') ? 'number_one' : peakRank;
+    params.append('peak_rank', rankValue);
+  }
+  
+  if (unrated) params.append('unrated_only', 'true');
+
+  const finalPath = `/songs/?${params.toString()}`;
+  console.log("🚀 API CALLING:", finalPath); 
+
+  return proxyFetch(finalPath);
 }
 
 export async function getSongBySlug(slug) {
@@ -113,6 +150,10 @@ export async function getCurrentHot100() {
 
 export async function getRandomSongByArtist(artistSlug) {
   return proxyFetch(`/songs/random-by-artist/?artist_slug=${artistSlug}`);
+}
+
+export async function getTrendingArchive(limit = 5) {
+  return proxyFetch(`/songs/trending-archive/?limit=${limit}`);
 }
 
 export async function submitUserScore(songId, userScore, authToken) {

@@ -355,12 +355,7 @@ export default function BirthdayClient({ chart, requestedDate }) {
 
         {/* Links */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <Link
-            href={`/charts/hot-100/${chart.chart_date}`}
-            className="block bg-slate-900 text-white hover:text-amber-400 font-black py-4 hover:bg-slate-800 border-3 border-slate-900 transition-all uppercase tracking-wide"
-          >
-            View Full 100 Chart
-          </Link>
+
           <Link
             href="/birthday"
             className="inline-block text-slate-900 hover:text-slate-800 font-cherry line text-lg"

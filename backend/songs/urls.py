@@ -6,12 +6,13 @@ from .views import (
     RandomSongView, TopRatedSongsView, RandomSongsByDecadeView, NumberOneSongsView,
     SongsWithImagesView, PlaylistGeneratorView, QuizGeneratorView, CurrentHot100View, 
     featured_artists, random_song_by_artist, SongTimelineView, historic_chart, chart_dates,
-    website_stats
+    website_stats, TrendingArchiveView
 )
 
 urlpatterns = [
     path('', SongListCreateView.as_view(), name='song-list-create'),
     path('website-stats/', website_stats, name='website-stats'),
+    path('trending-archive/', TrendingArchiveView.as_view(), name='trending-archive'),
     path('<int:pk>/', SongDetailView.as_view(), name='song-detail'),
     path('<int:pk>/timeline/', SongTimelineView.as_view(), name='song-timeline'),
     path('slug/<slug:slug>/timeline/', SongTimelineView.as_view(), name='song-timeline-slug'),

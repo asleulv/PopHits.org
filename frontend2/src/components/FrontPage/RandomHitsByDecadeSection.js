@@ -7,25 +7,34 @@ export default function RandomHitsByDecadeSection({
 }) {
   if (Object.keys(groupedByDecade).length === 0) {
     return (
-      <section className="mb-8 bg-yellow-50 text-slate-900 p-8 w-full lg:rounded-xl shadow-lg">
+      <section className="mb-12 bg-yellow-50 text-slate-900 p-10 w-full rounded-3xl border-4 border-black border-dashed">
         <div className="flex justify-center items-center py-12">
-          <p className="text-xl text-slate-700">Loading random hits by decade...</p>
+          <p className="text-xl font-black uppercase tracking-widest animate-pulse text-slate-400">
+            Scanning the Archive...
+          </p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="mb-8 bg-yellow-50 text-slate-900 p-8 w-full lg:rounded-xl shadow-lg">
-      <div className="flex flex-col items-center md:flex-row md:justify-center gap-4 mb-6">
-        <h2 className="text-xl md:text-3xl font-cherry font-semibold flex items-center gap-3">
-          <Shuffle className="hidden lg:block w-8 h-8 text-amber-600" />
-          <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
-            Explore Chart-Topping Songs and Hidden Gems by Decade
-          </span>
+    <section className="mb-12 bg-yellow-50 text-slate-900 p-6 md:p-10 w-full rounded-3xl">
+      {/* Header Section */}
+      <div className="flex flex-col items-center mb-10">
+        <div className="bg-blue-950 text-white px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+          <Shuffle size={14} /> Random Generator
+        </div>
+        
+        <h2 className="text-4xl md:text-6xl font-black text-center tracking-tighter italic uppercase text-slate-900 leading-none">
+          The <span className="text-blue-950 decoration-8 decoration-black">Time Machine</span>
         </h2>
+        
+        <p className="text-sm font-mono mt-4 text-slate-600 text-center max-w-md">
+          Roll the dice on music history. Select a decade to pull a random hit from our deep archive.
+        </p>
       </div>
 
+      {/* Main Content Component */}
       <RandomHitsByDecadeClient
         groupedByDecade={groupedByDecade}
         initialDecade={initialDecade}

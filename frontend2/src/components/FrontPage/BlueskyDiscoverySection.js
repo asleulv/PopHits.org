@@ -1,4 +1,4 @@
-import { MessageCircleHeart, ExternalLink } from "lucide-react";
+import { MessageCircleHeart, ExternalLink, Clock } from "lucide-react";
 import Image from "next/image";
 
 // Helper function to format date
@@ -39,7 +39,7 @@ const linkifyText = (text) => {
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-amber-700 hover:text-amber-900 underline break-all"
+          className="text-blue-950 hover:text-black underline break-all font-bold"
         >
           {url}
         </a>
@@ -47,7 +47,7 @@ const linkifyText = (text) => {
     } else if (part.startsWith("<HASHTAG>") && part.endsWith("</HASHTAG>")) {
       const hashtag = part.slice(9, -10);
       return (
-        <span key={index} className="text-amber-600 font-medium">
+        <span key={index} className="text-blue-900 font-bold">
           {hashtag}
         </span>
       );
@@ -57,92 +57,74 @@ const linkifyText = (text) => {
 };
 
 export default function BlueskyDiscoverySection({ posts }) {
-  if (!posts || posts.length === 0) {
-    return null;
-  }
+  if (!posts || posts.length === 0) return null;
 
-  // Show different amounts based on screen size
   const postsToShow = posts.slice(0, 3);
 
   return (
-    <section className="mb-8 bg-yellow-50 p-6 rounded-xl shadow-sm">
-      <div className="flex items-center gap-3 mb-6">
-        <h2 className="text-xl md:text-3xl font-cherry font-semibold mb-6 text-center flex items-center justify-center gap-2">
-          <MessageCircleHeart className="hidden lg:block w-8 h-8 text-slate-700" />
-          <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent">
-            From our Bluesky Feed
-          </span>
+    <section className="mb-12 w-full bg-yellow-50 p-4 md:p-10 rounded-3xl">
+      {/* Header Section */}
+      <div className="flex flex-col items-center mb-10">
+        <div className="bg-blue-950 text-white px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4">
+          Community Choice
+        </div>
+        <h2 className="text-3xl md:text-5xl font-black text-center tracking-tighter italic uppercase text-slate-900">
+          From our <span className="text-blue-950">Bluesky Feed</span>
         </h2>
+        <p className="text-sm font-mono mt-2 text-slate-600 text-center">
+          Live feed of community research and ratings
+        </p>
       </div>
 
-      {/* Mobile: Show only 1 post */}
-      <div className="grid gap-4 grid-cols-1 md:hidden">
-        {postsToShow.slice(0, 1).map((post, index) => (
-          <div
-            key={post.uri || index}
-            className="bg-white border border-slate-400 p-4 rounded-xl shadow-sm relative"
-          >
-            {post.image && (
-              <div className="mb-3">
-                <Image
-                  src={post.image}
-                  alt="Album cover"
-                  width={400}
-                  height={400}
-                  className="w-full rounded-lg shadow-md object-cover"
-                />
-              </div>
-            )}
-            <p className="text-sm text-slate-700 mb-6 leading-relaxed">
-              {linkifyText(post.text)}
-            </p>
-            <div className="absolute bottom-3 right-3 text-xs text-slate-500">
-              Posted {formatDate(post.createdAt)}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Tablet and Desktop: Show 2-3 posts */}
-      <div className="hidden md:grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Responsive Grid */}
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {postsToShow.map((post, index) => (
           <div
             key={post.uri || index}
-            className="bg-white border border-slate-400 p-4 rounded-xl shadow-sm relative"
+            className={`bg-white border-4 border-black p-5 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative flex flex-col ${
+              index === 1 ? "hidden md:flex" : index === 2 ? "hidden lg:flex" : "flex"
+            }`}
           >
             {post.image && (
-              <div className="mb-3">
+              <div className="mb-4 border-2 border-black">
                 <Image
                   src={post.image}
-                  alt="Album cover"
+                  alt="Archive visual"
                   width={400}
                   height={400}
-                  className="w-full rounded-lg shadow-md object-cover"
+                  className="w-full object-cover aspect-square"
                 />
               </div>
             )}
-            <p className="text-sm text-slate-700 mb-6 leading-relaxed">
+            
+            {/* Post Text - Natural casing, legible size */}
+            <div className="text-base text-slate-900 mb-10 leading-relaxed font-medium">
               {linkifyText(post.text)}
-            </p>
-            <div className="absolute bottom-3 right-3 text-xs text-slate-500">
-              Posted {formatDate(post.createdAt)}
+            </div>
+
+            {/* Bottom Meta */}
+            <div className="mt-auto flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-[10px] font-black uppercase text-slate-400">
+                <Clock size={12} />
+                <span>{formatDate(post.createdAt)}</span>
+              </div>
+
             </div>
           </div>
         ))}
       </div>
 
-      {posts.length > 1 && (
-        <div className="text-center mt-6">
-          <a
-            href="https://bsky.app/profile/pophits.bsky.social"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 text-amber-700 hover:text-amber-900 font-medium font-cherry transition-colors"
-          >
-            View more on Bluesky <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
-      )}
+      {/* Footer CTA - Matching your other section exactly */}
+      <div className="text-center mt-10">
+        <a
+          href="https://bsky.app/profile/pophits.bsky.social"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block px-8 py-3 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 transition-all"
+        >
+          View More on Bluesky →
+        </a>
+      </div>
     </section>
   );
 }

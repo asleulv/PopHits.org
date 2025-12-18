@@ -7,6 +7,7 @@ class UserSongRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     score = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 11)])
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'song',)

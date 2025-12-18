@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404
@@ -42,6 +42,9 @@ class UserSongCommentCreateView(APIView):
 
 
 class UserSongCommentUpdateView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def patch(self, request, song_pk, comment_pk):
         comment = get_object_or_404(UserSongComment, pk=comment_pk)
         if request.user == comment.user:
@@ -77,6 +80,8 @@ class UserSongRatingCreateView(APIView):
 
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication]) 
+@permission_classes([IsAuthenticated])       
 def get_user_rating_for_song(request, song_id, user_id):
     try:
         rating = UserSongRating.objects.get(song_id=song_id, user_id=user_id)
@@ -86,6 +91,9 @@ def get_user_rating_for_song(request, song_id, user_id):
 
 
 class UserBookmarkView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, song_id):
         song = get_object_or_404(Song, id=song_id)
         bookmark, created = Bookmark.objects.get_or_create(user=request.user)
@@ -108,6 +116,9 @@ class UserBookmarkView(APIView):
 
 
 class UserBookmarkedSongsView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         user_bookmarks = Bookmark.objects.filter(user=request.user)
         bookmarked_songs = [bookmark.songs.all() for bookmark in user_bookmarks]
@@ -122,6 +133,8 @@ class UserBookmarkedSongsView(APIView):
 
 
 class BookmarkStatusView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, song_id):
         song = get_object_or_404(Song, id=song_id)
         bookmark = Bookmark.objects.filter(user=request.user).first()

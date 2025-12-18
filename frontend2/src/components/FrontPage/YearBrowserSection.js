@@ -2,19 +2,27 @@ import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 
 export default function YearBrowserSection({ years }) {
-  return (
-    <section className="mb-8 p-6 w-full bg-white">
-      <h2 className="text-2xl md:text-3xl font-cherry font-black mb-6 text-center flex items-center justify-center gap-2">
-        <CalendarDays className="w-6 h-6 md:w-8 md:h-8 text-amber-600" />
-        <span className="text-slate-900">Browse by Year</span>
-      </h2>
+  // Sort years descending so the newest archives appear first
+  const sortedYears = [...years].sort((a, b) => b - a);
 
-      <div className="flex flex-wrap justify-center gap-3">
-        {years.map((year) => (
+  return (
+    <section className="mb-12 p-6 md:p-10 w-full bg-white rounded-3xl border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+      {/* Header Section */}
+      <div className="flex flex-col items-center mb-10">
+        <div className="bg-blue-950 text-white px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+          <CalendarDays size={14} /> Chronology
+        </div>
+        <h2 className="text-3xl md:text-5xl font-black text-center tracking-tighter italic uppercase text-slate-900 leading-none">
+          Archive <span className="text-blue-950 decoration-8 decoration-black">Timeline</span>
+        </h2>
+      </div>
+
+      <div className="flex flex-wrap justify-center gap-4">
+        {sortedYears.map((year) => (
           <Link
             key={year}
             href={`/year/${year}`}
-            className="px-5 py-2 border-2 border-slate-900 bg-white text-slate-900 font-cherry text-sm transition-all hover:bg-slate-900 hover:text-white"
+            className="px-6 py-2 border-[3px] border-black bg-white text-black font-black font-mono text-base shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-yellow-400 hover:shadow-none hover:translate-x-1 hover:translate-y-1"
           >
             {year}
           </Link>

@@ -1,13 +1,19 @@
 import ArtistPageWrapper from '@/components/ArtistPage/ArtistPageWrapper';
 
-export async function generateMetadata() {
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  // Clean up the slug for the title (e.g., drake -> Drake)
+  const artistName = slug.charAt(0).toUpperCase() + slug.slice(1).replace('-', ' ');
+
   return {
-    title: 'Artist Songs | PopHits.org',
-    description: 'Browse, filter, and search through hit songs by artist. Discover the most popular songs that charted on the Billboard Hot 100.',
-    keywords: 'artist songs, artist hits, artist music, billboard hot 100, popular songs by artist',
+    title: `${artistName} Hit Songs & Archive | PopHits.org`,
+    description: `Browse every Billboard Hot 100 hit by ${artistName}. View rankings, scores, and community activity.`,
   };
 }
 
-export default function ArtistPage() {
-  return <ArtistPageWrapper />;
+export default async function ArtistPage({ params }) {
+  const { slug } = await params;
+
+  // Pass the slug to the wrapper so it knows to filter the API call
+  return <ArtistPageWrapper artistSlug={slug} />;
 }

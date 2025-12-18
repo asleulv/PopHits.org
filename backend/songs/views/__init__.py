@@ -18,6 +18,7 @@ from .generators import PlaylistGeneratorView, QuizGeneratorView
 from .stats import ArtistStatsView
 from .pagination import CustomPagination, ArtistPagination
 from .website_stats import website_stats
+from .user_activity import TrendingArchiveView
 
 __all__ = [
     # Songs
@@ -41,6 +42,8 @@ __all__ = [
     'UserBookmarkedSongsView',
     'BookmarkStatusView',
     'CommentStatusView',
+    # User Activity 
+    'TrendingArchiveView',
     # Songs Library
     'TopRatedSongsView',
     'RandomSongsByDecadeView',

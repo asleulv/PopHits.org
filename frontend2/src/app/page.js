@@ -4,11 +4,11 @@ import {
   getTopRatedSongs,
   getRandomHitsByDecade,
   getFeaturedArtists,
-  getCurrentHot100,
   getNumberOneHits,
   getRandomSongByArtist,
   getWebsiteStats,
   getBlogPosts,
+  getTrendingArchive
 } from "@/lib/api";
 import { getBlueskyPosts } from "@/lib/bluesky";
 
@@ -17,13 +17,13 @@ import HeroSection from "@/components/FrontPage/HeroSection";
 import LatestBlogPostSection from "@/components/FrontPage/LatestBlogPostSection";
 import YearBrowserSection from "@/components/FrontPage/YearBrowserSection";
 import TopRatedSongsSection from "@/components/FrontPage/TopRatedSongsSection";
-import CurrentHot100Section from "@/components/FrontPage/CurrentHot100Section";
 import NumberOneHitsSection from "@/components/FrontPage/NumberOneHitsSection";
 import RandomHitsByDecadeSection from "@/components/FrontPage/RandomHitsByDecadeSection";
 import BlueskyDiscoverySection from "@/components/FrontPage/BlueskyDiscoverySection";
 import FeaturedArtists from "@/components/FrontPage/FeaturedArtists";
 import BirthdayWidget from "@/components/FrontPage/BirthdayWidget";
 import BlueskyClient from "@/components/FrontPage/BlueskyClient";
+import TrendingHits from "@/components/FrontPage/CommunityFavourites";
 
 // Helper function to get decade from year
 function getDecade(year) {
@@ -32,12 +32,11 @@ function getDecade(year) {
 }
 
 export const metadata = {
-  title:
-    "PopHits.org - Chart-Topping Hits & Hidden Gems from 70 Years of Music",
+  title: "PopHits.org - Historical Music Archive & Hit Rankings",
   description:
-    "Listen to Billboard chart hits and discover top-rated songs by decade on PopHits.org. Explore number one singles, hidden gems, and weekly chart updates with Spotify integration from 70 years of music history featuring 30,000+ curated hits.",
+    "Explore the ultimate archive of music history. Rate thousands of tracks, discover peaks from decades of hits, and build your own research collection of popular music.",
   keywords:
-    "pop hits, greatest pop songs, chart-topping hits, music history, Billboard Hot 100, listen, spotify, weekly charts",
+    "pop hits, greatest songs, music history, chart rankings, archive, research, song ratings",
   openGraph: {
     title:
       "PopHits.org - Chart-Topping Hits & Hidden Gems from 70 Years of Music",
@@ -120,14 +119,7 @@ async function HeroSectionWrapper() {
   }
 }
 
-async function CurrentHot100Wrapper() {
-  try {
-    const currentHot100 = await getCurrentHot100();
-    return <CurrentHot100Section currentHot100={currentHot100} />;
-  } catch (error) {
-    return <div>Loading Hot 100...</div>;
-  }
-}
+
 
 async function BlueskyWrapper() {
   try {
@@ -193,6 +185,17 @@ async function FeaturedArtistsWrapper() {
   }
 }
 
+async function TrendingHitsWrapper() {
+  try {
+    const trendingData = await getTrendingArchive(5);
+    // Use the name you defined in the import (TrendingHits)
+    return <TrendingHits topRatedData={trendingData} />;
+  } catch (error) {
+    console.error("Trending hits fetch failed:", error);
+    return null;
+  }
+}
+
 async function NumberOneWrapper() {
   try {
     const numberOneHitsData = await getNumberOneHits();
@@ -205,7 +208,7 @@ async function NumberOneWrapper() {
 
 export async function BlogWrapper() {
   try {
-    const data = await getBlogPosts({ page: 1, page_size: 1 }); 
+    const data = await getBlogPosts({ page: 1, page_size: 1 });
 
     let latestBlogPost = null;
     if (Array.isArray(data)) {
@@ -267,12 +270,12 @@ export default async function FrontPage() {
 
         <BirthdayWidget />
 
-        {/* 2. Current Hot 100 */}
         <Suspense
           fallback={<div className="h-32 bg-gray-800 animate-pulse rounded" />}
         >
-          <CurrentHot100Wrapper />
+          <TrendingHitsWrapper />
         </Suspense>
+
 
         {/* 3. Featured Discovery (Bluesky) */}
         <Suspense fallback={<div>Loading discovery...</div>}>

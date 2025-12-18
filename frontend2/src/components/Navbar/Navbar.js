@@ -172,19 +172,6 @@ export default function Navbar() {
                     </Link>
                   </li>
 
-                  <li className="navbar-menu-item">
-                    <Link
-                      href="/current-hot100"
-                      className="navbar-menu-link hover:text-amber-300"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <span className="navbar-menu-icon">
-                        <TrendingUp size={18} />
-                      </span>
-                      Current Hot 100
-                    </Link>
-                  </li>
-
 
                   <li className="navbar-menu-item">
                     <Link
