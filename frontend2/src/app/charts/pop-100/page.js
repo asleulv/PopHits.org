@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { getTrendingArchive } from "@/lib/api";
 
+export const dynamic = 'force-dynamic';
+
 function formatTimeAgo(timestamp) {
   if (!timestamp) return "Recently";
   const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
