@@ -86,7 +86,7 @@ def featured_artists(request):
     for artist in artists:
         image_url = None
         if artist.image:
-            image_url = request.build_absolute_uri(artist.image.url)
+            image_url =artist.image.url
         
         artists_list.append({
             'id': artist.id,
