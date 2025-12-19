@@ -86,7 +86,7 @@ def featured_artists(request):
     for artist in artists:
         image_url = None
         if artist.image:
-            image_url =artist.image.url
+            image_url = f"https://pophits.org{artist.image.url}"
         
         artists_list.append({
             'id': artist.id,
