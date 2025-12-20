@@ -9,12 +9,31 @@ from ..models import Song, NumberOneSong
 from ..serializers import SongSerializer
 
 
+from django.db.models import F, FloatField
+from django.db.models.functions import Cast
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 class TopRatedSongsView(APIView):
     def get(self, request):
         limit = int(request.GET.get('limit', 10))
         limit = max(1, min(limit, 100))
 
-        top_rated_songs = Song.objects.filter(average_user_score__gt=0).order_by('-average_user_score')[:limit]
+        # TUNING CONSTANTS
+        # m = The 'confidence' factor. 
+        # Increase this to make it harder for songs with few votes to reach the top.
+        m = 2.0 
+        
+        # C = The "Global Average". 
+        # If your site is mostly positive, use 7.0. If you are strict, use 5.0.
+        C = 7.0
+
+        top_rated_songs = Song.objects.filter(total_ratings__gt=0).annotate(
+            # Bayesian Weighted Rating Formula
+            weighted_score=(
+                (F('total_ratings') * F('average_user_score')) + (m * C)
+            ) / (F('total_ratings') + m)
+        ).order_by('-weighted_score')[:limit]
 
         serializer = SongSerializer(top_rated_songs, many=True)
         return Response(serializer.data)

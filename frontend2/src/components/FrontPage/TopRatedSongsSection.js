@@ -1,14 +1,13 @@
 import Link from "next/link";
-import { Flame } from "lucide-react";
+import { Flame, Info } from "lucide-react";
 
 export default function TopRatedSongsSection({ topRatedSongs }) {
   if (!topRatedSongs || topRatedSongs.length === 0) return null;
 
   return (
-    /* FIXED: Using the stable 100vw centering logic to stop horizontal sliding */
     <section className="relative mb-12 bg-blue-950 p-6 md:p-10 md:rounded-3xl rounded-none md:border-4 border-y-4 border-x-0 border-black md:w-full w-[100vw] ml-[50%] translate-x-[-50%] animate-fadeIn">
       
-      {/* Header: FULLY CENTERED on all devices per your requirement */}
+      {/* Header */}
       <div className="flex flex-col items-center mb-10 px-2 md:px-0 text-center">
         <div className="bg-yellow-400 text-black px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
           <Flame size={14} fill="currentColor" /> Hall of Fame
@@ -16,6 +15,12 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
         <h2 className="text-3xl md:text-5xl font-black tracking-tighter italic uppercase text-white leading-none">
           The <span className="text-yellow-400">All-Time</span> High Scores
         </h2>
+        
+        {/* NEW: Simple Description */}
+        <p className="mt-4 text-blue-200 text-[10px] md:text-xs uppercase font-bold tracking-widest max-w-md leading-relaxed opacity-80">
+          Rankings are weighted by <span className="text-white">community consensus</span>. 
+          The more votes a song gets, the higher its score counts!
+        </p>
       </div>
 
       {/* The List */}
@@ -53,17 +58,21 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
               </Link>
             </div>
 
-            {/* Score */}
-            <div className="flex-shrink-0">
+            {/* Score & Vote Count */}
+            <div className="flex flex-col items-end flex-shrink-0">
               <div className="bg-yellow-400 text-black font-black px-3 py-1 text-xs md:text-lg border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 {song.average_user_score}
               </div>
+              {/* NEW: Showing vote count to explain the ranking */}
+              <span className="text-[9px] font-black uppercase text-blue-900 mt-1 opacity-50">
+                {song.total_ratings || 0} {song.total_ratings === 1 ? 'Vote' : 'Votes'}
+              </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Footer CTA: FULLY CENTERED on mobile and desktop */}
+      {/* Footer CTA */}
       <div className="text-center mt-10 px-2 md:px-0">
         <Link
           href="/songs?sort_by=average_user_score&order=desc"
