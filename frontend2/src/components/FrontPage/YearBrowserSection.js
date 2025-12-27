@@ -12,7 +12,7 @@ export default function YearBrowserSection({ years }) {
        - Added md:rounded-3xl rounded-none for mobile consistency
        - Added md:border-4 border-y-4 border-x-0 for cleaner mobile edges
     */
-    <section className="relative mb-12 bg-blue-950 p-6 md:p-10 md:rounded-3xl rounded-none md:border-4 border-y-4 border-x-0 border-black md:w-full w-[100vw] ml-[50%] translate-x-[-50%] shadow-none">
+    <section className="relative mb-12 bg-gradient-to-b from-black to-black p-6 md:p-10 md:rounded-3xl rounded-none md:border-4 border-y-4 border-x-0 border-black md:w-full w-[100vw] ml-[50%] translate-x-[-50%] shadow-none">
       {/* Header Section */}
       <div className="flex flex-col items-center mb-10">
         {/* Fixed Version */}
@@ -26,6 +26,9 @@ export default function YearBrowserSection({ years }) {
             Timeline
           </span>
         </h2>
+        <p className="text-sm font-mono mt-2 text-slate-200 text-center">
+          Explore the hits year by year
+        </p>
       </div>
 
       <div className="flex flex-wrap justify-center gap-3 md:gap-4 px-2 md:px-0">

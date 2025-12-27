@@ -23,12 +23,15 @@ export default function CommunityFavorites({ topRatedData }) {
       
       {/* HEADER: Fully centered on mobile and desktop */}
       <div className="flex flex-col items-center mb-8 text-center px-2 md:px-0">
-        <div className="bg-blue-950 text-white px-3 py-1 font-black uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+        <div className="bg-blue-950 text-white px-3 py-1 font-black uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2">
           <Activity size={12} className="text-yellow-400" /> Community Choice
         </div>
         <h2 className="text-3xl md:text-5xl font-black tracking-tighter italic uppercase text-slate-900 leading-none">
           Trending <span className="text-blue-950">Archive</span>
         </h2>
+         <p className="text-sm font-mono mt-2 text-slate-600 text-center">
+          Recent ratings given by the pophits.org community
+        </p>
       </div>
 
       {/* The Table */}
@@ -97,9 +100,9 @@ export default function CommunityFavorites({ topRatedData }) {
       <div className="text-center px-2 md:px-0">
         <Link
           href="/charts/pop-100"
-          className="inline-block px-10 py-4 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-1 transition-all"
+          className="inline-block px-10 py-4 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 active:shadow-none active:translate-y-1 transition-all"
         >
-          View Full Archive →
+          View Full Archive
         </Link>
       </div>
     </section>

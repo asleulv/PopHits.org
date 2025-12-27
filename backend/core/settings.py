@@ -151,28 +151,26 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # --- Security & CSRF Settings ---
-
-# 1. Pull the 4 values you have in your .env
+# 1. Pull the 4 values from your .env
 SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', 0))
 SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False').lower() == 'true'
 SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
 CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
 
-# 2. Add these recommended defaults (standard for Django/React)
+# 2. Add these recommended defaults
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_USE_SESSIONS = False
 
-# 3. Security Best Practices (No .env needed for these)
-CSRF_COOKIE_HTTPONLY = False  # Keep False if React needs to read the cookie for headers
+# 3. Security Best Practices
+CSRF_COOKIE_HTTPONLY = False 
 SESSION_COOKIE_HTTPONLY = True
 SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True   
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Session cookie settings
-SESSION_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = False  
+# 4. THE FIX FOR GUNICORN/NGINX TIMEOUTS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

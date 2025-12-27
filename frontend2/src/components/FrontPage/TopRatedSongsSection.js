@@ -5,11 +5,11 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
   if (!topRatedSongs || topRatedSongs.length === 0) return null;
 
   return (
-    <section className="relative mb-12 bg-blue-950 p-6 md:p-10 md:rounded-3xl rounded-none md:border-4 border-y-4 border-x-0 border-black md:w-full w-[100vw] ml-[50%] translate-x-[-50%] animate-fadeIn">
+    <section className="relative mb-12 bg-gradient-to-b from-blue-950 to-black p-6 md:p-10 md:rounded-3xl rounded-none md:border-4 border-y-4 border-x-0 border-black md:w-full w-[100vw] ml-[50%] translate-x-[-50%] animate-fadeIn">
       
       {/* Header */}
       <div className="flex flex-col items-center mb-10 px-2 md:px-0 text-center">
-        <div className="bg-yellow-400 text-black px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+        <div className="bg-yellow-400 text-black px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 flex items-center gap-2">
           <Flame size={14} fill="currentColor" /> Hall of Fame
         </div>
         <h2 className="text-3xl md:text-5xl font-black tracking-tighter italic uppercase text-white leading-none">
@@ -24,7 +24,7 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
       </div>
 
       {/* The List */}
-      <div className="flex flex-col gap-3 px-2 md:px-0">
+      <div className="flex flex-col gap-1 px-2 md:px-0">
         {topRatedSongs.map((song, index) => (
           <div
             key={song.id}
@@ -76,9 +76,9 @@ export default function TopRatedSongsSection({ topRatedSongs }) {
       <div className="text-center mt-10 px-2 md:px-0">
         <Link
           href="/songs?sort_by=average_user_score&order=desc"
-          className="inline-block px-10 py-4 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1"
+          className="inline-block px-10 py-4 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 transition-all active:shadow-none active:translate-x-1 active:translate-y-1"
         >
-          View Full Leaderboard →
+          View Full Leaderboard
         </Link>
       </div>
     </section>

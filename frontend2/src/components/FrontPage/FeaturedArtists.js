@@ -11,7 +11,7 @@ export default function FeaturedArtists({ artists }) {
     <div className="mb-12 w-full bg-yellow-50 p-6 md:p-10 rounded-3xl">
       {/* Header Section */}
       <div className="flex flex-col items-center mb-10">
-        <div className="bg-blue-950 text-white px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+        <div className="bg-blue-950 text-white px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 flex items-center gap-2">
           <Star size={14} fill="currentColor" /> Spotlight
         </div>
         <h2 className="text-3xl md:text-5xl font-black text-center tracking-tighter italic uppercase text-slate-900 leading-none">
@@ -58,9 +58,9 @@ export default function FeaturedArtists({ artists }) {
       <div className="text-center mt-12">
         <Link
           href="/artists"
-          className="inline-block px-8 py-3 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all"
+          className="inline-block px-8 py-3 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 active:shadow-none transition-all"
         >
-          Browse All Artists →
+          Browse All Artists
         </Link>
       </div>
     </div>

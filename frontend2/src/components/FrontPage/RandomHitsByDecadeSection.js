@@ -21,7 +21,7 @@ export default function RandomHitsByDecadeSection({
     <section className="mb-12 bg-yellow-50 text-slate-900 p-6 md:p-10 w-full rounded-3xl">
       {/* Header Section */}
       <div className="flex flex-col items-center mb-10">
-        <div className="bg-blue-950 text-white px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+        <div className="bg-blue-950 text-white px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px] mb-4 flex items-center gap-2">
           <Shuffle size={14} /> Random Generator
         </div>
         

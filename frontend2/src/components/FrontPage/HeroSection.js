@@ -176,7 +176,7 @@ export default function HeroSection({
       {/* Featured Hit Card */}
       {songWithImage && (
         <div className="w-full md:max-w-md mx-auto md:mx-0">
-          <div className="bg-slate-900 text-white p-6 rounded-3xl border-4 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-gradient-to-b from-blue-950 to-black text-white p-6 rounded-3xl border-4 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex items-center gap-2 mb-4 border-b border-white/20 pb-2">
               <Disc className="w-6 h-6 text-yellow-400 animate-spin-slow" />
               <h2 className="text-xs font-black uppercase tracking-widest text-yellow-400">
@@ -217,14 +217,14 @@ export default function HeroSection({
                   href={`/year/${songWithImage.year}`}
                   className="text-white hover:text-yellow-400 transition-colors"
                 >
-                  RECORDED IN {songWithImage.year}
+                  BECAME POPULAR IN {songWithImage.year}
                 </Link>
               </div>
 
               <div className="pt-6">
                 <Link
                   href={`/songs/${songWithImage.slug}`}
-                  className="inline-flex items-center justify-center gap-2 w-full py-3 bg-white text-black border-2 border-black font-black uppercase text-xs hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="inline-flex items-center justify-center gap-2 w-full py-3 bg-white text-black border-2 border-black font-black uppercase text-xs hover:bg-yellow-400 transition-colors"
                 >
                   <Headphones className="w-4 h-4" />
                   Listen Now

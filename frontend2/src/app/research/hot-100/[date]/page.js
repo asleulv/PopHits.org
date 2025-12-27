@@ -4,10 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getChartDates, getChartByDate } from "@/lib/api";
 
-export async function generateStaticParams() {
-  const { dates } = await getChartDates();
-  return dates.map((date) => ({ date: date }));
-}
+
 
 // FIX 1: Await params in generateMetadata
 export async function generateMetadata({ params }) {

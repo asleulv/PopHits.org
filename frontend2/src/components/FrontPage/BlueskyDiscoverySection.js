@@ -122,7 +122,7 @@ export default function BlueskyDiscoverySection({ posts }) {
           rel="noopener noreferrer"
           className="inline-block px-8 py-3 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 transition-all"
         >
-          View More on Bluesky →
+          View More on Bluesky
         </a>
       </div>
     </section>

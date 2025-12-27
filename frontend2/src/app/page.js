@@ -272,20 +272,6 @@ export default async function FrontPage() {
 
         <BirthdayWidget />
 
-        <Suspense
-          fallback={<div className="h-32 bg-gray-800 animate-pulse rounded" />}
-        >
-          <TrendingHitsWrapper />
-        </Suspense>
-
-
-        
-
-        {/* 4. Random Hits by Decade */}
-        <Suspense fallback={<div>Loading hits...</div>}>
-          <RandomHitsWrapper />
-        </Suspense>
-
         {/* 5. Top Rated Songs */}
         <Suspense fallback={<div>Loading top rated...</div>}>
           <TopRatedWrapper />
@@ -294,6 +280,17 @@ export default async function FrontPage() {
         {/* 6. Featured Artists */}
         <Suspense fallback={<div>Loading artists...</div>}>
           <FeaturedArtistsWrapper />
+        </Suspense>
+
+        <Suspense
+          fallback={<div className="h-32 bg-gray-800 animate-pulse rounded" />}
+        >
+          <TrendingHitsWrapper />
+        </Suspense>        
+
+        {/* 4. Random Hits by Decade */}
+        <Suspense fallback={<div>Loading hits...</div>}>
+          <RandomHitsWrapper />
         </Suspense>
 
         {/* 7. Number One Hits */}
