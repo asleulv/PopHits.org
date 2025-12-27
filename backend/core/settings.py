@@ -150,11 +150,25 @@ CSRF_TRUSTED_ORIGINS = [
     "http://188.245.244.69:3001",
 ]
 
+# --- Security & CSRF Settings ---
+
+# 1. Pull the 4 values you have in your .env
+SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', 0))
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False').lower() == 'true'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
+
+# 2. Add these recommended defaults (standard for Django/React)
 CORS_ALLOW_CREDENTIALS = True
-CSRF_COOKIE_SAMESITE = 'Lax'  
-CSRF_COOKIE_HTTPONLY = False  
-CSRF_COOKIE_SECURE = False    
-CSRF_USE_SESSIONS = False     
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = False
+
+# 3. Security Best Practices (No .env needed for these)
+CSRF_COOKIE_HTTPONLY = False  # Keep False if React needs to read the cookie for headers
+SESSION_COOKIE_HTTPONLY = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True   
 
 # Session cookie settings
 SESSION_COOKIE_SAMESITE = 'Lax'
