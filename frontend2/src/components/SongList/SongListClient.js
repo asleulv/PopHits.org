@@ -33,6 +33,7 @@ export default function SongListClient({
   yearFilter: initialYearFilter,
   tagSlug: initialTagSlug,
   tagName,
+  hideTitle,
 }) {
   const [songs, setSongs] = useState(initialSongs || []);
   const [loading, setLoading] = useState(false);
@@ -101,7 +102,16 @@ export default function SongListClient({
     }
 
     return `${prefix}${base}${suffix}`;
-  }, [onlyUnratedSongs, onlyNumberOneHits, artistSlug, artistName, yearFilter, decadeFilter, searchQuery, tagName]);
+  }, [
+    onlyUnratedSongs,
+    onlyNumberOneHits,
+    artistSlug,
+    artistName,
+    yearFilter,
+    decadeFilter,
+    searchQuery,
+    tagName,
+  ]);
 
   const showingFrom = (page - 1) * perPage + 1;
   const showingTo = Math.min(page * perPage, totalCount);
@@ -127,18 +137,29 @@ export default function SongListClient({
       const authToken = isAuthenticated
         ? localStorage.getItem("authToken")
         : null;
+
+      // Correctly identify if we are filtering by Artist, Year, or Tag
+      const filterType = artistSlug
+        ? "artist"
+        : yearFilter
+        ? "year"
+        : tagSlug
+        ? "tag"
+        : null;
+      const filterValue = artistSlug || yearFilter || tagSlug || null;
+
       const data = await getSongs(
         page,
         perPage,
-        artistSlug ? "artist" : yearFilter ? "year" : null,
-        artistSlug || yearFilter,
+        filterType, // Argument 3: "tag"
+        filterValue, // Argument 4: "christmas"
         sortField,
         sortOrder === "desc" ? "-" : "",
         searchQuery,
         onlyNumberOneHits ? "1" : null,
         onlyUnratedSongs,
         decadeFilter,
-        tagSlug,
+        tagSlug, // Argument 11
         authToken
       );
       setSongs(data.results || []);
@@ -204,54 +225,68 @@ export default function SongListClient({
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Editorial Headline Section */}
-      <div className="mb-8 text-center">
-        <div className="inline-flex items-center gap-2 bg-[#0F172A] text-[#FFD700] px-3 py-1 mb-2 border-2 border-[#0F172A]">
-          {onlyUnratedSongs ? (
-            <Star className="w-3 h-3 fill-[#FFD700]" />
-          ) : onlyNumberOneHits ? (
-            <Award className="w-3 h-3 fill-[#FFD700]" />
-          ) : searchQuery ? (
-            <Search className="w-3 h-3" />
-          ) : decadeFilter ? (
-            <Calendar className="w-3 h-3" />
-          ) : artistSlug ? (
-            <Music className="w-3 h-3" />
-          ) : (
-            <Filter className="w-3 h-3" />
-          )}
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-            {searchQuery
-              ? "Search Results"
-              : artistSlug
-              ? "Artist Profile"
-              : decadeFilter
-              ? "Decade Archive"
-              : "Archive Index"}
-          </span>
+      {!hideTitle && (
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-[#0F172A] text-[#FFD700] px-3 py-1 mb-2 border-2 border-[#0F172A]">
+            {onlyUnratedSongs ? (
+              <Star className="w-3 h-3 fill-[#FFD700]" />
+            ) : onlyNumberOneHits ? (
+              <Award className="w-3 h-3 fill-[#FFD700]" />
+            ) : searchQuery ? (
+              <Search className="w-3 h-3" />
+            ) : decadeFilter ? (
+              <Calendar className="w-3 h-3" />
+            ) : artistSlug ? (
+              <Music className="w-3 h-3" />
+            ) : (
+              <Filter className="w-3 h-3" />
+            )}
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+              {searchQuery
+                ? "Search Results"
+                : artistSlug
+                ? "Artist Profile"
+                : decadeFilter
+                ? "Decade Archive"
+                : "Archive Index"}
+            </span>
+          </div>
+
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-black uppercase italic">
+              {getPageTitle()}
+            </h1>
+          </div>
+
+          <div className="w-20 h-1.5 mx-auto bg-[#FFD700] mt-4"></div>
         </div>
-
-        <h1 className="text-3xl md:text-5xl font-black italic uppercase text-[#0F172A] leading-none tracking-tight">
-          {getPageTitle()}
-        </h1>
-
-        <div className="w-20 h-1.5 mx-auto bg-[#FFD700] mt-4"></div>
-      </div>
+      )}
 
       {/* Database Controls */}
       {!artistSlug && (
-        <div className={`${styles.panel} !border-t-0 !rounded-none overflow-hidden`}>
-          <div className={styles.header}>
-            <div className="flex items-center gap-2">
-              <span className="text-[9px] font-black uppercase tracking-[0.1em]">
+        <div
+          className={`border-[3px] border-[#0F172A] rounded-none overflow-hidden bg-white shadow-sm mb-4`}
+        >
+          <div
+            className={`${styles.header} !bg-[#0F172A] !border-none !rounded-none !m-0 !py-2 !px-4 flex items-center justify-between`}
+          >
+            {/* Left Side: Title */}
+            <div className="flex items-center">
+              <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white">
                 Database Controls
               </span>
             </div>
+
+            {/* Right Side: Reset Button */}
             <button
-              onClick={handleReset}
-              className="text-[9px] font-bold ml-7 uppercase text-[#FFD700] hover:text-white flex items-center gap-1"
-            >
-              <RefreshCw className="w-4 h-4" /> Reset filters
-            </button>
+  onClick={handleReset}
+  className="group ml-5 flex items-center gap-2 px-3 py-1 rounded-full border border-[#FFD700]/20 bg-[#FFD700]/5 hover:bg-[#FFD700] hover:border-[#FFD700] transition-all duration-300"
+>
+  <RefreshCw className="w-3 h-3 text-[#FFD700] group-hover:text-[#0F172A] group-hover:rotate-180 transition-all duration-500" />
+  <span className="text-[9px] font-black uppercase tracking-widest text-[#FFD700] group-hover:text-[#0F172A]">
+    Reset Filters
+  </span>
+</button>
           </div>
 
           <div className="p-3 md:p-4 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 items-end">

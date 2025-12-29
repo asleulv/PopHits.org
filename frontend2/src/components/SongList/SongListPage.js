@@ -12,6 +12,7 @@ export default function SongListPage({
   artistName = null,
   tagSlug = null,
   tagName = null,
+  hideTitle = false,
 }) {
   const searchParams = useSearchParams();
 
@@ -53,6 +54,7 @@ export default function SongListPage({
           artistName={artistName}
           tagSlug={tagSlug}
           tagName={tagName}
+          hideTitle={hideTitle}
         />
       </Suspense>
     </div>

@@ -69,12 +69,6 @@ async function proxyFetch(path, options = {}) {
 // SONG ENDPOINTS
 // ============================================================================
 
-// src/lib/api.js
-
-// src/lib/api.js
-
-// src/lib/api.js
-
 export async function getSongs(options = {}) {
   // 1. Detect if the user passed 10 arguments (like in your SongsPage)
   const isLegacyCall = typeof options !== 'object';
@@ -99,6 +93,7 @@ export async function getSongs(options = {}) {
   // ARTIST/YEAR HANDSHAKE: Ensure Django gets the 'artist' or 'year' keys
   if (type === 'artist' && slugOrYear) params.append('artist', slugOrYear);
   if (type === 'year' && slugOrYear) params.append('year', String(slugOrYear));
+  if (type === 'tag' && slugOrYear) params.append('tag', slugOrYear);
 
   // GLOBAL FILTERS: Map these to the keys Django expects
   if (sortBy) params.append('sort_by', sortBy);
@@ -404,4 +399,19 @@ export async function getLatestBlogPost() {
 
 export async function getWebsiteStats() {
   return proxyFetch(`/songs/website-stats/`);
+}
+
+// ============================================================================
+// TAG ENDPOINTS
+// ============================================================================
+
+export async function getTags() {
+  return proxyFetch(`/tags/`);
+}
+
+export async function getTag(slug) {
+  /** * This hits your Django endpoint for a specific tag.
+   * Ensure your Django view for /api/tags/<slug>/ returns the 'description' field.
+   */
+  return proxyFetch(`/tags/${slug}/`);
 }

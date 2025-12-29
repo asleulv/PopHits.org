@@ -1,6 +1,6 @@
 # songs/serializers.py
 from rest_framework import serializers
-from .models import Song, UserSongComment, UserSongRating, CurrentHot100, Artist, ArtistRelationship, ArtistTagRelation, SongTimeline
+from .models import Song, UserSongComment, UserSongRating, CurrentHot100, Artist, ArtistRelationship, ArtistTagRelation, SongTimeline, SongTag
 from django.db.models import Min, Max, Sum, Count
 
 
@@ -185,6 +185,7 @@ class SongSerializer(serializers.ModelSerializer):
             {
                 "name": rel.tag.name,
                 "slug": rel.tag.slug,
+                "description": rel.tag.description,
                 "color": rel.tag.color,
                 "icon": rel.tag.lucide_icon,
                 "category": rel.tag.category,
@@ -202,3 +203,24 @@ class CurrentHot100Serializer(serializers.ModelSerializer):
     class Meta:
         model = CurrentHot100
         fields = '__all__'
+
+class TagDetailSerializer(serializers.ModelSerializer):
+    # Use a MethodField to handle the URL construction manually
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SongTag
+        fields = ['name', 'slug', 'description', 'color', 'lucide_icon', 'category', 'song_count', 'image']
+
+    def get_image(self, obj):
+        if not obj.image:
+            return None
+            
+        request = self.context.get('request')
+        if request is not None:
+            # Standard way: builds full URL (http://localhost:8000/media/...)
+            return request.build_absolute_uri(obj.image.url)
+            
+        # Fallback: If request context is missing (common in Next.js server fetches)
+        # Manually point to your Django media folder
+        return f"http://127.0.0.1:8000{obj.image.url}"

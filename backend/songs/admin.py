@@ -150,7 +150,8 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(SongTag)
 class SongTagAdmin(admin.ModelAdmin):
-    list_display = ['name', 'display_color', 'display_icon', 'category',
+    # Added preview_image to the list_display
+    list_display = ['preview_image', 'name', 'display_color', 'display_icon', 'category',
                     'song_count', 'is_featured', 'show_in_actions', 'display_order']
     list_editable = ['is_featured', 'show_in_actions', 'display_order']
     list_filter = ['category', 'is_featured', 'show_in_actions']
@@ -162,8 +163,9 @@ class SongTagAdmin(admin.ModelAdmin):
             'fields': ('name', 'slug', 'category', 'description')
         }),
         ('Visual Design', {
-            'fields': ('color', 'lucide_icon'),
-            'description': 'Choose color and icon for tag display'
+            # ADDED 'image' HERE
+            'fields': ('image', 'color', 'lucide_icon'),
+            'description': 'Choose a Hero Image, color, and icon for tag display'
         }),
         ('Display Options', {
             'fields': ('is_featured', 'show_in_actions', 'display_order')
@@ -176,17 +178,27 @@ class SongTagAdmin(admin.ModelAdmin):
 
     readonly_fields = ['song_count']
 
+    # Added this method to see the image in the list view
+    def preview_image(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ccc;" />',
+                obj.image.url
+            )
+        return format_html('<span style="color: #999; font-size: 10px;">No Image</span>')
+    preview_image.short_description = 'Hero'
+
     def display_color(self, obj):
         return format_html(
-            '<span style="background-color: {}; padding: 5px 15px; color: white; border-radius: 3px;">{}</span>',
+            '<span style="background-color: {}; padding: 5px 15px; color: white; border-radius: 3px; font-family: monospace;">{}</span>',
             obj.color,
             obj.color
         )
-    display_color.short_description = 'Color Preview'
+    display_color.short_description = 'Color'
 
     def display_icon(self, obj):
         if obj.lucide_icon:
-            return format_html('de>{}</code>', obj.lucide_icon)
+            return format_html('<code>{}</code>', obj.lucide_icon)
         return '—'
     display_icon.short_description = 'Icon'
 

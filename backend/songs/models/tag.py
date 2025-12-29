@@ -6,6 +6,12 @@ class SongTag(models.Model):
     """Tags for categorizing songs (seasonal, novelty, themes, etc.)"""
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=60, unique=True, blank=True)
+    image = models.ImageField(
+        upload_to='tag_heroes/', 
+        blank=True, 
+        null=True,
+        help_text='Hero image for the top of the tag page'
+    )
     
     # Visual elements - fully editable in admin
     color = models.CharField(

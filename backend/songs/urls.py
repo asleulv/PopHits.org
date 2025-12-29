@@ -6,7 +6,7 @@ from .views import (
     RandomSongView, TopRatedSongsView, RandomSongsByDecadeView, NumberOneSongsView,
     SongsWithImagesView, PlaylistGeneratorView, QuizGeneratorView, CurrentHot100View, 
     featured_artists, random_song_by_artist, SongTimelineView, historic_chart, chart_dates,
-    website_stats, TrendingArchiveView
+    website_stats, TrendingArchiveView, TagDetailView
 )
 
 urlpatterns = [
@@ -19,6 +19,7 @@ urlpatterns = [
     path('bookmarked-songs/', UserBookmarkedSongsView.as_view(), name='get_bookmarked_songs'),
     path('<int:song_id>/bookmark-status/', BookmarkStatusView.as_view()),
     path('<int:song_id>/comment-status/', CommentStatusView.as_view()),
+    path('tags/<slug:slug>/', TagDetailView.as_view(), name='tag-detail'),
     path('random-song/', RandomSongView.as_view(), name='random-song'),
     path('top-rated-songs/', TopRatedSongsView.as_view(), name='top-rated-songs'),
     path('number-one-songs/', NumberOneSongsView.as_view(), name='number-one-songs'),
