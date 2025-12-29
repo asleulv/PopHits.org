@@ -1,9 +1,52 @@
 import { getSongs, getTag } from "@/lib/api";
 import SongListPage from "@/components/SongList/SongListPage";
 
-export const metadata = {
-  title: "Tagged Songs | PopHits.org",
-};
+// --- DYNAMIC SEO SECTION ---
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const tagData = await getTag(slug).catch(() => null);
+
+  const tagName = tagData?.name || slug.charAt(0).toUpperCase() + slug.slice(1);
+  const description = tagData?.description || `Explore the best ${tagName} songs and chart history on PopHits.org.`;
+  
+  // Base keywords + dynamic tag keywords
+  const baseKeywords = "pop hits, greatest pop songs, chart-topping hits, music history, Billboard Hot 100";
+  const dynamicKeywords = `${tagName} music, best ${tagName} songs, ${tagName} chart history, ${tagData?.category || ''}`;
+  const keywords = `${baseKeywords}, ${dynamicKeywords}`;
+
+  const siteUrl = "https://pophits.org";
+  const imageUrl = tagData?.image 
+    ? (tagData.image.startsWith('http') ? tagData.image : `${siteUrl}${tagData.image}`)
+    : `${siteUrl}/default-og-image.jpg`;
+
+  return {
+    title: `${tagName} Songs - Chart History | PopHits.org`,
+    description: description,
+    keywords: keywords, // This adds the dynamic keywords to the meta tags
+    openGraph: {
+      title: `${tagName} Music Archive`,
+      description: description,
+      url: `${siteUrl}/tags/${slug}`,
+      siteName: 'PopHits.org',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${tagName} background`,
+        },
+      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${tagName} Songs on PopHits`,
+      description: description,
+      images: [imageUrl],
+    },
+  };
+}
+// ---------------------------
 
 function formatTagName(slug) {
   if (!slug) return "";
@@ -75,7 +118,7 @@ export default async function TagSongsPage({ params, searchParams }) {
         </div>
       </div>
 
-      {/* 2. INTERACTIVE LIST (CLIENT HYDRATED) */}
+      {/* 2. INTERACTIVE LIST */}
       <SongListPage
         initialSongs={songs}
         totalSongs={totalSongs}
@@ -90,7 +133,6 @@ export default async function TagSongsPage({ params, searchParams }) {
         tagSlug={slug}
         tagName={tagName}
         hideTitle={true}
-        // tagDescription is NOT needed here anymore because we rendered it above
       />
     </div>
   );
