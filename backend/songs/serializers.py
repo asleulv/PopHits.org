@@ -217,10 +217,12 @@ class TagDetailSerializer(serializers.ModelSerializer):
             return None
             
         request = self.context.get('request')
+        
+        # If we have the request, build the full URI
         if request is not None:
-            # Standard way: builds full URL (http://localhost:8000/media/...)
             return request.build_absolute_uri(obj.image.url)
             
-        # Fallback: If request context is missing (common in Next.js server fetches)
-        # Manually point to your Django media folder
-        return f"http://127.0.0.1:8000{obj.image.url}"
+        # FIXED FALLBACK: 
+        # Return only the path starting with /media/
+        # This allows the browser to resolve it to pophits.org
+        return obj.image.url
