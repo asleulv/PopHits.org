@@ -216,13 +216,7 @@ class TagDetailSerializer(serializers.ModelSerializer):
         if not obj.image:
             return None
             
-        request = self.context.get('request')
-        
-        # If we have the request, build the full URI
-        if request is not None:
-            return request.build_absolute_uri(obj.image.url)
-            
-        # FIXED FALLBACK: 
-        # Return only the path starting with /media/
-        # This allows the browser to resolve it to pophits.org
+        # We stop checking for 'request' and stop using 'build_absolute_uri'.
+        # This ensures we only return the relative path (starting with /media/),
+        # which Nginx and the browser will handle correctly on pophits.org.
         return obj.image.url
