@@ -205,7 +205,6 @@ class CurrentHot100Serializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TagDetailSerializer(serializers.ModelSerializer):
-    # Use a MethodField to handle the URL construction manually
     image = serializers.SerializerMethodField()
 
     class Meta:
@@ -216,7 +215,10 @@ class TagDetailSerializer(serializers.ModelSerializer):
         if not obj.image:
             return None
             
-        # We stop checking for 'request' and stop using 'build_absolute_uri'.
-        # This ensures we only return the relative path (starting with /media/),
-        # which Nginx and the browser will handle correctly on pophits.org.
-        return obj.image.url
+        request = self.context.get('request')
+        if request is not None:
+            # This automatically prepends https://api.pophits.org
+            return request.build_absolute_uri(obj.image.url)
+        
+        # Fallback for when request context isn't available (like in management commands)
+        return f"https://api.pophits.org{obj.image.url}"
