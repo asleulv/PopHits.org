@@ -13,6 +13,14 @@ async function TagGrid() {
   const tags = await getTags();
   const tagsArray = Array.isArray(tags) ? tags : (tags.results || []);
 
+  // Helper to force absolute URLs for production
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    // Prepend the production domain
+    return `https://pophits.org${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+  };
+
   if (tagsArray.length === 0) return (
     <div className="text-center py-20 font-black uppercase italic text-slate-400">
       No themes found. Check back soon!
@@ -26,10 +34,11 @@ async function TagGrid() {
           <div className="relative aspect-square bg-white border-4 border-black rounded-3xl group-hover:shadow-none transition-all overflow-hidden">
             {tag.image ? (
               <Image
-                src={tag.image}
+                src={getImageUrl(tag.image)} // <--- FIXED HERE
                 alt={tag.name}
                 fill
                 className="object-cover opacity-30 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500"
+                sizes="(max-width: 768px) 50vw, 25vw"
               />
             ) : (
               <div className="absolute inset-0 bg-yellow-50 flex items-center justify-center">
