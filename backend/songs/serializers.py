@@ -205,15 +205,16 @@ class CurrentHot100Serializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TagDetailSerializer(serializers.ModelSerializer):
-    # REMOVE THE image = serializers.SerializerMethodField() line!
-    # Just let the ModelSerializer handle it automatically.
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = SongTag
-        fields = [
-            'name', 'slug', 'description', 'color', 
-            'lucide_icon', 'category', 'song_count', 
-            'image', 'is_featured'
-        ]
-    
-    # DELETE the def get_image(self, obj) function entirely.
+        fields = ['name', 'slug', 'description', 'color', 'lucide_icon', 'category', 'song_count', 'image', 'is_featured']
+
+    def get_image(self, obj):
+        if not obj.image:
+            return None
+        
+        # Hardcode the domain just like you did in featured_artists
+        # This is the "Artist Secret" that ensures Next.js sees a clean HTTPS URL
+        return f"https://pophits.org{obj.image.url}"
