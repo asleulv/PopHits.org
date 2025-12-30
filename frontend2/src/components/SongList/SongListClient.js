@@ -279,14 +279,14 @@ export default function SongListClient({
 
             {/* Right Side: Reset Button */}
             <button
-  onClick={handleReset}
-  className="group ml-5 flex items-center gap-2 px-3 py-1 rounded-full border border-[#FFD700]/20 bg-[#FFD700]/5 hover:bg-[#FFD700] hover:border-[#FFD700] transition-all duration-300"
->
-  <RefreshCw className="w-3 h-3 text-[#FFD700] group-hover:text-[#0F172A] group-hover:rotate-180 transition-all duration-500" />
-  <span className="text-[9px] font-black uppercase tracking-widest text-[#FFD700] group-hover:text-[#0F172A]">
-    Reset Filters
-  </span>
-</button>
+              onClick={handleReset}
+              className="group ml-5 flex items-center gap-2 px-3 py-1 rounded-full border border-[#FFD700]/20 bg-[#FFD700]/5 hover:bg-[#FFD700] hover:border-[#FFD700] transition-all duration-300"
+            >
+              <RefreshCw className="w-3 h-3 text-[#FFD700] group-hover:text-[#0F172A] group-hover:rotate-180 transition-all duration-500" />
+              <span className="text-[9px] font-black uppercase tracking-widest text-[#FFD700] group-hover:text-[#0F172A]">
+                Reset Filters
+              </span>
+            </button>
           </div>
 
           <div className="p-3 md:p-4 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 items-end">

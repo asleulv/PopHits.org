@@ -210,7 +210,7 @@ class TagDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SongTag
-        fields = ['name', 'slug', 'description', 'color', 'lucide_icon', 'category', 'song_count', 'image']
+        fields = ['name', 'slug', 'description', 'color', 'lucide_icon', 'category', 'song_count', 'image', 'is_featured']
 
     def get_image(self, obj):
         if not obj.image:

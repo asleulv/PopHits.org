@@ -8,7 +8,8 @@ import {
   getRandomSongByArtist,
   getWebsiteStats,
   getBlogPosts,
-  getTrendingArchive
+  getTrendingArchive,
+  getTags
 } from "@/lib/api";
 import { getBlueskyPosts } from "@/lib/bluesky";
 
@@ -24,6 +25,7 @@ import FeaturedArtists from "@/components/FrontPage/FeaturedArtists";
 import BirthdayWidget from "@/components/FrontPage/BirthdayWidget";
 import BlueskyClient from "@/components/FrontPage/BlueskyClient";
 import TrendingHits from "@/components/FrontPage/CommunityFavourites";
+import TagSection from "@/components/FrontPage/TagSection";
 
 export const dynamic = 'force-dynamic';
 
@@ -198,6 +200,23 @@ async function TrendingHitsWrapper() {
   }
 }
 
+async function TagSectionWrapper() {
+  try {
+    // This uses your existing proxyFetch(`/tags/`)
+    const tags = await getTags();
+    
+    // Safety check: ensure tags is an array (sometimes APIs wrap results in an object)
+    const tagsArray = Array.isArray(tags) ? tags : (tags.results || []);
+
+    if (tagsArray.length === 0) return null;
+
+    return <TagSection tags={tagsArray} />;
+  } catch (error) {
+    console.error("TagSection fetch failed:", error);
+    return null;
+  }
+}
+
 async function NumberOneWrapper() {
   try {
     const numberOneHitsData = await getNumberOneHits();
@@ -271,6 +290,16 @@ export default async function FrontPage() {
         </Suspense>
 
         <BirthdayWidget />
+
+        <Suspense 
+          fallback={
+            <div className="mb-12 w-full bg-yellow-50 border-4 border-black border-dashed h-[400px] rounded-3xl animate-pulse flex items-center justify-center">
+              <span className="font-black uppercase italic text-slate-400">Loading Curated Themes...</span>
+            </div>
+          }
+        >
+          <TagSectionWrapper />
+        </Suspense>
 
         {/* 5. Top Rated Songs */}
         <Suspense fallback={<div>Loading top rated...</div>}>

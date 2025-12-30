@@ -16,7 +16,7 @@ from .songs_library import (
 from .charts import CurrentHot100View, historic_chart, chart_dates
 from .generators import PlaylistGeneratorView, QuizGeneratorView
 from .stats import ArtistStatsView
-from .tags import TagDetailView
+from .tags import TagDetailView, TagListView
 from .pagination import CustomPagination, ArtistPagination
 from .website_stats import website_stats
 from .user_activity import TrendingArchiveView
@@ -64,4 +64,5 @@ __all__ = [
     'ArtistPagination',
      # Tags 
     'TagDetailView',
+    'TagListView'
 ]
