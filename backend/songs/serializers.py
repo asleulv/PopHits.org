@@ -205,20 +205,15 @@ class CurrentHot100Serializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TagDetailSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    # REMOVE THE image = serializers.SerializerMethodField() line!
+    # Just let the ModelSerializer handle it automatically.
 
     class Meta:
         model = SongTag
-        fields = ['name', 'slug', 'description', 'color', 'lucide_icon', 'category', 'song_count', 'image', 'is_featured']
-
-    def get_image(self, obj):
-        if not obj.image:
-            return None
-            
-        request = self.context.get('request')
-        if request is not None:
-            # This automatically prepends https://api.pophits.org
-            return request.build_absolute_uri(obj.image.url)
-        
-        # Fallback for when request context isn't available (like in management commands)
-        return f"https://api.pophits.org{obj.image.url}"
+        fields = [
+            'name', 'slug', 'description', 'color', 
+            'lucide_icon', 'category', 'song_count', 
+            'image', 'is_featured'
+        ]
+    
+    # DELETE the def get_image(self, obj) function entirely.
