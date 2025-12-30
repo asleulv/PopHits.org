@@ -31,7 +31,7 @@ export default function TagSection({ tags }) {
         </h2>
         <p className="max-w-2xl text-center text-lg md:text-xl text-slate-700 font-bold leading-tight">
           Beyond the charts: discover music curated by lyrical themes,
-          historical events, and iconic cultural references. Because it's fun.
+          historical events, and iconic cultural references. Because it is fun!
         </p>
       </div>
 

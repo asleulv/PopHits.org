@@ -1,5 +1,6 @@
 import { getSongs, getTag } from "@/lib/api";
 import SongListPage from "@/components/SongList/SongListPage";
+import Image from "next/image";
 
 // --- DYNAMIC SEO SECTION ---
 export async function generateMetadata({ params }) {
@@ -7,16 +8,23 @@ export async function generateMetadata({ params }) {
   const tagData = await getTag(slug).catch(() => null);
 
   const tagName = tagData?.name || slug.charAt(0).toUpperCase() + slug.slice(1);
-  const description = tagData?.description || `Explore the best ${tagName} songs and chart history on PopHits.org.`;
-  
+  const description =
+    tagData?.description ||
+    `Explore the best ${tagName} songs and chart history on PopHits.org.`;
+
   // Base keywords + dynamic tag keywords
-  const baseKeywords = "pop hits, greatest pop songs, chart-topping hits, music history, Billboard Hot 100";
-  const dynamicKeywords = `${tagName} music, best ${tagName} songs, ${tagName} chart history, ${tagData?.category || ''}`;
+  const baseKeywords =
+    "pop hits, greatest pop songs, chart-topping hits, music history, Billboard Hot 100";
+  const dynamicKeywords = `${tagName} music, best ${tagName} songs, ${tagName} chart history, ${
+    tagData?.category || ""
+  }`;
   const keywords = `${baseKeywords}, ${dynamicKeywords}`;
 
   const siteUrl = "https://pophits.org";
-  const imageUrl = tagData?.image 
-    ? (tagData.image.startsWith('http') ? tagData.image : `${siteUrl}${tagData.image}`)
+  const imageUrl = tagData?.image
+    ? tagData.image.startsWith("http")
+      ? tagData.image
+      : `${siteUrl}${tagData.image}`
     : `${siteUrl}/default-og-image.jpg`;
 
   return {
@@ -27,7 +35,7 @@ export async function generateMetadata({ params }) {
       title: `${tagName} Music Archive`,
       description: description,
       url: `${siteUrl}/tags/${slug}`,
-      siteName: 'PopHits.org',
+      siteName: "PopHits.org",
       images: [
         {
           url: imageUrl,
@@ -36,10 +44,10 @@ export async function generateMetadata({ params }) {
           alt: `${tagName} background`,
         },
       ],
-      type: 'website',
+      type: "website",
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `${tagName} Songs on PopHits`,
       description: description,
       images: [imageUrl],
@@ -94,10 +102,13 @@ export default async function TagSongsPage({ params, searchParams }) {
       <div className="relative mb-0 overflow-hidden border-[3px] border-[#0F172A] bg-[#0F172A]">
         {tagImage ? (
           <div className="h-48 md:h-64 w-full relative">
-            <img
+            <Image
               src={tagImage}
               alt={tagName}
-              className="w-full h-full object-cover opacity-60"
+              fill
+              priority // Tells Next.js to load this immediately for better SEO
+              className="object-cover opacity-60"
+              sizes="100vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] to-transparent"></div>
           </div>
