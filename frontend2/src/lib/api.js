@@ -406,12 +406,11 @@ export async function getWebsiteStats() {
 // ============================================================================
 
 export async function getTags() {
-  return proxyFetch(`/tags/`);
+  // 'no-store' tells Next.js 15: "Don't bake this into the HTML, fetch it fresh"
+  return proxyFetch(`/tags/`, { cache: 'no-store' });
 }
 
 export async function getTag(slug) {
-  /** * This hits your Django endpoint for a specific tag.
-   * Ensure your Django view for /api/tags/<slug>/ returns the 'description' field.
-   */
-  return proxyFetch(`/tags/${slug}/`);
+  // We do it here too so tag descriptions/images update instantly when you edit them
+  return proxyFetch(`/tags/${slug}/`, { cache: 'no-store' });
 }

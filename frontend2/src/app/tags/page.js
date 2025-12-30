@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Tag, Music2, Search } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Music Themes & Collections Archive | PopHits.org",
   description: "Explore our curated music archives by theme. From songs about cities and cars to names and colors, find your favorite hits categorized by topic.",
