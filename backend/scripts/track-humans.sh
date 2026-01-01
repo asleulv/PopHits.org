@@ -41,8 +41,7 @@ if [ "$COUNT" -gt 0 ]; then
     MOBILE_PCT=$(( (MOBILE_COUNT * 100) / COUNT ))
     
     # --- Top Interest (Songs, Artists, or Tags) ---
-    TOP_INTEREST=$(grep "$DATE" $LOG | grep -Ei "/(songs|artists|tags)/[a-zA-Z0-9]" | grep -vEi "bot|spider|proxy|api" | awk '{print $7}' | cut -d? -f1 | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}' | sed -E 's:^/(songs|artists|tags)/::')
-
+    TOP_INTEREST=$(grep "$DATE" $LOG | grep -Ei "/(songs|artists|tags)/" | grep -vEi "bot|spider|proxy|api" | awk '{print $7}' | cut -d? -f1 | grep -E "^/(songs|artists|tags)/.+" | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}' | sed -E 's:^/(songs|artists|tags)/::')
     # --- Top Referrer ---
     TOP_REF=$(grep "$DATE" $LOG | grep -vEi "bot|spider|pophits.org" | awk -F\" '{print $4}' | grep -v "-" | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}')
 
