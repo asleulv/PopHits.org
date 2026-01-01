@@ -1,60 +1,51 @@
 #!/bin/bash
 
-# Configuration
+# 1. SETUP
 DATE=$(date -d "yesterday" +%d/%b/%Y)
-# Use the rotated log to ensure we have the full previous day
 LOG="/var/log/nginx/pophits_access.log.1" 
 OUT="/var/www/pophits/public/stats/human_stats.csv"
-YESTERDAY_IPS_FILE="/tmp/pophits_yesterday_ips.txt"
 
-mkdir -p /var/www/pophits/public/stats
-
-# 1. Header setup
+# 2. HEADER (We added top_song and mobile_pct)
 if [ ! -f $OUT ]; then
-    echo "date,unique_humans,returning_fans,super_fans,top_referrer,avg_hits" > $OUT
+    echo "date,unique_humans,returning_fans,super_fans,top_referrer,avg_hits,top_song,mobile_pct" > $OUT
 fi
 
-# 2. Identify the "Human Truth" IPs (CSS Loaders)
-# We exclude all known bots/scrapers to get the pure human list
+# 3. FIND THE HUMANS
 HUMAN_IPS=$(grep "$DATE" $LOG | grep ".css" | grep -vEi "bot|spider|crawler|semrush|ahrefs|slurp|headless|scraper" | awk '{print $1}' | sort -u)
 COUNT=$(echo "$HUMAN_IPS" | wc -w)
 
 if [ "$COUNT" -gt 0 ]; then
-    RETURNING=0
-    SUPER_FANS=0
-    TOTAL_HITS=0
+    RETURNING=0; SUPER_FANS=0; TOTAL_HITS=0; MOBILE_COUNT=0;
 
     for ip in $HUMAN_IPS; do
-        # --- Track Returning Fans ---
-        # Check if this IP appeared in any older logs (log.2.gz and beyond)
+        # --- Returning Fans ---
         is_returning=$(sudo zgrep -h "$ip" /var/log/nginx/pophits_access.log.*.gz | grep -v "$DATE" | head -n 1)
-        if [ -n "$is_returning" ]; then
-            ((RETURNING++))
-        fi
+        [ -n "$is_returning" ] && ((RETURNING++))
 
-        # --- Track Super Fans (Session > 10 mins) ---
-        # Find first and last hit time for this IP today
+        # --- Super Fans (10m+) ---
         times=$(grep "$DATE" $LOG | grep "$ip" | awk '{print $4}' | cut -d: -f2,3,4 | sed 's/\[//')
-        first=$(echo "$times" | head -n 1)
-        last=$(echo "$times" | tail -n 1)
-        
-        # Convert to seconds for math
-        start_sec=$(date -d "$first" +%s 2>/dev/null)
-        end_sec=$(date -d "$last" +%s 2>/dev/null)
-        duration=$((end_sec - start_sec))
-        
-        if [ "$duration" -gt 600 ]; then # 600 seconds = 10 minutes
-            ((SUPER_FANS++))
-        fi
+        start_sec=$(date -d "$(echo "$times" | head -n 1)" +%s 2>/dev/null)
+        end_sec=$(date -d "$(echo "$times" | tail -n 1)" +%s 2>/dev/null)
+        [ $((end_sec - start_sec)) -gt 600 ] && ((SUPER_FANS++))
 
-        # --- Track Engagement ---
+        # --- Mobile Users ---
+        grep "$DATE" $LOG | grep "$ip" | grep -Ei "iPhone|Android|Mobile" > /dev/null && ((MOBILE_COUNT++))
+
+        # --- Engagement ---
         hits=$(grep "$DATE" $LOG | grep "$ip" | wc -l)
         TOTAL_HITS=$((TOTAL_HITS + hits))
     done
 
+    # 4. CALCULATE NEW DATA
     AVG_HITS=$((TOTAL_HITS / COUNT))
-    TOP_REF=$(grep "$DATE" $LOG | grep -vEi "bot|spider|crawler" | awk -F\" '{print $4}' | grep -v "pophits.org" | grep -v "-" | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}')
+    MOBILE_PCT=$(( (MOBILE_COUNT * 100) / COUNT ))
+    
+    # Get the slug of the most visited song
+    TOP_SONG=$(grep "$DATE" $LOG | grep "/songs/" | grep -vEi "bot|spider" | awk '{print $7}' | cut -d? -f1 | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}' | sed 's|/songs/||')
 
-    # Append to CSV
-    echo "$DATE,$COUNT,$RETURNING,$SUPER_FANS,${TOP_REF:-Direct},$AVG_HITS" >> $OUT
+    # Get Referrer
+    TOP_REF=$(grep "$DATE" $LOG | grep -vEi "bot|spider|pophits.org" | awk -F\" '{print $4}' | grep -v "-" | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}')
+
+    # 5. SAVE EVERYTHING (Match the Header!)
+    echo "$DATE,$COUNT,$RETURNING,$SUPER_FANS,${TOP_REF:-Direct},$AVG_HITS,${TOP_SONG:-None},$MOBILE_PCT" >> $OUT
 fi
