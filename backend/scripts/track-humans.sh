@@ -5,9 +5,9 @@ DATE=$(date -d "yesterday" +%d/%b/%Y)
 LOG="/var/log/nginx/pophits_access.log.1" 
 OUT="/var/www/pophits/public/stats/human_stats.csv"
 
-# 2. HEADER (We added top_song and mobile_pct)
+# 2. HEADER (Properly Named)
 if [ ! -f $OUT ]; then
-    echo "date,unique_humans,returning_fans,super_fans,top_referrer,avg_hits,top_song,mobile_pct" > $OUT
+    echo "date,unique_humans,returning_fans,super_fans,top_referrer,avg_hits,top_interest,mobile_pct" > $OUT
 fi
 
 # 3. FIND THE HUMANS
@@ -36,16 +36,16 @@ if [ "$COUNT" -gt 0 ]; then
         TOTAL_HITS=$((TOTAL_HITS + hits))
     done
 
-    # 4. CALCULATE NEW DATA
+    # 4. CALCULATE DATA
     AVG_HITS=$((TOTAL_HITS / COUNT))
     MOBILE_PCT=$(( (MOBILE_COUNT * 100) / COUNT ))
     
-    # Get the slug of the most visited song
-    TOP_SONG=$(grep "$DATE" $LOG | grep "/songs/" | grep -vEi "bot|spider" | awk '{print $7}' | cut -d? -f1 | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}' | sed 's|/songs/||')
+    # --- Top Interest (Songs, Artists, or Tags) ---
+    TOP_INTEREST=$(grep "$DATE" $LOG | grep -Ei "/songs/|/artists/|/tags/" | grep -vEi "bot|spider|proxy|api" | awk '{print $7}' | cut -d? -f1 | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}' | sed -E 's|/(songs|artists|tags)/||')
 
-    # Get Referrer
+    # --- Top Referrer ---
     TOP_REF=$(grep "$DATE" $LOG | grep -vEi "bot|spider|pophits.org" | awk -F\" '{print $4}' | grep -v "-" | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}')
 
-    # 5. SAVE EVERYTHING (Match the Header!)
-    echo "$DATE,$COUNT,$RETURNING,$SUPER_FANS,${TOP_REF:-Direct},$AVG_HITS,${TOP_SONG:-None},$MOBILE_PCT" >> $OUT
+    # 5. SAVE EVERYTHING (Using the new variable name)
+    echo "$DATE,$COUNT,$RETURNING,$SUPER_FANS,${TOP_REF:-Direct},$AVG_HITS,${TOP_INTEREST:-None},$MOBILE_PCT" >> $OUT
 fi
