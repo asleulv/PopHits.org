@@ -15,7 +15,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
 # Added Tag to imports
-from songs.models import Song, Artist, Tag 
+from songs.models import Song, Artist, SongTag
 from blog.models import BlogPost
 
 def generate_sitemap():
@@ -50,7 +50,7 @@ def generate_sitemap():
         # 3. TAG THEMES (NEW REPLACEMENT FOR CHARTS)
         logger.info("Adding Tag Themes to sitemap...")
         tag_count = 0
-        for tag in Tag.objects.all():
+        for tag in SongTag.objects.all():
             sitemap_urls.append({
                 'url': f'https://pophits.org/tags/{tag.slug}',
                 'priority': '0.8',
