@@ -21,6 +21,12 @@ class Artist(models.Model):
     ], default='person')
     
     is_active = models.BooleanField(default=True)
+
+    tags = models.ManyToManyField(
+        'ArtistTag', 
+        through='ArtistTagRelation', 
+        related_name='artists'
+    )
     
     # External IDs for data enrichment
     musicbrainz_id = models.CharField(max_length=36, blank=True, null=True)
