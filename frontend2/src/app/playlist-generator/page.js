@@ -25,26 +25,49 @@ export const metadata = {
 
 export default function PlaylistGeneratorPage() {
   return (
-    <div className="p-4 min-h-screen">
-      <h1 className="text-2xl md:text-4xl font-cherry font-bold mb-6 text-center bg-gradient-to-r from-pink-500 via-purple-600 to-purple-900 bg-clip-text text-transparent">
-        <div className="flex items-center justify-center gap-2 px-1 py-1">
-          <Music className="w-8 h-8 text-black" />
-          <span className="text-black">
-            Hit Song Playlist Generator
-          </span>
-        </div>
-      </h1>
+    <div className="max-w-6xl mx-auto px-4 py-12 min-h-screen space-y-10">
       
-      <div className="mb-8">
-        <p className="text-center text-gray-700 text-lg max-w-3xl mx-auto">
-          Generate custom playlists of hit songs by selecting decades and popularity levels.
-          Perfect for discovering both chart-toppers and hidden gems from your favorite eras.
-        </p>
+      {/* 1. Header Section - Brutalist Style */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center justify-center gap-2 bg-black text-white px-4 py-1">
+          <Music className="w-4 h-4" />
+          <h2 className="text-xs font-black italic uppercase tracking-[0.3em]">
+            Archive Tool // Sequence Generator
+          </h2>
+        </div>
+        
+        <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-black leading-none">
+          Playlist Generator
+        </h1>
+
+        <div className="max-w-2xl mx-auto pt-4 border-t-2 border-black/10">
+          <p className="text-lg md:text-xl font-bold text-black/60 uppercase tracking-tight leading-tight italic">
+            Filter the historical record by decade and chart intensity. 
+            Discover both the era-defining anthems and the obscure artifacts.
+          </p>
+        </div>
       </div>
 
-      <Suspense fallback={<div className="text-center py-12">Loading playlist generator...</div>}>
-        <PlaylistGeneratorClient />
-      </Suspense>
+      {/* 2. Main Interface */}
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <Suspense 
+          fallback={
+            <div className="flex flex-col items-center justify-center py-20 border-2 border-black bg-[#fdfbf7]">
+              <div className="w-12 h-12 border-4 border-black border-t-transparent animate-spin mb-4" />
+              <p className="font-black uppercase italic tracking-widest text-xs">Calibrating Generator...</p>
+            </div>
+          }
+        >
+          <PlaylistGeneratorClient />
+        </Suspense>
+      </div>
+
+      {/* 3. Footer Branding */}
+      <div className="pt-12 text-center">
+        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 italic">
+          PopHits.org // Custom Retrieval Engine v2.6
+        </p>
+      </div>
     </div>
   );
 }

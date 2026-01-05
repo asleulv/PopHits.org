@@ -168,7 +168,7 @@ export default function HeroSection({
             className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-black uppercase tracking-widest text-xs border-2 border-black hover:bg-yellow-400 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none"
           >
             <CirclePlay className="w-5 h-5" />
-            Start Discovering →
+            Explore the Archive →
           </Link>
         </div>
       </div>

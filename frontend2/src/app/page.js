@@ -294,17 +294,17 @@ export default async function FrontPage() {
           <HeroSectionWrapper />
         </Suspense>
 
+        {/* 9. Latest Blog Post */}
+        <Suspense fallback={<div>Loading blog...</div>}>
+          <BlogWrapper />
+        </Suspense>
+
         <Suspense
           fallback={
             <div className="h-64 bg-gray-100 border-4 border-dashed border-black animate-pulse" />
           }
         >
           <LeaderboardWrapper />
-        </Suspense>
-
-        {/* 9. Latest Blog Post */}
-        <Suspense fallback={<div>Loading blog...</div>}>
-          <BlogWrapper />
         </Suspense>
 
         <BirthdayWidget />

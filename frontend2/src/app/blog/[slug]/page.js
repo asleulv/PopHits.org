@@ -7,8 +7,8 @@ import Link from "next/link";
 import SongPreview from "@/components/Blog/SongPreview";
 import YouTubeEmbed from "@/components/Blog/YouTubeEmbed";
 import SignupCTA from "@/components/Blog/SignupCTA";
-// ✅ UPDATED IMPORT: Using the new high-level proxy function
 import { getBlogPostBySlug } from "@/lib/api";
+import { Loader2, ArrowLeft, Newspaper, History, Tag } from "lucide-react";
 
 // Structured data for SEO (remains the same)
 function BlogPostStructuredData({ post }) {
@@ -16,9 +16,7 @@ function BlogPostStructuredData({ post }) {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
-    image:
-      post.featured_image ||
-      "https://pophits.org/static/media/oldhits_logo.png",
+    image: post.featured_image || "https://pophits.org/static/media/oldhits_logo.png",
     datePublished: post.published_date,
     dateModified: post.updated_date,
     author: { "@type": "Organization", name: "PopHits.org" },
@@ -53,14 +51,10 @@ export default function BlogPostPage() {
 
     async function fetchPost() {
       try {
-        // ✅ UPDATED CALL: Using getBlogPostBySlug instead of fetchBlogData
         const data = await getBlogPostBySlug(slug);
-        
-        // Handle the internal image URL replacement if necessary
         if (data && data.featured_image) {
           data.featured_image = data.featured_image.replace('http://127.0.0.1:8000', 'https://pophits.org');
         }
-        
         setPost(data);
       } catch (err) {
         console.error("Error fetching blog post:", err);
@@ -76,80 +70,120 @@ export default function BlogPostPage() {
     setIsAuthenticated(!!authToken);
   }, [slug]);
 
-  if (loading) return <div className="text-center py-16 text-slate-700">Loading...</div>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+      <Loader2 className="w-12 h-12 animate-spin text-black" />
+      <p className="font-black uppercase italic tracking-widest text-xs">Retrieving Dispatch...</p>
+    </div>
+  );
   
   if (error || !post)
     return (
-      <div className="container mx-auto px-4 py-8 bg-red-50 border border-red-300 text-red-800 p-4 rounded-lg">
-        <h1 className="text-2xl font-bold mb-2">{error ? "Error Loading Post" : "Blog Post Not Found"}</h1>
-        <p>{error || "Sorry, we couldn’t find the blog post you’re looking for."}</p>
-        <Link href="/blog" className="text-amber-700 hover:text-amber-900 font-medium mt-4 inline-block">
-          Return to Blog
-        </Link>
+      <div className="max-w-2xl mx-auto px-4 py-16">
+        <div className="border-2 border-black bg-red-600 text-white p-8">
+          <h1 className="text-3xl font-black italic uppercase tracking-tighter mb-4">
+            {error ? "System Error" : "Entry Not Found"}
+          </h1>
+          <p className="font-bold mb-6 text-sm uppercase">{error || "The requested dispatch does not exist in our records."}</p>
+          <Link href="/blog" className="inline-block bg-white text-black px-6 py-2 font-black italic uppercase text-xs border-2 border-black hover:bg-yellow-400 transition-colors">
+            Return to Index
+          </Link>
+        </div>
       </div>
     );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-12 animate-in fade-in duration-700">
       <BlogPostStructuredData post={post} />
 
-      {/* Breadcrumbs */}
-      <nav className="text-sm mb-6">
-        <ol className="list-none p-0 inline-flex">
-          <li>
-            <Link href="/" className="text-slate-600 hover:text-slate-900">Home</Link> →
-          </li>
-          <li className="mx-2">
-            <Link href="/blog" className="text-slate-600 hover:text-slate-900">Blog</Link> →
-          </li>
-          <li className="text-amber-700 font-medium">{post.title}</li>
-        </ol>
+      {/* Breadcrumbs - Architectural Style */}
+      <nav className="flex items-center gap-2 mb-10 text-[10px] font-black uppercase tracking-[0.2em] text-black/40">
+        <Link href="/" className="hover:text-black transition-colors">Home</Link>
+        <span className="opacity-20">//</span>
+        <Link href="/blog" className="hover:text-black transition-colors">Blog</Link>
+        <span className="opacity-20">//</span>
+        <span className="text-black truncate max-w-[150px] md:max-w-none">{post.title}</span>
       </nav>
 
-      <article className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-slate-400">
+      <article className="border-2 border-black bg-white overflow-hidden">
+        {/* Featured Image - Static Grayscale-to-Color logic */}
         {post.featured_image && (
-          <div className="relative w-full h-80">
+          <div className="relative w-full h-64 md:h-96 border-b-2 border-black overflow-hidden group">
             <Image 
               src={post.featured_image} 
               alt={post.title} 
               fill 
-              className="object-cover"
-              unoptimized={true} // Helpful if images are served from a different internal IP
+              className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+              unoptimized={true} 
             />
           </div>
         )}
 
-        <div className="p-6 md:p-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 pb-2 bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent font-sansita">
-            {post.title}
-          </h1>
-          <div className="text-sm text-slate-600 mb-8">
-            Published on {new Date(post.published_date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+        <div className="p-6 md:p-12 space-y-8">
+          {/* Headline Section */}
+          <header className="space-y-4">
+            <div className="flex items-center gap-2 bg-black text-white px-3 py-1 w-fit">
+              <Newspaper size={12} />
+              <span className="text-[10px] font-black italic uppercase tracking-widest">Editorial Record</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-black leading-[0.9]">
+              {post.title}
+            </h1>
+            
+            <div className="flex items-center gap-4 border-t-2 border-black/5 pt-4 text-[10px] font-black uppercase tracking-widest text-black/40 italic">
+              <div className="flex items-center gap-1">
+                <History size={12} />
+                <span>Published: {new Date(post.published_date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content Area */}
+          <div className="prose prose-slate max-w-none 
+            prose-headings:font-black prose-headings:italic prose-headings:uppercase prose-headings:tracking-tighter prose-headings:text-black
+            prose-p:text-black/80 prose-p:font-bold prose-p:leading-relaxed
+            prose-strong:text-black prose-strong:font-black
+            prose-blockquote:border-l-4 prose-blockquote:border-black prose-blockquote:italic prose-blockquote:bg-yellow-50 prose-blockquote:p-4">
+            <YouTubeEmbed content={post.content} />
           </div>
 
-          {/* This component handles rendering the HTML content from Django */}
-          <YouTubeEmbed content={post.content} />
-          <SignupCTA isLoggedIn={isAuthenticated} />
+          <div className="pt-8 border-t-2 border-black/10">
+            <SignupCTA isLoggedIn={isAuthenticated} />
+          </div>
 
+          {/* Related Songs Section */}
           {post.related_songs?.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-slate-300">
-              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent font-sansita">
-                Related Hits
-              </h2>
-              <div className="grid gap-4">
+            <section className="mt-16 space-y-6">
+              <div className="flex items-center gap-2 border-b-2 border-black pb-2">
+                <Tag className="w-5 h-5" />
+                <h2 className="text-2xl font-black italic uppercase tracking-tighter text-black">
+                  Referenced Hits
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
                 {post.related_songs.map((song) => (
                   <SongPreview key={song.id} song={song} />
                 ))}
               </div>
-            </div>
+            </section>
           )}
         </div>
       </article>
 
-      <div className="max-w-4xl mx-auto mt-8 text-center">
-        <Link href="/blog" className="inline-block bg-slate-900 text-white px-6 py-3 rounded-lg shadow-md hover:bg-slate-700 transition-all duration-300 transform hover:scale-105">
-          ← Back to Blog
+      {/* Back to Index Navigation */}
+      <div className="mt-12 text-center">
+        <Link 
+          href="/blog" 
+          className="inline-flex items-center gap-2 border-2 border-black px-8 py-4 bg-black text-white font-black italic uppercase text-lg tracking-tighter hover:bg-amber-500 hover:text-black transition-all"
+        >
+          <ArrowLeft size={20} />
+          Return to Archive
         </Link>
+      </div>
+      
+      <div className="mt-12 text-center text-[10px] font-black uppercase tracking-[0.4em] text-black/20 italic">
+        Dispatch Record // PopHits.org Editorial Division
       </div>
     </div>
   );

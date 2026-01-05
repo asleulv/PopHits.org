@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Added Image
 import { Mic2, Trophy, Star, Info } from 'lucide-react';
 
 export default function TopArtists({ ratings }) {
@@ -8,12 +9,16 @@ export default function TopArtists({ ratings }) {
   const artistData = ratings.reduce((acc, curr) => {
     const artistName = curr.song_artist || curr.artist;
     const artistSlug = curr.artist_slug; 
+    // Assuming image follows a pattern or is available in the rating object
+    // If your API provides artist_image, use that; otherwise, we can predict the path
+    const artistImage = curr.artist_image || `/images/artists/${artistSlug}.jpg`; 
     
     if (artistName) {
       if (!acc[artistName]) {
         acc[artistName] = { 
           name: artistName, 
           slug: artistSlug, 
+          image: artistImage, // Store image in accumulator
           count: 0, 
           totalScore: 0 
         };
@@ -33,7 +38,7 @@ export default function TopArtists({ ratings }) {
   return (
     <div className="mt-8 bg-[#fdfbf7] border-2 border-black p-8">
       
-      {/* 1. Standardized Header - Left Aligned & Quiet */}
+      {/* 1. Standardized Header */}
       <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-black/10 pb-6 gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 text-black">
@@ -60,15 +65,33 @@ export default function TopArtists({ ratings }) {
               key={index} 
               className="bg-white border-2 border-black p-5 relative group transition-colors flex flex-col items-center hover:bg-gray-50"
             >
-              {/* Rank Badge - Clean & Flat */}
+              {/* Rank Badge */}
               <div className="absolute top-0 right-0 bg-black text-white px-3 py-1 font-cherry font-black italic text-sm z-20">
                 #{index + 1}
               </div>
 
-              {/* ARTIST ICON AREA - Cleaned up */}
-              <div className="w-16 h-16 rounded-full border-2 border-black bg-gray-50 flex items-center justify-center mb-4 relative overflow-hidden transition-colors">
-                {/* Initial Removed, just high-contrast Mic icon */}
-                <Mic2 className="w-6 h-6 text-black/40 group-hover:text-black transition-colors" />
+              {/* ARTIST IMAGE AREA */}
+              <div className="w-20 h-20 rounded-full border-2 border-black bg-gray-50 flex items-center justify-center mb-4 relative overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none transition-all">
+                {artist.image ? (
+                  <Image
+                    src={artist.image}
+                    alt={artist.name}
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                    onError={(e) => {
+                      // Fallback if image doesn't exist
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <Mic2 className="w-6 h-6 text-black/40 group-hover:text-black transition-colors" />
+                )}
+                
+                {/* Visual Overlay if image is missing/errors */}
+                <div className="absolute inset-0 flex items-center justify-center -z-10 bg-gray-100">
+                    <Mic2 className="w-6 h-6 text-black/20" />
+                </div>
               </div>
 
               <h5 className="font-cherry font-black uppercase text-lg text-center leading-none mb-4 group-hover:text-amber-600 transition-colors min-h-[2.5rem] flex items-center">

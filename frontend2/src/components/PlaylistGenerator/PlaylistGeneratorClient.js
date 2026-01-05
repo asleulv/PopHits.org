@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Music, RefreshCw, Copy, Calendar, BarChart2 } from "lucide-react";
+import { Music, RefreshCw, Copy, Calendar, BarChart2, Loader2, CheckCircle2, AlertOctagon, ExternalLink } from "lucide-react";
 import { generatePlaylist } from "@/lib/api";
 
 export default function PlaylistGeneratorClient() {
@@ -11,14 +11,7 @@ export default function PlaylistGeneratorClient() {
   const [loading, setLoading] = useState(false);
   const [playlist, setPlaylist] = useState([]);
   const [selectedDecades, setSelectedDecades] = useState([
-    "1950",
-    "1960",
-    "1970",
-    "1980",
-    "1990",
-    "2000",
-    "2010",
-    "2020",
+    "1950", "1960", "1970", "1980", "1990", "2000", "2010", "2020",
   ]);
   const [errorMessage, setErrorMessage] = useState("");
   const [notification, setNotification] = useState(null);
@@ -33,11 +26,6 @@ export default function PlaylistGeneratorClient() {
     setErrorMessage("");
     setNotification(null);
     try {
-      console.log("Generating playlist with params:", {
-        numSongs,
-        hitLevel,
-        selectedDecades,
-      });
       const data = await generatePlaylist(numSongs, hitLevel, selectedDecades);
       if (data.length === 0) {
         setErrorMessage("No songs match the criteria.");
@@ -45,7 +33,6 @@ export default function PlaylistGeneratorClient() {
         setPlaylist(data);
       }
     } catch (error) {
-      console.error("Failed to generate playlist:", error);
       setErrorMessage("No songs available for the given criteria.");
     } finally {
       setLoading(false);
@@ -58,22 +45,9 @@ export default function PlaylistGeneratorClient() {
       .then(() => {
         setNotification({
           type: 'success',
-          message: 'All song URLs copied to clipboard!'
+          message: 'URLs copied to clipboard'
         });
-        
-        setTimeout(() => {
-          setNotification(null);
-        }, 3000);
-      })
-      .catch(() => {
-        setNotification({
-          type: 'error',
-          message: 'Failed to copy song URLs.'
-        });
-        
-        setTimeout(() => {
-          setNotification(null);
-        }, 3000);
+        setTimeout(() => setNotification(null), 3000);
       });
   };
 
@@ -89,38 +63,36 @@ export default function PlaylistGeneratorClient() {
   ];
 
   return (
-    <div className="w-full">
-      {/* Notification */}
+    <div className="w-full space-y-6 animate-in fade-in duration-500">
+      {/* Brutalist Toast - Flat */}
       {notification && (
-        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
-          notification.type === 'success' ? 'bg-green-600' : 'bg-red-600'
-        } text-white`}>
-          <p>{notification.message}</p>
+        <div className={`fixed bottom-8 right-8 z-50 p-4 border-2 border-black flex items-center gap-3 animate-in slide-in-from-bottom-4 ${
+          notification.type === 'success' ? 'bg-amber-400 text-black' : 'bg-red-600 text-white'
+        }`}>
+          {notification.type === 'success' ? <CheckCircle2 size={20} /> : <AlertOctagon size={20} />}
+          <p className="font-black uppercase italic text-sm tracking-tight">{notification.message}</p>
         </div>
       )}
       
-      <div className="mb-6 bg-yellow-50 p-5 rounded-xl shadow-sm border border-slate-300">
-        <div className="flex items-center gap-3 mb-3">
-          <Calendar className="w-6 h-6 text-amber-600" />
-          <span className="text-lg font-semibold text-slate-900">
-            Select Decades:
-          </span>
+      {/* 1. Decade Selection Box */}
+      <div className="bg-white border-2 border-black p-6">
+        <div className="flex items-center gap-3 mb-6 border-b-2 border-black pb-2">
+          <Calendar size={20} />
+          <span className="text-lg font-black italic uppercase tracking-tighter">Temporal Selection</span>
         </div>
-        <div className="flex flex-wrap gap-2 justify-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
           {decadesOptions.map(({ label, value }) => (
             <button
               key={value}
               onClick={() => {
-                if (selectedDecades.includes(value)) {
-                  setSelectedDecades(selectedDecades.filter(decade => decade !== value));
-                } else {
-                  setSelectedDecades([...selectedDecades, value]);
-                }
+                setSelectedDecades(prev => 
+                  prev.includes(value) ? prev.filter(d => d !== value) : [...prev, value]
+                );
               }}
-              className={`px-4 py-2 rounded-lg transition-colors border ${
+              className={`py-2 font-black italic uppercase text-xs border-2 border-black transition-colors ${
                 selectedDecades.includes(value)
-                  ? "bg-slate-900 text-white border-slate-900"
-                  : "bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-300"
+                  ? "bg-black text-white"
+                  : "bg-white text-black hover:bg-yellow-50"
               }`}
             >
               {label}
@@ -129,177 +101,138 @@ export default function PlaylistGeneratorClient() {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
-        <div className="bg-yellow-50 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md border border-slate-300">
-          <div className="flex items-center gap-3 mb-3">
-            <Music className="w-6 h-6 text-amber-600" />
-            <span className="text-lg font-semibold text-slate-900">
-              Number of Songs:
-            </span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Quantity Card */}
+        <div className="bg-white border-2 border-black p-5">
+          <div className="flex items-center gap-2 mb-4 opacity-40">
+            <Music size={16} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Quantity</span>
           </div>
           <select
             value={numSongs}
             onChange={(e) => setNumSongs(Number(e.target.value))}
-            className="w-full p-2 border border-slate-400 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 text-slate-900"
+            className="w-full bg-transparent border-b-2 border-black py-1 font-black italic text-xl outline-none appearance-none"
           >
             {[10, 20, 25, 50, 100].map((num) => (
-              <option key={num} value={num}>
-                {num} songs
-              </option>
+              <option key={num} value={num}>{num} Songs</option>
             ))}
           </select>
         </div>
 
-        <div className="bg-yellow-50 p-5 rounded-xl shadow-sm w-full md:w-1/3 transition-all duration-300 hover:shadow-md border border-slate-300">
-          <div className="flex items-center gap-3 mb-3">
-            <BarChart2 className="w-6 h-6 text-amber-600" />
-            <span className="text-lg font-semibold text-slate-900">
-              Hit Level:
-            </span>
+        {/* Intensity Card */}
+        <div className="bg-white border-2 border-black p-5">
+          <div className="flex items-center gap-2 mb-4 opacity-40">
+            <BarChart2 size={16} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Saturation</span>
           </div>
-          <p className="text-sm text-slate-600 mb-2">1 = #1 hits, 10 = obscure hits</p>
           <select
             value={hitLevel}
             onChange={(e) => setHitLevel(Number(e.target.value))}
-            className="w-full p-2 border border-slate-400 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 text-slate-900"
+            className="w-full bg-transparent border-b-2 border-black py-1 font-black italic text-xl outline-none appearance-none"
           >
             {[...Array(10).keys()].map((level) => (
-              <option key={level + 1} value={level + 1}>
-                Level {level + 1}
-              </option>
+              <option key={level + 1} value={level + 1}>Hit Level {level + 1}</option>
             ))}
           </select>
         </div>
 
-        <div className="flex flex-col justify-end gap-4 w-full md:w-1/3">
+        {/* Main Action Buttons */}
+        <div className="flex flex-col gap-2 justify-end">
           <button
             onClick={handleGeneratePlaylist}
             disabled={loading}
-            className="w-full px-6 py-3 text-lg bg-slate-900 text-white rounded-xl shadow-md hover:bg-slate-700 flex items-center justify-center transition-all duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-black text-white py-4 font-black uppercase italic text-xl border-2 border-black hover:bg-amber-500 hover:text-black transition-all disabled:opacity-50"
           >
-            {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                Generating...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="w-5 h-5 mr-2" />
-                Generate Playlist
-              </>
-            )}
+            {loading ? <Loader2 className="animate-spin mx-auto" /> : "Initialize List"}
           </button>
-
-          {/* Copy All URLs Button */}
           {playlist.length > 0 && (
             <button
               onClick={handleCopyAllUrls}
-              className="w-full px-6 py-3 text-lg bg-slate-700 text-white rounded-xl shadow-md hover:bg-slate-600 flex items-center justify-center transition-all duration-200 ease-in-out"
+              className="w-full bg-white text-black py-2 font-black uppercase italic text-sm border-2 border-black hover:bg-black hover:text-white transition-all"
             >
-              <Copy className="w-5 h-5 mr-2" />
               Copy All URLs
             </button>
           )}
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center items-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
-            <p className="text-slate-700">Generating your custom playlist...</p>
+      {/* 2. Results Table */}
+      <div className="pt-4">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-black/20">
+             <Loader2 size={40} className="animate-spin text-black mb-4" />
+             <p className="font-black uppercase italic tracking-widest text-xs">Compiling Records...</p>
           </div>
-        </div>
-      ) : (
-        <>
-          {errorMessage ? (
-            <div className="bg-red-50 border border-red-300 text-red-700 px-6 py-4 rounded-xl mt-6 text-center">
-              <p className="font-medium">{errorMessage}</p>
-              <p className="text-sm mt-2">Try adjusting your filters to find more songs.</p>
-            </div>
-          ) : (
-            playlist.length > 0 && (
-              <div className="bg-white rounded-xl shadow-md overflow-hidden mt-6 border border-slate-400">
-                <div className="bg-slate-50 p-4 border-b border-slate-300">
-                  <h2 className="text-xl font-semibold text-center text-slate-900">
-                    Your Custom Playlist ({playlist.length} Songs)
-                  </h2>
-                </div>
-                
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-slate-300">
-                    <thead className="bg-slate-50 border-b border-slate-300">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                          Title
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                          Artist
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                          Year
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                          Peak Rank
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                          Listen
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-slate-300">
-                      {playlist.map((song) => (
-                        <tr key={song.id} className="hover:bg-yellow-50 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900">
-                            <Link 
-                              href={`/songs/${song.slug}`}
-                              className="hover:text-amber-700 transition-colors"
-                            >
-                              {song.title}
-                            </Link>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-amber-700">
-                            <Link 
-                              href={`/artist/${song.artist_slug}`}
-                              className="hover:text-slate-900 transition-colors"
-                            >
-                              {song.artist}
-                            </Link>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-900">
-                            {song.year}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-900">
-                            {song.peak_rank}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {song.spotify_url && (
-                              <a
-                                href={song.spotify_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-amber-700 hover:text-amber-900 font-medium"
-                              >
-                                Spotify
-                              </a>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                
-                <div className="p-4 bg-slate-50 border-t border-slate-300 text-center">
-                  <p className="text-slate-700">
-                    <span className="font-medium">{playlist.length}</span> songs generated based on your criteria
-                  </p>
-                </div>
+        ) : (
+          <>
+            {errorMessage ? (
+              <div className="bg-red-600 text-white border-2 border-black p-4 text-center font-black uppercase italic">
+                {errorMessage}
               </div>
-            )
-          )}
-        </>
-      )}
+            ) : (
+              playlist.length > 0 && (
+                <div className="border-2 border-black overflow-hidden bg-white">
+                  <div className="bg-black text-white p-3 flex justify-between items-center">
+                    <h2 className="font-black italic uppercase tracking-tighter text-lg">
+                      Playlist Archive Output // {playlist.length} Items
+                    </h2>
+                  </div>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-yellow-50/50 border-b-2 border-black">
+                          {["Track", "Artist", "Year", "Rank", "Listen"].map((h) => (
+                            <th key={h} className="px-6 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-black/40">
+                              {h}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y-2 divide-black/5">
+                        {playlist.map((song) => (
+                          <tr key={song.id} className="hover:bg-yellow-50/50 transition-colors group">
+                            <td className="px-6 py-4">
+                              <Link href={`/songs/${song.slug}`} className="font-black uppercase italic text-lg tracking-tighter block group-hover:text-amber-600">
+                                {song.title}
+                              </Link>
+                            </td>
+                            <td className="px-6 py-4 font-bold text-xs uppercase tracking-tight">
+                              <Link href={`/artist/${song.artist_slug}`} className="hover:underline">
+                                {song.artist}
+                              </Link>
+                            </td>
+                            <td className="px-6 py-4 font-black italic text-xl tracking-tighter">
+                              {song.year}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="bg-black text-white px-2 py-0.5 font-black text-xs">
+                                #{song.peak_rank}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              {song.spotify_url && (
+                                <a
+                                  href={song.spotify_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-black hover:text-green-600 transition-colors"
+                                >
+                                  <ExternalLink size={18} />
+                                </a>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
