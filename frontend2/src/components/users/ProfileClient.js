@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { Clipboard, Star, Award } from "lucide-react";
+import { Clipboard, Star, Award, Loader2 } from "lucide-react";
 
 // Widget Imports
 import ProfileHeader from "./dashboard/DossierHeader";
@@ -16,6 +16,26 @@ import BookmarkTable from "./dashboard/BookmarkTable";
 import TopArtists from "./dashboard/TopArtists";
 import GenreHeatmap from "./dashboard/GenreHeatMap";
 import HistorianRank from "./dashboard/HistorianRank";
+
+// --- Loading Component ---
+const LoadingDossier = () => (
+  <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-6 animate-in fade-in duration-500">
+    <div className="relative">
+      <Loader2 className="w-20 h-20 animate-spin text-black" strokeWidth={2.5} />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-3 h-3 bg-red-600 rounded-full animate-ping" />
+      </div>
+    </div>
+    <div className="text-center space-y-2">
+      <h2 className="inline-block bg-black text-white px-4 py-1 text-xs font-black italic uppercase tracking-[0.2em]">
+        Status: Accessing Archive
+      </h2>
+      <p className="text-3xl font-black italic uppercase tracking-tighter text-black">
+        Retrieving Personnel Data...
+      </p>
+    </div>
+  </div>
+);
 
 export default function ProfileClient() {
   const { isAuthenticated, authToken } = useAuth();
@@ -38,12 +58,14 @@ export default function ProfileClient() {
       ? "http://localhost:8000"
       : "https://pophits.org";
 
+  // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated && !isLoading) router.push("/login");
   }, [isAuthenticated, isLoading, router]);
 
+  // Phase 1: Fetch Profile and Bookmarks
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCoreData = async () => {
       if (!authToken) return;
       try {
         const [pRes, bRes] = await Promise.all([
@@ -60,36 +82,48 @@ export default function ProfileClient() {
             },
           }),
         ]);
+        
         const pData = await pRes.json();
+        const bData = await bRes.json();
+
         setUserProfile(pData.user_data);
         setRatingHistory(pData.rating_history || []);
-        setBookmarkedSongs(await bRes.json());
+        setBookmarkedSongs(bData);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching core data:", err);
+        setIsLoading(false); // Stop loading on error so UI can show error state
+      }
+    };
+    fetchCoreData();
+  }, [authToken, baseUrl]);
+
+  // Phase 2: Fetch Stats (depends on userProfile from Phase 1)
+  useEffect(() => {
+    if (!userProfile?.username) return;
+
+    const fetchStatsData = async () => {
+      try {
+        const res = await fetch(
+          `${baseUrl}/api/profile/stats/${encodeURIComponent(
+            userProfile.username
+          )}/`,
+          {
+            headers: {
+              Authorization: `Token ${authToken}`,
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          }
+        );
+        const statsData = await res.json();
+        setUserStats(statsData);
+      } catch (err) {
+        console.error("Error fetching stats:", err);
       } finally {
+        // Only set loading to false once the heaviest data (stats) is in
         setIsLoading(false);
       }
     };
-    fetchData();
-  }, [authToken, baseUrl]);
-
-  useEffect(() => {
-    if (!userProfile?.username) return;
-    const fetchStats = async () => {
-      const res = await fetch(
-        `${baseUrl}/api/profile/stats/${encodeURIComponent(
-          userProfile.username
-        )}/`,
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-            "X-Requested-With": "XMLHttpRequest",
-          },
-        }
-      );
-      setUserStats(await res.json());
-    };
-    fetchStats();
+    fetchStatsData();
   }, [userProfile, authToken, baseUrl]);
 
   const copySpotifyUrls = () => {
@@ -119,10 +153,21 @@ export default function ProfileClient() {
     setBookmarkedSongs([]);
   };
 
-  if (!isAuthenticated && !isLoading) return null;
+  // 1. Loading Guard
+  if (isLoading) {
+    return (
+      <div className="max-w-6xl mx-auto py-20">
+        <LoadingDossier />
+      </div>
+    );
+  }
 
+  // 2. Auth Guard
+  if (!isAuthenticated) return null;
+
+  // 3. Main Render
   return (
-    <div className="max-w-6xl mx-auto space-y-12 pb-20">
+    <div className="max-w-6xl mx-auto space-y-12 pb-20 animate-in fade-in duration-700">
       {/* 1. Header Title */}
       <div className="text-center space-y-2">
         <h2 className="inline-block bg-black text-white px-4 py-1 text-sm font-black italic uppercase tracking-tighter">
@@ -133,13 +178,14 @@ export default function ProfileClient() {
         </h1>
       </div>
 
-      {/* 2. Unified Personnel Dossier (Replaces separate AccountInfo and SignatureEra) */}
+      {/* 2. Unified Personnel Dossier */}
       <ProfileHeader userProfile={userProfile} ratings={ratingHistory} />
 
       {userStats && (
         <section className="space-y-8">
           {/* 2.5 New Historian Rank Widget */}
           <HistorianRank stats={userStats} />
+          
           {/* 3. Metrics Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
