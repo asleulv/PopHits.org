@@ -99,9 +99,9 @@ export default function BlogPostPage() {
       {/* Breadcrumbs - Architectural Style */}
       <nav className="flex items-center gap-2 mb-10 text-[10px] font-black uppercase tracking-[0.2em] text-black/40">
         <Link href="/" className="hover:text-black transition-colors">Home</Link>
-        <span className="opacity-20">//</span>
+        <span className="opacity-20">-</span>
         <Link href="/blog" className="hover:text-black transition-colors">Blog</Link>
-        <span className="opacity-20">//</span>
+        <span className="opacity-20">-</span>
         <span className="text-black truncate max-w-[150px] md:max-w-none">{post.title}</span>
       </nav>
 

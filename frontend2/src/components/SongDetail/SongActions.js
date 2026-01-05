@@ -26,7 +26,7 @@ export default function SongActions({ showRatingOnly = false }) {
     if (token && song.slug) {
       refreshSongData();
     }
-  }, [song.slug]);
+  }, [song.slug, refreshSongData]);
 
   const handleScoreChange = async (score) => {
     if (!isAuthenticated) return;
