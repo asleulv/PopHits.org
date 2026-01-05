@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bookmark } from "lucide-react";
 import Link from "next/link";
 import { toggleBookmarkSong } from "@/lib/api";
@@ -8,6 +8,7 @@ import { useSong } from "@/contexts/SongContext";
 
 export default function SongActions({ showRatingOnly = false }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const hasInitializedRef = useRef(false);
   const {
     song,
     userScore,
@@ -22,17 +23,19 @@ export default function SongActions({ showRatingOnly = false }) {
     const token = localStorage.getItem("authToken");
     setIsAuthenticated(!!token);
 
-    // On mount, if logged in, sync to get user-specific rating/bookmark status
+    // Only refresh on mount or when song.slug changes, not when refreshSongData changes
     if (token && song.slug) {
       refreshSongData();
     }
-  }, [song.slug, refreshSongData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [song.slug]); // Only re-run when slug changes
 
   const handleScoreChange = async (score) => {
     if (!isAuthenticated) return;
     const authToken = localStorage.getItem("authToken");
     const finalScore = userScore === score ? 0 : score;
 
+    // Optimistically update UI
     setUserScore(finalScore);
 
     try {
@@ -53,26 +56,39 @@ export default function SongActions({ showRatingOnly = false }) {
       );
 
       if (response.ok) {
-        // --- ADD THIS DELAY ---
+        // Refresh to get updated average score
         setTimeout(() => {
-          console.log("Triggering refresh...");
           refreshSongData();
         }, 500);
+      } else {
+        // Revert optimistic update on failure
+        setUserScore(userScore);
       }
     } catch (error) {
       console.error("Rating failed:", error);
+      // Revert optimistic update on failure
+      setUserScore(userScore);
     }
   };
 
   const handleBookmarkToggle = async () => {
     if (!isAuthenticated) return;
+    
+    // Optimistically update UI
+    const previousState = isBookmarked;
+    setIsBookmarked(!isBookmarked);
+
     try {
       const authToken = localStorage.getItem("authToken");
       const response = await toggleBookmarkSong(song.id, authToken);
       setIsBookmarked(response.is_bookmarked);
+      
+      // Refresh to sync any other data
       await refreshSongData();
     } catch (error) {
       console.error("Bookmark toggle failed:", error);
+      // Revert optimistic update on failure
+      setIsBookmarked(previousState);
     }
   };
 
