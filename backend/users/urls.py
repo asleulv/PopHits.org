@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserRegistrationView, UserLoginView, UserLogoutView, UserProfileView, UserProfileView, ResetPasswordRequest, ResetPasswordConfirm, CSRFTokenView, user_stats
+from .views import UserRegistrationView, UserLoginView, UserLogoutView, UserProfileView, UserProfileView, ResetPasswordRequest, ResetPasswordConfirm, CSRFTokenView, user_stats, historian_leaderboard
 
 urlpatterns = [
     path('csrf/', CSRFTokenView.as_view(), name='csrf-token'),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('reset-password/', ResetPasswordRequest.as_view(), name='reset-password'),
     path('confirm-reset-password/<uid>/<token>/', ResetPasswordConfirm.as_view(), name='confirm-reset-password'), 
     path('profile/stats/<str:username>/', user_stats, name='user-stats'),
+    path('leaderboard/', historian_leaderboard, name='historian-leaderboard'),
 ]

@@ -1,6 +1,6 @@
 # songs/serializers.py
 from rest_framework import serializers
-from .models import Song, UserSongComment, UserSongRating, CurrentHot100, Artist, ArtistRelationship, ArtistTagRelation, SongTimeline, SongTag
+from .models import Song, UserSongComment, UserSongRating, CurrentHot100, Artist, ArtistRelationship, ArtistTagRelation, SongTimeline, SongTag, Bookmark
 from django.db.models import Min, Max, Sum, Count
 
 
@@ -162,6 +162,10 @@ class SongSerializer(serializers.ModelSerializer):
     artist_data = serializers.SerializerMethodField()
     tags = serializers.SerializerMethodField()
 
+    # --- NEW FIELDS FOR PERSISTENCE ---
+    user_rating = serializers.SerializerMethodField()
+    is_bookmarked = serializers.SerializerMethodField()
+
     latest_score = serializers.IntegerField(read_only=True)
     latest_rater = serializers.CharField(read_only=True)
     latest_time = serializers.DateTimeField(read_only=True)
@@ -170,8 +174,25 @@ class SongSerializer(serializers.ModelSerializer):
         model = Song
         fields = '__all__'
 
+    # --- NEW METHODS ---
+    def get_user_rating(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            # Using the UserSongRating already imported at the top
+            rating = UserSongRating.objects.filter(song=obj, user=request.user).first()
+            return rating.score if rating else 0
+        return 0
+
+    def get_is_bookmarked(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            # Change 'song' to 'songs' to match your model choices:
+            # Choices are: id, songs, user, user_id
+            return Bookmark.objects.filter(songs=obj, user=request.user).exists()
+        return False
+
+    # --- YOUR ORIGINAL METHODS (UNCHANGED) ---
     def get_artist_data(self, obj):
-        # Check if artist_fk exists (for NumberOneSong compatibility)
         if hasattr(obj, 'artist_fk') and obj.artist_fk and obj.artist_fk.musicbrainz_id:
             return ArtistDetailSerializer(obj.artist_fk).data
         return None
@@ -179,8 +200,6 @@ class SongSerializer(serializers.ModelSerializer):
     def get_tags(self, obj):
         if not hasattr(obj, "tag_relations"):
             return []
-
-        # Use prefetched data instead of select_related
         return [
             {
                 "name": rel.tag.name,

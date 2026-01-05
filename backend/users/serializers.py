@@ -6,7 +6,6 @@ class UserSongRatingSerializer(serializers.ModelSerializer):
     song_artist = serializers.ReadOnlyField(source='song.artist')
     song_slug = serializers.SerializerMethodField()
     artist_slug = serializers.ReadOnlyField(source='song.artist_slug')
-    # 1. Define the field so the SerializerMethodField knows what to call
     artist_tags = serializers.SerializerMethodField() 
     spotify_url = serializers.ReadOnlyField(source='song.spotify_url')
     song_year = serializers.ReadOnlyField(source='song.year')

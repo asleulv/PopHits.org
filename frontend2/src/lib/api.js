@@ -414,3 +414,15 @@ export async function getTag(slug) {
   // We do it here too so tag descriptions/images update instantly when you edit them
   return proxyFetch(`/tags/${slug}/`, { cache: 'no-store' });
 }
+
+// ============================================================================
+// HISTORIAN LEADERBOARD ENDPOINTS
+// ============================================================================
+
+export async function getHistorianLeaderboard() {
+  // Use your bulletproof proxyFetch to handle server vs client logic
+  // We use { next: { revalidate: 3600 } } to cache the leaderboard for 1 hour
+  return proxyFetch(`/leaderboard/`, { 
+    next: { revalidate: 3600 } 
+  });
+}

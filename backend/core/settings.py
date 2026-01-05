@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
 
 load_dotenv()
 
@@ -140,6 +141,11 @@ CORS_ALLOWED_ORIGINS = [
     "https://pophits.org",
     "http://pophits.org",
     "http://188.245.244.69:3001",
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-internal-key", 
+    "authorization",
 ]
 
 CSRF_TRUSTED_ORIGINS = [

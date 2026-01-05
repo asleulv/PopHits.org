@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Clipboard, Star, Award } from "lucide-react";
 
 // Widget Imports
-import ProfileHeader from "./dashboard/DossierHeader"; 
+import ProfileHeader from "./dashboard/DossierHeader";
 import StatCard from "./dashboard/StatCard";
 import DecadeStats from "./dashboard/DecadeStats";
 import RatedSongsList from "./dashboard/RatedSongsList";
@@ -15,6 +15,7 @@ import HistoryTable from "./dashboard/HistoryTable";
 import BookmarkTable from "./dashboard/BookmarkTable";
 import TopArtists from "./dashboard/TopArtists";
 import GenreHeatmap from "./dashboard/GenreHeatMap";
+import HistorianRank from "./dashboard/HistorianRank";
 
 export default function ProfileClient() {
   const { isAuthenticated, authToken } = useAuth();
@@ -32,7 +33,8 @@ export default function ProfileClient() {
   const [currentPageRating, setCurrentPageRating] = useState(1);
   const [currentPageBookmarks, setCurrentPageBookmarks] = useState(1);
 
-  const baseUrl = process.env.NODE_ENV === "development"
+  const baseUrl =
+    process.env.NODE_ENV === "development"
       ? "http://localhost:8000"
       : "https://pophits.org";
 
@@ -75,7 +77,9 @@ export default function ProfileClient() {
     if (!userProfile?.username) return;
     const fetchStats = async () => {
       const res = await fetch(
-        `${baseUrl}/api/profile/stats/${encodeURIComponent(userProfile.username)}/`,
+        `${baseUrl}/api/profile/stats/${encodeURIComponent(
+          userProfile.username
+        )}/`,
         {
           headers: {
             Authorization: `Token ${authToken}`,
@@ -89,10 +93,14 @@ export default function ProfileClient() {
   }, [userProfile, authToken, baseUrl]);
 
   const copySpotifyUrls = () => {
-    const songs = tab === "rating"
+    const songs =
+      tab === "rating"
         ? ratingHistory.filter((r) => r.score >= filterScore)
         : bookmarkedSongs;
-    const urls = songs.map((s) => s.spotify_url).filter((u) => u).join("\n");
+    const urls = songs
+      .map((s) => s.spotify_url)
+      .filter((u) => u)
+      .join("\n");
     if (urls) {
       navigator.clipboard.writeText(urls);
       alert("Spotify URLs copied!");
@@ -130,6 +138,8 @@ export default function ProfileClient() {
 
       {userStats && (
         <section className="space-y-8">
+          {/* 2.5 New Historian Rank Widget */}
+          <HistorianRank stats={userStats} />
           {/* 3. Metrics Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard

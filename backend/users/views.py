@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from songs.models import UserSongRating
 from .serializers import UserSongRatingSerializer
 from .utils import send_registration_email, send_password_reset_email
+from .models import UserProfile
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_str
@@ -19,8 +20,6 @@ from django.utils.encoding import force_bytes
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
-from rest_framework.decorators import api_view
-
 
 class CSRFTokenView(APIView):
     permission_classes = [AllowAny]
@@ -212,24 +211,22 @@ from rest_framework.decorators import api_view
 @permission_classes([IsAuthenticated])
 def user_stats(request, username):
     """
-    Calculate and return user statistics including:
-    - Total songs in database
-    - Songs rated by user
-    - Percentage of songs rated
-    - Unrated songs count
-    - Average score
-    - Score distribution
-    - Average score per decade
-    - Highest and lowest rated songs (all with max/min score)
+    Calculate and return user statistics including historian rank and progress.
     """
+    # 1. Look up the user and their profile first
+    try:
+        user_obj = User.objects.get(username=username)
+        profile = user_obj.profile
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+
+    # --- Existing Stats Logic ---
     total_songs = Song.objects.count()
-    rated_qs = UserSongRating.objects.filter(user__username=username)
+    rated_qs = UserSongRating.objects.filter(user=user_obj)
     rated_count = rated_qs.count()
     score_agg = rated_qs.aggregate(avg_score=Avg('score'))
 
-    # Highest and lowest rated songs
     rated_qs_clean = rated_qs.exclude(score=0)
-
     max_score = rated_qs_clean.aggregate(Max('score'))['score__max']
     min_score = rated_qs_clean.aggregate(Min('score'))['score__min']
 
@@ -267,7 +264,14 @@ def user_stats(request, username):
         output_field=IntegerField()
     )
 
+    # --- Build the response dictionary ---
     stats = {
+        # Historian & Gamification Data
+        'historian_points': profile.points,
+        'historian_title': profile.historian_title,
+        'next_rank': profile.next_rank_data, # Using the @property we defined in the model
+        
+        # Existing database stats
         'total_songs': total_songs,
         'songs_rated': rated_count,
         'percent_rated': round((rated_count / total_songs * 100) if total_songs else 0, 1),
@@ -303,4 +307,29 @@ def user_stats(request, username):
     }
 
     return Response(stats)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def historian_leaderboard(request):
+    # Exclude Asle and admin accounts
+    base_qs = UserProfile.objects.exclude(user__username='Asle')\
+                                 .exclude(user__username='admin')\
+                                 .select_related('user')
+
+    # Top 10 All-Time
+    all_time = base_qs.order_by('-points')[:10]
+    
+    # Top 10 Monthly
+    monthly = base_qs.order_by('-points_monthly')[:10]
+    
+    return Response({
+        'all_time': [
+            {'username': p.user.username, 'points': p.points, 'title': p.historian_title} 
+            for p in all_time
+        ],
+        'monthly': [
+            {'username': p.user.username, 'points': p.points_monthly, 'title': p.historian_title} 
+            for p in monthly
+        ]
+    })
 

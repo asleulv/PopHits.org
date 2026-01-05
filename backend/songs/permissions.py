@@ -28,10 +28,18 @@ class IsInternalServer(BasePermission):
     
 class IsInternalServerWithOptionalAuth(BasePermission):
     """
-    Same as IsInternalServer but allows optional user authentication to be passed through.
-    Use this with TokenAuthentication in authentication_classes to support user-specific filtering.
+    Allows access if the internal API key is present 
+    OR if the user is authenticated.
     """
     def has_permission(self, request, view):
         expected_key = settings.INTERNAL_API_KEY
         sent_key = request.META.get('HTTP_X_INTERNAL_KEY')
-        return expected_key and (sent_key == expected_key)
+        
+        # 1. Check if the Internal Key is valid
+        is_internal = expected_key and (sent_key == expected_key)
+        
+        # 2. Check if the user is authenticated (via Token)
+        is_authenticated = bool(request.user and request.user.is_authenticated)
+        
+        # Allow access if either is true
+        return is_internal or is_authenticated

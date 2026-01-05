@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import AllowAny
 
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
@@ -105,23 +106,26 @@ class SongListCreateView(generics.ListCreateAPIView):
 
 
 class SongDetailView(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsInternalServerWithOptionalAuth]
     serializer_class = SongSerializer
 
     def get_queryset(self):
-        # Prefetch tags for efficiency
-        return Song.objects.all().prefetch_related(
-            'tag_relations__tag'
-        )
+        return Song.objects.all().prefetch_related('tag_relations__tag')
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
+        
+        # --- UPDATE THIS LINE ---
+        # We add context={'request': request} so the serializer can see the user
+        serializer = self.get_serializer(instance, context={'request': request})
 
         # Comments
         comments = UserSongComment.objects.filter(song=instance)
-        comment_serializer = UserSongCommentSerializer(comments, many=True)
+        # Note: You should pass context here too if you want comments to show user-specific data
+        comment_serializer = UserSongCommentSerializer(comments, many=True, context={'request': request})
 
-        # Tags (with visual metadata)
+        # Tags (Keep your existing logic)
         tag_relations = instance.tag_relations.select_related('tag')
         tags_data = [
             {
@@ -172,6 +176,9 @@ class SongTimelineView(APIView):
 
 
 class SongDetailBySlugView(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsInternalServerWithOptionalAuth]
+
     serializer_class = SongSerializer
 
     def get_queryset(self):

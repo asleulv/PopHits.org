@@ -9,7 +9,8 @@ import {
   getWebsiteStats,
   getBlogPosts,
   getTrendingArchive,
-  getTags
+  getTags,
+  getHistorianLeaderboard
 } from "@/lib/api";
 import { getBlueskyPosts } from "@/lib/bluesky";
 
@@ -26,8 +27,9 @@ import BirthdayWidget from "@/components/FrontPage/BirthdayWidget";
 import BlueskyClient from "@/components/FrontPage/BlueskyClient";
 import TrendingHits from "@/components/FrontPage/CommunityFavourites";
 import TagSection from "@/components/FrontPage/TagSection";
+import LeaderboardSection from "@/components/FrontPage/LeaderboardSection";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // Helper function to get decade from year
 function getDecade(year) {
@@ -123,8 +125,6 @@ async function HeroSectionWrapper() {
   }
 }
 
-
-
 async function BlueskyWrapper() {
   try {
     const blueskyPosts = await getBlueskyPosts();
@@ -204,9 +204,9 @@ async function TagSectionWrapper() {
   try {
     // This uses your existing proxyFetch(`/tags/`)
     const tags = await getTags();
-    
+
     // Safety check: ensure tags is an array (sometimes APIs wrap results in an object)
-    const tagsArray = Array.isArray(tags) ? tags : (tags.results || []);
+    const tagsArray = Array.isArray(tags) ? tags : tags.results || [];
 
     if (tagsArray.length === 0) return null;
 
@@ -224,6 +224,16 @@ async function NumberOneWrapper() {
     return <NumberOneHitsSection numberOneHits={numberOneHits} />;
   } catch (error) {
     return <div>Loading number ones...</div>;
+  }
+}
+
+async function LeaderboardWrapper() {
+  try {
+    const data = await getHistorianLeaderboard();
+    return <LeaderboardSection data={data} />;
+  } catch (error) {
+    // Silent fail on frontpage to prevent crashing the whole site
+    return null;
   }
 }
 
@@ -284,6 +294,14 @@ export default async function FrontPage() {
           <HeroSectionWrapper />
         </Suspense>
 
+        <Suspense
+          fallback={
+            <div className="h-64 bg-gray-100 border-4 border-dashed border-black animate-pulse" />
+          }
+        >
+          <LeaderboardWrapper />
+        </Suspense>
+
         {/* 9. Latest Blog Post */}
         <Suspense fallback={<div>Loading blog...</div>}>
           <BlogWrapper />
@@ -291,10 +309,12 @@ export default async function FrontPage() {
 
         <BirthdayWidget />
 
-        <Suspense 
+        <Suspense
           fallback={
             <div className="mb-12 w-full bg-yellow-50 border-4 border-black border-dashed h-[400px] rounded-3xl animate-pulse flex items-center justify-center">
-              <span className="font-black uppercase italic text-slate-400">Loading Curated Themes...</span>
+              <span className="font-black uppercase italic text-slate-400">
+                Loading Curated Themes...
+              </span>
             </div>
           }
         >
@@ -315,7 +335,7 @@ export default async function FrontPage() {
           fallback={<div className="h-32 bg-gray-800 animate-pulse rounded" />}
         >
           <TrendingHitsWrapper />
-        </Suspense>        
+        </Suspense>
 
         {/* 4. Random Hits by Decade */}
         <Suspense fallback={<div>Loading hits...</div>}>
