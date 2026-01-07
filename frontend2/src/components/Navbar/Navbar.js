@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import Logo from "@/components/Logo";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { slide as Menu } from "react-burger-menu";
@@ -11,19 +10,11 @@ import { FaHouseUser, FaUser, FaDiceD6 } from "react-icons/fa";
 import { MdQuiz } from "react-icons/md";
 import { BsMusicPlayerFill, BsListOl } from "react-icons/bs";
 import { RiLogoutBoxRFill, RiUserAddLine } from "react-icons/ri";
-import {
-  Home,
-  CircleAlert,
-  ListMusic,
-  Star,
-  Calendar,
-  TrendingUp,
-  Search,
-  BookOpen,
-} from "lucide-react";
+import { Home, CircleAlert, Search, BookOpen, Loader2 } from "lucide-react";
 import { GiBullseye } from "react-icons/gi";
 
 export default function Navbar() {
+  const [isPending, startTransition] = useTransition();
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated, logoutUser } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,14 +48,45 @@ export default function Navbar() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/songs?query=${encodeURIComponent(searchQuery.trim())}`);
+    const trimmedQuery = searchQuery.trim();
+
+    if (trimmedQuery) {
+      // This is the part that triggers the "Searching Database..." overlay
+      startTransition(() => {
+        router.push(`/songs?query=${encodeURIComponent(trimmedQuery)}`);
+        router.refresh();
+      });
+
       setSearchQuery("");
     }
   };
 
   return (
     <>
+      {/* --- ADD THIS: Loading Overlay --- */}
+      {isPending && (
+        <div className="fixed inset-0 z-[9999] bg-white/80 backdrop-blur-sm flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-300">
+            <div className="relative">
+              <Loader2
+                className="w-20 h-20 animate-spin text-black"
+                strokeWidth={2.5}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-3 h-3 bg-red-600 rounded-full animate-ping" />
+              </div>
+            </div>
+            <div className="text-center space-y-2">
+              <h2 className="inline-block bg-black text-white px-4 py-1 text-xs font-black italic uppercase tracking-[0.2em]">
+                Status: Filtering Archive
+              </h2>
+              <p className="text-3xl font-black italic uppercase tracking-tighter text-black">
+                Searching Database...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Main Navigation Bar */}
       <nav
         className={`navbar bg-black border-amber-400 ${
@@ -171,7 +193,6 @@ export default function Navbar() {
                       Create Quiz
                     </Link>
                   </li>
-
 
                   <li className="navbar-menu-item">
                     <Link

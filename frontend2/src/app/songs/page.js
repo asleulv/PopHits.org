@@ -65,6 +65,7 @@ export default async function SongsPage({ searchParams }) {
   return (
     <>
       <SongListPage
+        key={query}
         initialSongs={songs}
         totalSongs={totalSongs}
         initialPage={page}
