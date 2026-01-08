@@ -70,7 +70,7 @@ async function proxyFetch(path, options = {}) {
 // ============================================================================
 
 export async function getSongs(options = {}) {
-  // 1. Detect if the user passed 10 arguments (like in your SongsPage)
+  // 1. Detect if the user passed arguments (legacy) or an object
   const isLegacyCall = typeof options !== 'object';
   
   // 2. Extract values based on position OR name
@@ -84,38 +84,35 @@ export async function getSongs(options = {}) {
   const peakRank = isLegacyCall ? arguments[7] : options.peakRank;
   const unrated = isLegacyCall ? arguments[8] : options.unrated;
   const decade = isLegacyCall ? arguments[9] : options.decade;
+  const tag = isLegacyCall ? arguments[10] : options.tag;
+  // --- ADDED THIS LINE ---
+  const authToken = isLegacyCall ? arguments[11] : options.authToken;
 
   const params = new URLSearchParams({
     page: String(page),
     page_size: String(perPage),
   });
 
-  // ARTIST/YEAR HANDSHAKE: Ensure Django gets the 'artist' or 'year' keys
   if (type === 'artist' && slugOrYear) params.append('artist', slugOrYear);
   if (type === 'year' && slugOrYear) params.append('year', String(slugOrYear));
   if (type === 'tag' && slugOrYear) params.append('tag', slugOrYear);
-
-  // GLOBAL FILTERS: Map these to the keys Django expects
   if (sortBy) params.append('sort_by', sortBy);
   if (order) params.append('order', order);
-  
-  // Django looks for 'search' for text queries
   if (query) params.append('search', query);
-  
   if (decade) params.append('decade', decade);
-  
   if (peakRank) {
-    // Normalize 'number-one' to 'number_one' for Django's filter
     const rankValue = (peakRank === 'number-one' || peakRank === '1') ? 'number_one' : peakRank;
     params.append('peak_rank', rankValue);
   }
-  
   if (unrated) params.append('unrated_only', 'true');
 
   const finalPath = `/songs/?${params.toString()}`;
   console.log("🚀 API CALLING:", finalPath); 
 
-  return proxyFetch(finalPath);
+  // --- CRITICAL CHANGE: Pass the headers here ---
+  return proxyFetch(finalPath, {
+    headers: authToken ? { Authorization: `Token ${authToken}` } : {},
+  });
 }
 
 export async function getSongBySlug(slug) {
